@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using CRMBytholod.ResponseAPI;
 using CRMBytholod.RequestAPI;
+using Newtonsoft.Json;
 
 namespace CRMBytholod.Controllers
 {
@@ -17,22 +18,20 @@ namespace CRMBytholod.Controllers
         [HttpGet]
         public IEnumerable<string> Get()
         {
-            return new string[] { "value1", "value2" };        }
+            return new string[] { "value1", "value2" };    
+        }
 
 
         // POST: api/Auth
         [HttpPost]
-        public string Post([FromBody] AuthRequest value)
+        public string Post([FromBody] AuthRequest req)
         {
             string json = "";
 
             try
             {
-
-                AuthResponse resp = new AuthResponse();
-                resp.GetFindShops(Const.ConnectionString, req);
+                AuthResponse resp = new AuthResponse(req);
                 json = JsonConvert.SerializeObject(resp);
-
             }
             catch (Exception ex)
             {
@@ -43,10 +42,7 @@ namespace CRMBytholod.Controllers
             return json;
         }
 
-        public string Post([FromBody]AuthRequest req)
-        {
-            
-        }
+       
 
     }
 }

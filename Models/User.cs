@@ -39,8 +39,62 @@ INSERT INTO [dbo].[PromoCode]
 
         }
 
-        public bool Auth( string Login , string passw)
+        public bool Auth( string Login , string Passw)
         {
+            SqlParameter[] parameters = new SqlParameter[]
+            {
+                new SqlParameter(@"Login",SqlDbType.NVarChar) { Value =Login },
+                new SqlParameter(@"Passw",SqlDbType.NVarChar) { Value =Passw }
+            };
+            
+            #region sql
+
+            string sqlText = $@"
+ declare @isAuth int;
+
+
+SET @isAuth=(
+ SELECT count(1)  FROM [dbo].[User]
+WHERE 1=1
+	AND ID_TYPE_USER=3
+	AND Login=@Login
+	AND Passw=@Passw
+	)
+
+-- если авторизован и одна запись (нет дублей) то получаем айди сессии и входим
+if @isAuth > 0  AND @isAuth <=1
+BEGIN
+	
+	UPDATE [dbo].[User] SET Sessionid= NEWID()
+	WHERE 1=1
+		AND ID_TYPE_USER=3
+	    AND Login=@Login
+	    AND Passw=@Passw
+
+	SELECT Sessionid, 1 AS Auth FROM [dbo].[User]
+	WHERE 1=1
+		AND ID_TYPE_USER=3
+	    AND Login=@Login
+    	AND Passw=@Passw
+
+END   
+
+";
+
+            #endregion
+
+            DataTable dt = new DataTable();// при наличии данных
+            // получаем данные из запроса
+            dt = ExecuteSqlGetDataTableStatic(sqlText);
+
+            if (dt.Rows.Count == 0)
+                return false;
+
+            foreach (DataRow row in dt.Rows)
+            {
+                Sessionid = (string)row["Sessionid"];
+                return true;
+            }
 
 
             return false;
@@ -53,13 +107,14 @@ INSERT INTO [dbo].[PromoCode]
 
             // Запрос в БД и получение фильтров пользователя
 
-            DataTable dt = new DataTable();// при наличии данных
 
             string sqlText = $@" SELECT 
 	   f.[FILTER_ID]
       ,f.[Name] AS NameFiltr
        ";
 
+
+            DataTable dt = new DataTable();// при наличии данных
             // получаем данные из запроса
             dt = ExecuteSqlGetDataTableStatic(sqlText);
 

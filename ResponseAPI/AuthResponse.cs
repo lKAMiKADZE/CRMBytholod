@@ -15,7 +15,20 @@ namespace CRMBytholod.ResponseAPI
 
         public AuthResponse(AuthRequest authRequest)
         {
-            User 
+            isAuth = false;
+            Sessionid = "";
+            User user = new User();
+
+            if (user.Auth(authRequest.Login, authRequest.Passw))
+            {
+                isAuth = true;
+                Sessionid = user.Sessionid;
+            }
         }
+
+
+
+
+
     }
 }
