@@ -2,29 +2,26 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using CRMBytholod.RequestAPI;
+using CRMBytholod.ResponseAPI;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using CRMBytholod.ResponseAPI;
-using CRMBytholod.RequestAPI;
 using Newtonsoft.Json;
 
 namespace CRMBytholod.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class AuthController : ControllerBase
+    public class OrdersController : ControllerBase
     {
-
-
-        // POST: api/Auth
         [HttpPost]
-        public string Post([FromBody] AuthRequest req)
+        public string Post([FromBody] OrdersRequest req)
         {
             string json = "";
 
             try
             {
-                AuthResponse resp = new AuthResponse(req);
+                OrdersResponse resp = new OrdersResponse(req);
                 json = JsonConvert.SerializeObject(resp);
             }
             catch (Exception ex)
@@ -32,11 +29,7 @@ namespace CRMBytholod.Controllers
                 json += " err " + ex.Message;
             }
 
-
             return json;
         }
-
-       
-
     }
 }

@@ -17,28 +17,19 @@ namespace CRMBytholod.Models
         public string Login { get; set; }
         public string Phone { get; set; }
         public string Sessionid { get; set; }
+        public DateTime DateAdd { get; set; }
 
-        public void Create()
-        {
+        ///////////////////////////////////////
+        //dop param
 
-            SqlParameter[] parameters = GetSqlParametersInsert();
+        public int OrderAwait { get; set; }
+        public int OrderPovtor { get; set; }
+        public int OrderSucces { get; set; }
+        public int OrderDenied { get; set; }
+        public int OrderInWork { get; set; }
+        public int MoneyUpMaster { get; set; }
 
-            string sqlText = $@" 
-INSERT INTO [dbo].[PromoCode]
-           ([PROMOCODE_ID]
-           ,[Code]
-           )
-     VALUES
-           (
-		   @PROMOCODE_ID
-		   
-		   )
-";
-            ExecuteSqlStatic(sqlText, parameters);
-
-
-        }
-
+        ///////////////////////////////////////
         public bool AuthMaster( string Login , string Passw)
         {
             SqlParameter[] parameters = new SqlParameter[]
@@ -100,7 +91,102 @@ END
             return false;
         }
 
-      
+
+        public static User GetMasterStat(string Sessionid)
+        {
+            User us;
+
+
+            SqlParameter[] parameters = new SqlParameter[]
+            {
+                new SqlParameter(@"Sessionid",SqlDbType.NVarChar) { Value =Sessionid }
+            };
+
+            #region sql
+
+            string sqlText = $@"
+SELECT 
+ u.Name
+, sum(z.MoneyMaster) AS MoneyMaster
+,( SELECT count(1) FROM [dbo].[User] u
+	JOIN [dbo].[Zakaz] z ON z.ID_MASTER=u.ID_USER
+	WHERE 1=1
+		AND u.Sessionid=@Sessionid --'CB80665A-93E0-4E91-A982-36063D546CE6' --@Sessionid --
+		AND z.DateAdd >= CURRENT_TIMESTAMP-30
+		AND z.ID_STATUS=1
+		
+) AS Await
+
+,( SELECT count(1) FROM [dbo].[User] u
+	JOIN [dbo].[Zakaz] z ON z.ID_MASTER=u.ID_USER
+	WHERE 1=1
+		AND u.Sessionid=@Sessionid --'CB80665A-93E0-4E91-A982-36063D546CE6' --@Sessionid
+		AND z.DateAdd >= CURRENT_TIMESTAMP-30
+		AND z.ID_STATUS=2
+) AS Povtor
+
+,( SELECT count(1) FROM [dbo].[User] u
+	JOIN [dbo].[Zakaz] z ON z.ID_MASTER=u.ID_USER
+	WHERE 1=1
+		AND u.Sessionid=@Sessionid --'CB80665A-93E0-4E91-A982-36063D546CE6' --@Sessionid
+		AND z.DateAdd >= CURRENT_TIMESTAMP-30
+		AND z.ID_STATUS=3
+) AS Denied
+
+,( SELECT count(1) FROM [dbo].[User] u
+	JOIN [dbo].[Zakaz] z ON z.ID_MASTER=u.ID_USER
+	WHERE 1=1
+		AND u.Sessionid=@Sessionid --'CB80665A-93E0-4E91-A982-36063D546CE6' --@Sessionid
+		AND z.DateAdd >= CURRENT_TIMESTAMP-30
+		AND z.ID_STATUS=4
+) AS InWork
+
+,( SELECT count(1) FROM [dbo].[User] u
+	JOIN [dbo].[Zakaz] z ON z.ID_MASTER=u.ID_USER
+	WHERE 1=1
+		AND u.Sessionid=@Sessionid --'CB80665A-93E0-4E91-A982-36063D546CE6' --@Sessionid
+		AND z.DateAdd >= CURRENT_TIMESTAMP-30
+		AND z.ID_STATUS=5
+) AS Succes
+
+ FROM [dbo].[User] u
+JOIN [dbo].[Zakaz] z ON z.ID_MASTER=u.ID_USER
+WHERE 1=1
+	AND u.Sessionid=@Sessionid --'CB80665A-93E0-4E91-A982-36063D546CE6' --@Sessionid
+	AND z.DateAdd >= CURRENT_TIMESTAMP-30
+	
+GROUP BY  u.Name
+
+
+";
+
+            #endregion
+
+            DataTable dt = new DataTable();// при наличии данных
+            // получаем данные из запроса
+            dt = ExecuteSqlGetDataTableStatic(sqlText, parameters);
+
+
+            foreach (DataRow row in dt.Rows)
+            {
+                us = new User
+                {
+                    Name = (string)row["Name"],
+                    MoneyUpMaster = (int)row["MoneyMaster"],
+                    OrderAwait = (int)row["Await"],
+                    OrderPovtor = (int)row["Povtor"],
+                    OrderDenied = (int)row["Denied"],
+                    OrderInWork = (int)row["InWork"],
+                    OrderSucces = (int)row["Succes"]                    
+                };
+
+                return us;
+            }
+
+
+            return null;
+        }
+
 
         ////////////////
         // Методы SQL
