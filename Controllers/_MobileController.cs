@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using CRMBytholod.RequestAPI;
 using CRMBytholod.Settings;
@@ -12,7 +14,7 @@ namespace CRMBytholod.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class MobileController : ControllerBase
+    public class _MobileController : ControllerBase
     {
         // GET: api/Mobile
         [HttpGet]
@@ -30,12 +32,19 @@ namespace CRMBytholod.Controllers
 
         // POST: api/Mobile
         [HttpPost]
-        public void Post([FromBody] string value)
+        public string Post([FromBody] fff req)
         {
+            return "hi";
         }
 
 
 
         
+    }
+
+    public class fff
+    {
+        [JsonPropertyName("value")]
+        public string value { get; set; }
     }
 }

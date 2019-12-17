@@ -15,21 +15,15 @@ namespace CRMBytholod.Controllers
     public class MasterController : ControllerBase
     {
         [HttpPost]
-        public string Post([FromBody] MasterRequest req)
+        public MasterResponse Post([FromBody] MasterRequest req)
         {
             string json = "";
 
-            try
-            {
-                MasterResponse resp = new MasterResponse(req);
-                json = JsonConvert.SerializeObject(resp);
-            }
-            catch (Exception ex)
-            {
-                json += " err " + ex.Message;
-            }
+            MasterResponse resp = new MasterResponse(req);
+            //json = JsonConvert.SerializeObject(resp);
+           
 
-            return json;
+            return resp;
         }
     }
 }

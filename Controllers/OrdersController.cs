@@ -15,21 +15,15 @@ namespace CRMBytholod.Controllers
     public class OrdersController : ControllerBase
     {
         [HttpPost]
-        public string Post([FromBody] OrdersRequest req)
+        public OrdersResponse Post([FromBody] OrdersRequest req)
         {
             string json = "";
 
-            try
-            {
-                OrdersResponse resp = new OrdersResponse(req);
-                json = JsonConvert.SerializeObject(resp);
-            }
-            catch (Exception ex)
-            {
-                json += " err " + ex.Message;
-            }
+            OrdersResponse resp = new OrdersResponse(req);
+            //json = JsonConvert.SerializeObject(resp);
+            
 
-            return json;
+            return resp;
         }
     }
 }

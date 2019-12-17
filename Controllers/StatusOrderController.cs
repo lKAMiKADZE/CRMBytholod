@@ -15,21 +15,14 @@ namespace CRMBytholod.Controllers
     public class StatusOrderController : ControllerBase
     {
         [HttpPost]
-        public string Post([FromBody] StatusOrderRequest req)
+        public StatusOrderResponse Post([FromBody] StatusOrderRequest req)
         {
             string json = "";
 
-            try
-            {
-                StatusOrderResponse resp = new StatusOrderResponse(req);
-                json = JsonConvert.SerializeObject(resp);
-            }
-            catch (Exception ex)
-            {
-                json += " err " + ex.Message;
-            }
-
-            return json;
+            StatusOrderResponse resp = new StatusOrderResponse(req);
+            //json = JsonConvert.SerializeObject(resp);
+            
+            return resp;
         }
     }
 }

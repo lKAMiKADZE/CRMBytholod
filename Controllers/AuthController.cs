@@ -16,11 +16,15 @@ namespace CRMBytholod.Controllers
     {
 
 
-        // POST: api/Auth
-        [HttpPost]
-        public string Post([FromBody] AuthRequest req)
+        [HttpGet]
+        public string Get(string Login, string Passw)
         {
             string json = "";
+            var req = new AuthRequest
+            {
+                Login = Login,
+                Passw = Passw
+            };
 
             try
             {
@@ -34,6 +38,20 @@ namespace CRMBytholod.Controllers
 
 
             return json;
+        }
+
+        // POST: api/Auth
+        [HttpPost]
+        public AuthResponse Post([FromBody] AuthRequest req)
+        {
+            string json = "";
+
+            AuthResponse resp = new AuthResponse(req);
+            //json = JsonConvert.SerializeObject(resp);
+            
+
+
+            return resp;
         }
 
        
