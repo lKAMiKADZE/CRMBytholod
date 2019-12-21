@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using CRMBytholod.Settings;
 using Microsoft.Data.SqlClient;
 using System.Data;
+using System.Globalization;
 
 namespace CRMBytholod.Models
 {
@@ -51,7 +52,7 @@ namespace CRMBytholod.Models
         //dop param
         /////////////////////////////////
         
-        public string DayWeek_Date { get; set; }
+        public string DayWeek_Date { get; set; }// хранится название дня недели и дата
 
         /////////////////////////////////
         public static List<Order> GetNewOrders(string Sessionid)
@@ -118,7 +119,7 @@ ORDER BY DateSendMaster DESC, ID_ZAKAZ DESC
             {
                 Status status = new Status
                 {
-                    ID_STATUS = (int)row["ID_STATUS"],
+                    ID_STATUS = (long)row["ID_STATUS"],
                     NameStatus = (string)row["NameStatus"],
                 };
 
@@ -127,7 +128,7 @@ ORDER BY DateSendMaster DESC, ID_ZAKAZ DESC
 
                 Order order = new Order
                 {
-                    ID_ZAKAZ = (int)row["ID_ZAKAZ"],
+                    ID_ZAKAZ = (long)row["ID_ZAKAZ"],
                     STREET = (string)row["STREET"],
                     HOUSE = (string)row["HOUSE"],
                     KORPUS = (string)row["KORPUS"],
@@ -136,10 +137,12 @@ ORDER BY DateSendMaster DESC, ID_ZAKAZ DESC
                     DATA = (DateTime)row["DATA"],
                     VREMJA = (string)row["VREMJA"],
                     DateAdd = (DateTime)row["DateAdd"],
-                    DateSendMaster = (DateTime?)row["DateSendMaster"],
-                    DateOpenMaster = (DateTime?)row["DateOpenMaster"],
+                    DateSendMaster = row["DateSendMaster"] != DBNull.Value ? (DateTime?)row["DateSendMaster"] : null,
+                    DateOpenMaster = row["DateOpenMaster"] != DBNull.Value ? (DateTime?)row["DateOpenMaster"] : null,
                     STATUS = status
                 };
+
+
 
                 Orders.Add(order);
             }
@@ -172,7 +175,7 @@ SELECT [ID_ZAKAZ]
       ,[HOLODILNIK_DEFECT]
       ,[DATA]
       ,[VREMJA]
-      ,[DateAdd]
+      ,o.[DateAdd]
       ,[DateSendMaster]
       ,[DateOpenMaster]	  
 	  ,[DateClose]
@@ -198,20 +201,19 @@ ORDER BY DateClose DESC, ID_ZAKAZ DESC
             dt = ExecuteSqlGetDataTableStatic(sqlText, parameters);
 
 
+            string prevRUdate = "";
+
             foreach (DataRow row in dt.Rows)
             {
                 Status status = new Status
                 {
-                    ID_STATUS = (int)row["ID_STATUS"],
+                    ID_STATUS = (long)row["ID_STATUS"],
                     NameStatus = (string)row["NameStatus"],
                 };
 
-                //!!! сделать обработку и присвоить к DayWeek_Date
-                //день недели + дату
-
                 Order order = new Order
                 {
-                    ID_ZAKAZ = (int)row["ID_ZAKAZ"],
+                    ID_ZAKAZ = (long)row["ID_ZAKAZ"],
                     STREET = (string)row["STREET"],
                     HOUSE = (string)row["HOUSE"],
                     KORPUS = (string)row["KORPUS"],
@@ -220,13 +222,30 @@ ORDER BY DateClose DESC, ID_ZAKAZ DESC
                     DATA = (DateTime)row["DATA"],
                     VREMJA = (string)row["VREMJA"],
                     DateAdd = (DateTime)row["DateAdd"],
-                    DateSendMaster = (DateTime?)row["DateSendMaster"],
-                    DateOpenMaster = (DateTime?)row["DateOpenMaster"],
-                    DateClose = (DateTime?)row["DateClose"],
-
+                    DateSendMaster = row["DateSendMaster"] != DBNull.Value ? (DateTime?)row["DateSendMaster"] : null,
+                    DateOpenMaster = row["DateOpenMaster"] != DBNull.Value ? (DateTime?)row["DateOpenMaster"] : null,
+                    DateClose = row["DateClose"] != DBNull.Value ? (DateTime?)row["DateClose"] : null,
+                    DayWeek_Date = "",
 
                     STATUS = status
                 };
+
+
+                // получение дня недели и даты, но заполняется только уникальная дата, т.е. новый день недели, должен быть у самой первой записи
+                string RUdate = ((DateTime)row["DateClose"]).ToString("dddd dd/MM/yyyy", CultureInfo.GetCultureInfo("ru-ru"));
+
+                //выполняется в 1 цикле
+                if (String.IsNullOrEmpty(prevRUdate))
+                {
+                    prevRUdate = RUdate;// запоминаем дата для сравнения в след цикле
+                    order.DayWeek_Date = RUdate;
+                }
+
+                if (!prevRUdate.Equals(RUdate))
+                    order.DayWeek_Date = RUdate;
+
+
+                prevRUdate = RUdate;
 
                 Orders.Add(order);
             }
@@ -249,7 +268,7 @@ ORDER BY DateClose DESC, ID_ZAKAZ DESC
                 new SqlParameter(@"DateEnd",SqlDbType.DateTime) { Value =DateEnd }
             };
 
-            #region sql !!!
+            #region sql 
 
             string Where_Adres = "";
 
@@ -268,7 +287,7 @@ SELECT [ID_ZAKAZ]
       ,[HOLODILNIK_DEFECT]
       ,[DATA]
       ,[VREMJA]
-      ,[DateAdd]
+      ,o.[DateAdd]
       ,[DateSendMaster]
       ,[DateOpenMaster]	  
 	  ,[DateClose]
@@ -297,12 +316,13 @@ ORDER BY DateClose DESC, ID_ZAKAZ DESC
             // получаем данные из запроса
             dt = ExecuteSqlGetDataTableStatic(sqlText, parameters);
 
+            string prevRUdate = "";
 
             foreach (DataRow row in dt.Rows)
             {
                 Status status = new Status
                 {
-                    ID_STATUS = (int)row["ID_STATUS"],
+                    ID_STATUS = (long)row["ID_STATUS"],
                     NameStatus = (string)row["NameStatus"],
                 };
 
@@ -311,7 +331,7 @@ ORDER BY DateClose DESC, ID_ZAKAZ DESC
 
                 Order order = new Order
                 {
-                    ID_ZAKAZ = (int)row["ID_ZAKAZ"],
+                    ID_ZAKAZ = (long)row["ID_ZAKAZ"],
                     STREET = (string)row["STREET"],
                     HOUSE = (string)row["HOUSE"],
                     KORPUS = (string)row["KORPUS"],
@@ -320,13 +340,30 @@ ORDER BY DateClose DESC, ID_ZAKAZ DESC
                     DATA = (DateTime)row["DATA"],
                     VREMJA = (string)row["VREMJA"],
                     DateAdd = (DateTime)row["DateAdd"],
-                    DateSendMaster = (DateTime?)row["DateSendMaster"],
-                    DateOpenMaster = (DateTime?)row["DateOpenMaster"],
-                    DateClose = (DateTime?)row["DateClose"],
+                    DateSendMaster = row["DateSendMaster"] != DBNull.Value ? (DateTime?)row["DateSendMaster"] : null,
+                    DateOpenMaster = row["DateOpenMaster"] != DBNull.Value ? (DateTime?)row["DateOpenMaster"] : null,
+                    DateClose = row["DateClose"] != DBNull.Value ? (DateTime?)row["DateClose"] : null,
+                    DayWeek_Date ="",
 
 
                     STATUS = status
                 };
+
+
+                // получение дня недели и даты, но заполняется только уникальная дата, т.е. новый день недели, должен быть у самой первой записи
+                string RUdate = ((DateTime)row["DateClose"]).ToString("dddd dd/MM/yyyy", CultureInfo.GetCultureInfo("ru-ru"));
+
+                //выполняется в 1 цикле
+                if (String.IsNullOrEmpty(prevRUdate))
+                {
+                    prevRUdate = RUdate;// запоминаем дата для сравнения в след цикле
+                    order.DayWeek_Date = RUdate;
+                }
+
+                if (!prevRUdate.Equals(RUdate))
+                    order.DayWeek_Date = RUdate;
+
+                prevRUdate = RUdate;
 
                 Orders.Add(order);
             }
@@ -398,18 +435,21 @@ ORDER BY DateClose DESC, ID_ZAKAZ DESC
             {
                 Status status = new Status
                 {
-                    ID_STATUS = (int)row["ID_STATUS"],
+                    ID_STATUS = (long)row["ID_STATUS"],
                     NameStatus = (string)row["NameStatus"],
                 };
 
 
                 Order order = new Order
                 {
-                    ID_ZAKAZ = (int)row["ID_ZAKAZ"],
+                    ID_ZAKAZ = (long)row["ID_ZAKAZ"],
                     HOLODILNIK_DEFECT = (string)row["HOLODILNIK_DEFECT"],
-                    DateClose = (DateTime?)row["DateClose"],
+                    DateClose = row["DateClose"] != DBNull.Value ? (DateTime?)row["DateClose"] : null,
                     STATUS = status
                 };
+
+
+
 
                 Orders.Add(order);
             }
@@ -516,9 +556,9 @@ WHERE 1=1
                     DATA = (DateTime)row["DATA"],
                     VREMJA = (string)row["VREMJA"],
                     DateAdd = (DateTime)row["DateAdd"],
-                    DateSendMaster = (DateTime?)row["DateSendMaster"],
-                    DateOpenMaster = (DateTime?)row["DateOpenMaster"],
-                    DateClose = (DateTime?)row["DateClose"],
+                    DateSendMaster = row["DateSendMaster"] != DBNull.Value ? (DateTime?)row["DateSendMaster"] : null,
+                    DateOpenMaster = row["DateOpenMaster"] != DBNull.Value ? (DateTime?)row["DateOpenMaster"] : null,
+                    DateClose = row["DateClose"] != DBNull.Value ? (DateTime?)row["DateClose"] : null,
 
 
                     DescripClose = (string)row["DescripClose"],

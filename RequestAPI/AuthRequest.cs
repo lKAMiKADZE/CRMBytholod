@@ -6,11 +6,11 @@ using System.Threading.Tasks;
 
 namespace CRMBytholod.RequestAPI
 {
-    public class AuthRequest
+    public class AuthRequest:BaseRequest
     {
-        [JsonPropertyName("Login")]
+        //[JsonPropertyName("Login")]
         public string Login { get; set; }
-        [JsonPropertyName("Passw")]
+        //[JsonPropertyName("Passw")]
         public string Passw { get; set; }
 
 
