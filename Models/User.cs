@@ -279,8 +279,15 @@ GROUP BY  u.Name
                         command.Parameters.AddRange(parameters);
                     }
 
-                    SqlDataReader reader = command.ExecuteReader();
-                    dt.Load(reader);
+                    try
+                    {
+                        SqlDataReader reader = command.ExecuteReader();
+                        dt.Load(reader);
+                    }
+                    catch(Exception ex)
+                    {
+
+                    }
 
                     command.Parameters.Clear();
 

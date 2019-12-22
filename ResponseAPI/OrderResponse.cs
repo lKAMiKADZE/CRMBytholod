@@ -20,7 +20,7 @@ namespace CRMBytholod.ResponseAPI
             // получить заявку и если она повтор до подтянуть список пред заявок
             Order = Order.GetOrder(req.Sessionid, req.ID_ZAKAZ);
 
-            if (Order.STATUS.ID_STATUS == 2)// если заявка является повтором, то подгружаем еще и список пред заявок
+            if (Order.Povtor)// если заявка является повтором, то подгружаем еще и список пред заявок
                 PrevOrders = Order.GetOldOrdersFromOrder(req.ID_ZAKAZ);
 
         }

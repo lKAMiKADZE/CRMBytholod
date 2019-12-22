@@ -48,10 +48,11 @@ namespace CRMBytholod.Models
         public int MoneyMaster { get; set; }
         public string DescripClose { get; set; }
         public string NameClient { get; set; }
+        public bool Povtor { get; set; }
 
         //dop param
         /////////////////////////////////
-        
+
         public string DayWeek_Date { get; set; }// хранится название дня недели и дата
 
         /////////////////////////////////
@@ -97,7 +98,7 @@ SELECT [ID_ZAKAZ]
       ,[DateOpenMaster]	  
       ,s.[ID_STATUS]
 	  ,s.[NameStatus]
-	  	   
+	  
   FROM [dbo].[Zakaz] o
 JOIN [User] u ON u.ID_USER=o.ID_MASTER
 JOIN [Status] s ON s.ID_STATUS=o.ID_STATUS
@@ -899,8 +900,15 @@ INSERT INTO [dbo].[LogStatusOrder]
                         command.Parameters.AddRange(parameters);
                     }
 
-                    SqlDataReader reader = command.ExecuteReader();
-                    dt.Load(reader);
+                    try
+                    {
+                        SqlDataReader reader = command.ExecuteReader();
+                        dt.Load(reader);
+                    }
+                    catch (Exception ex)
+                    {
+
+                    }
 
                     command.Parameters.Clear();
 
