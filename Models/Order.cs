@@ -98,7 +98,7 @@ SELECT [ID_ZAKAZ]
       ,[DateOpenMaster]	  
       ,s.[ID_STATUS]
 	  ,s.[NameStatus]
-	  
+	  ,[Povtor]
   FROM [dbo].[Zakaz] o
 JOIN [User] u ON u.ID_USER=o.ID_MASTER
 JOIN [Status] s ON s.ID_STATUS=o.ID_STATUS
@@ -140,6 +140,7 @@ ORDER BY DateSendMaster DESC, ID_ZAKAZ DESC
                     DateAdd = (DateTime)row["DateAdd"],
                     DateSendMaster = row["DateSendMaster"] != DBNull.Value ? (DateTime?)row["DateSendMaster"] : null,
                     DateOpenMaster = row["DateOpenMaster"] != DBNull.Value ? (DateTime?)row["DateOpenMaster"] : null,
+                    Povtor= (bool)row["Povtor"],
                     STATUS = status
                 };
 
