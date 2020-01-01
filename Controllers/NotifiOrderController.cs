@@ -6,23 +6,25 @@ using CRMBytholod.RequestAPI;
 using CRMBytholod.ResponseAPI;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Newtonsoft.Json;
 
 namespace CRMBytholod.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class OrdersFiltrController : ControllerBase
+    public class NotifiOrderController : ControllerBase
     {
+
         [HttpPost]
-        public OrdersFiltrResponse Post([FromBody] OrdersFiltrRequest req)
+        public NotifiNewOrderResponse Post([FromBody] NotifiNewOrderRequest req)
         {
-            
-            OrdersFiltrResponse resp = new OrdersFiltrResponse(req);
+
+            NotifiNewOrderResponse resp = new NotifiNewOrderResponse(req);
             //json = JsonConvert.SerializeObject(resp);
-            
+
 
             return resp;
         }
+
+
     }
 }

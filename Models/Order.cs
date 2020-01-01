@@ -183,6 +183,7 @@ SELECT [ID_ZAKAZ]
 	  ,[DateClose]
       ,s.[ID_STATUS]
 	  ,s.[NameStatus]
+	  ,[Povtor]
 	  	   
   FROM [dbo].[Zakaz] o
 JOIN [User] u ON u.ID_USER=o.ID_MASTER
@@ -228,6 +229,7 @@ ORDER BY DateClose DESC, ID_ZAKAZ DESC
                     DateOpenMaster = row["DateOpenMaster"] != DBNull.Value ? (DateTime?)row["DateOpenMaster"] : null,
                     DateClose = row["DateClose"] != DBNull.Value ? (DateTime?)row["DateClose"] : null,
                     DayWeek_Date = "",
+                    Povtor=(bool)row["Povtor"],
 
                     STATUS = status
                 };
@@ -585,12 +587,15 @@ WHERE 1=1
             return null;
         }
 
-        // при получении пуша, проставляем дату
-        public static void Set_DateSendMaster(long ID_ZAKAZ)
+        
+        public static List<Order> GetNewNotifi(string Sessionid)
         {
+            List<Order> Orders = new List<Order>();
+
+
             SqlParameter[] parameters = new SqlParameter[]
             {
-                new SqlParameter(@"ID_ZAKAZ",SqlDbType.BigInt) { Value =ID_ZAKAZ }
+                new SqlParameter(@"Sessionid",SqlDbType.NVarChar) { Value =Sessionid }
             };
 
             #region sql
@@ -598,15 +603,61 @@ WHERE 1=1
             string sqlText = $@"
 -- установка времени отправки уведомления мастеру
 UPDATE [dbo].[Zakaz] SET DateSendMaster =CURRENT_TIMESTAMP
-WHERE-DateSendMaster is null
-	AND ID_ZAKAZ=@ID_ZAKAZ
+WHERE DateSendMaster is null
+	AND ID_MASTER = (
+	SELECT ID_USER FROM [User] 
+	WHERE 1=1
+		AND Sessionid=	@Sessionid	--'2847C1CF-9DAE-4FD0-826F-C5A8BFD507C8'--@Sessionid	
+	
+	)
+	AND ID_STATUS in (1,2)
+	AND DateSendMaster is null
+	
+-- Выводим все новые заказы мастера
+
+SELECT ID_ZAKAZ,
+		HOLODILNIK_DEFECT
+				
+FROM [dbo].[Zakaz] o
+JOIN [User] u ON u.ID_USER=o.ID_MASTER
+JOIN [Status] s ON s.ID_STATUS=o.ID_STATUS
+WHERE 1=1
+	AND u.Sessionid=@Sessionid	--'CB80665A-93E0-4E91-A982-36063D546CE6'--@Sessionid	
+	AND s.ID_STATUS in (1,2)
+	AND o.DateSendMaster is null
 
 ";
 
             #endregion
 
+            DataTable dt = new DataTable();// при наличии данных
             // получаем данные из запроса
-            ExecuteSqlStatic(sqlText, parameters);
+            dt = ExecuteSqlGetDataTableStatic(sqlText, parameters);
+
+
+            foreach (DataRow row in dt.Rows)
+            {
+                Status status = new Status();
+
+                Organization org = new Organization();
+
+                User userMaster = new User();
+
+                Order order = new Order
+                {
+                    ID_ZAKAZ = (long)row["ID_ZAKAZ"],
+                    HOLODILNIK_DEFECT = (string)row["HOLODILNIK_DEFECT"],
+
+                    USER_MASTER = userMaster,
+                    STATUS = status,
+                    ORGANIZATION = org
+                };
+
+                Orders.Add(order);
+            }
+
+
+            return Orders;
         }
 
 
