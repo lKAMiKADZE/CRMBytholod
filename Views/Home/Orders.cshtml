@@ -1,0 +1,120 @@
+﻿@model CRMBytholod.ViewModels.OrdersVM
+
+@{
+    ViewData["Title"] = "Заявки";
+}
+
+<h1>Заявки</h1>
+
+<p>
+    <input type="submit" class="btn btn-primary" asp-action="CreateOrder" value="Новая заявка" >
+</p>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                ID_ZAKAZ
+            </th>
+            <th>
+                STREET
+            </th>
+            <th>
+                HOUSE
+            </th>
+            <th>
+                KORPUS
+            </th>
+            <th>
+                KVARTIRA
+            </th>
+            <th>
+                HOLODILNIK_DEFECT
+            </th>
+            <th>
+                DATA
+            </th>
+            <th>
+                VREMJA
+            </th>
+            <th>
+                DISPETCHER
+            </th>
+            <th>
+                Msisdn1
+            </th>
+            <th>
+                DateAdd
+            </th>
+            <th>
+                DateSendMaster
+            </th>
+            <th>
+                DateOpenMaster
+            </th>
+            <th>
+                NameClient
+            </th>
+            <th>
+                Povtor
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model.Orders) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.ID_ZAKAZ)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.STREET)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.HOUSE)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.KORPUS)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.KVARTIRA)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.HOLODILNIK_DEFECT)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.DATA)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.VREMJA)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.DISPETCHER)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Msisdn1)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.DateAdd)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.DateSendMaster)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.DateOpenMaster)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.NameClient)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Povtor)
+            </td>
+            <td>
+                @Html.ActionLink("Edit", "Edit", new { /* id=item.PrimaryKey */ }) |
+                @Html.ActionLink("Details", "Details", new { /* id=item.PrimaryKey */ }) |
+                @Html.ActionLink("Delete", "Delete", new { /* id=item.PrimaryKey */ })
+            </td>
+        </tr>
+}
+    </tbody>
+</table>

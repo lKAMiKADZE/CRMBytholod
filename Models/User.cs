@@ -30,6 +30,8 @@ namespace CRMBytholod.Models
         public int OrderInWork { get; set; }
         public int MoneyUpMaster { get; set; }
 
+        public bool Admin { get; set; }
+
         ///////////////////////////////////////
         //Методы для мобилы АПИ
         public bool AuthMaster( string Login , string Passw)
@@ -190,9 +192,8 @@ GROUP BY  u.Name
 
         //Методы для сайта
 
-        public static bool AuthUser(string Login, string Passw)
+        public bool AuthUser(string Login, string Passw)
         {
-            User us;
 
 
             SqlParameter[] parameters = new SqlParameter[]
@@ -228,10 +229,13 @@ WHERE LOWER(Login)=LOWER(@Login)
             foreach (DataRow row in dt.Rows)
             {
                 // попали в цикл, значит авторизовались, т.к. такой пользователь существует
-                //us = new User
-                //{
-                //    Name = (string)row["Name"],
-                //};
+
+                this.ID_USER = (long)row["ID_USER"];
+                this.Login = (string)row["Login"];
+
+                if ((long)row["ID_TYPE_USER"] == 1)
+                    Admin = true;
+                
 
                 return true;
             }

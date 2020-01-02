@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using CRMBytholod.Models;
+using CRMBytholod.ViewModels;
 
 namespace CRMBytholod.Controllers
 {
@@ -33,5 +34,24 @@ namespace CRMBytholod.Controllers
         {
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
+
+
+        ////// ЗАЯВКИ
+        /////////////
+
+
+        public IActionResult Orders()
+        {
+            OrdersVM VM = new OrdersVM(User.Identity.Name);
+
+
+            return View(VM);
+        }
+
+
+
+
+
+
     }
 }

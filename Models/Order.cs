@@ -1074,7 +1074,115 @@ WHERE 1=1
             return null;
         }
 
+        /// <summary>
+        /// Metod from site
+        /// </summary>
+        public static List<Order> GetOrdersSite()
+        {
+            List<Order> orders = new List<Order>();
+            SqlParameter[] parameters = new SqlParameter[]
+            {
+                //new SqlParameter(@"Login",SqlDbType.NVarChar) { Value =Login }
+            };
 
+            #region sql
+
+            string sqlText = $@"
+
+-- получение заявки
+SELECT [ID_ZAKAZ]
+      ,[STREET]
+      ,[HOUSE]
+      ,[KORPUS]
+      ,[KVARTIRA]
+      ,[PODEST]
+      ,[ETAG]
+      ,[KOD_DOMOFONA]
+      ,[HOLODILNIK_DEFECT]
+      ,[DATA]
+      ,[VREMJA]
+      ,[PRIMECHANIE]
+      ,[Msisdn1]
+      ,[Msisdn2]
+      ,[Msisdn3]
+      ,org.[ID_ORGANIZATION]
+	  ,org.[NameOrg]
+      ,o.[DateAdd]
+      ,[DateSendMaster]
+      ,[DateOpenMaster]
+      ,s.[ID_STATUS]
+	  ,s.[NameStatus]
+      ,[MoneyAll]
+      ,[MoneyFirm]
+      ,[MoneyDetal]
+      ,[MoneyMaster]
+      ,[DescripClose]
+      ,[NameClient]
+      ,[ID_USER_ADD]
+      ,[DateClose]
+	  ,u.[Name]
+  FROM [dbo].[Zakaz] o
+JOIN [User] u ON u.ID_USER=o.ID_MASTER
+JOIN [Status] s ON s.ID_STATUS=o.ID_STATUS
+LEFT JOIN [Organization] org ON org.ID_ORGANIZATION=o.ID_ORGANIZATION
+WHERE 1=1
+";
+
+            #endregion
+
+            DataTable dt = new DataTable();// при наличии данных
+            // получаем данные из запроса
+            dt = ExecuteSqlGetDataTableStatic(sqlText);
+
+
+            foreach (DataRow row in dt.Rows)
+            {
+                Status status = new Status
+                {
+                    ID_STATUS = (long)row["ID_STATUS"],
+                    NameStatus = (string)row["NameStatus"],
+                };
+
+                Organization org = new Organization
+                {
+                    //ID_ORGANIZATION = (long)row["ID_ORGANIZATION"],
+                    //NameOrg = (string)row["NameOrg"],
+                };
+
+                User userMaster = new User
+                {
+                    Name = (string)row["Name"]
+                };
+
+                Order order = new Order
+                {
+                    ID_ZAKAZ = (long)row["ID_ZAKAZ"],
+                    STREET = (string)row["STREET"],
+                    HOUSE = (string)row["HOUSE"],
+                    KORPUS = (string)row["KORPUS"],
+                    KVARTIRA = (string)row["KVARTIRA"],
+                    HOLODILNIK_DEFECT = (string)row["HOLODILNIK_DEFECT"],
+                    DATA = (DateTime)row["DATA"],
+                    VREMJA = (string)row["VREMJA"],
+                    DateAdd = (DateTime)row["DateAdd"],
+                    DateSendMaster = row["DateSendMaster"] != DBNull.Value ? (DateTime?)row["DateSendMaster"] : null,
+                    DateOpenMaster = row["DateOpenMaster"] != DBNull.Value ? (DateTime?)row["DateOpenMaster"] : null,
+                    DateClose = row["DateClose"] != DBNull.Value ? (DateTime?)row["DateClose"] : null,
+
+
+                    NameClient = (string)row["NameClient"],
+                    USER_MASTER = userMaster,
+
+                    STATUS = status,
+                    ORGANIZATION = org
+                };
+
+                orders.Add(order);
+            }
+
+
+            return orders;
+        }
 
 
 
