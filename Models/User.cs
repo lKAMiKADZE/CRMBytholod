@@ -13,6 +13,7 @@ namespace CRMBytholod.Models
         public long ID_USER { get; set; }
         public string Name { get; set; }
         public string Passw { get; set; }
+        public string PasswMaster { get; set; }        
         public TypeUser TYPE_USER { get; set; }
         public string Login { get; set; }
         public string Phone { get; set; }
@@ -30,6 +31,7 @@ namespace CRMBytholod.Models
         public int MoneyUpMaster { get; set; }
 
         ///////////////////////////////////////
+        //Методы для мобилы АПИ
         public bool AuthMaster( string Login , string Passw)
         {
             SqlParameter[] parameters = new SqlParameter[]
@@ -90,8 +92,6 @@ END
 
             return false;
         }
-
-
         public static User GetMasterStat(string Sessionid)
         {
             User us;
@@ -188,6 +188,143 @@ GROUP BY  u.Name
         }
 
 
+        //Методы для сайта
+
+        public static bool AuthUser(string Login, string Passw)
+        {
+            User us;
+
+
+            SqlParameter[] parameters = new SqlParameter[]
+            {
+                new SqlParameter(@"Login",SqlDbType.NVarChar) { Value =Login },
+                new SqlParameter(@"Passw",SqlDbType.NVarChar) { Value =Passw }
+            };
+
+            #region sql
+
+            string sqlText = $@"
+
+SELECT ID_USER,
+	Name,
+	ID_TYPE_USER,
+	Login,
+	Phone,
+	PasswMaster, -- Пароль мастера для вывода админу
+	DateAdd
+ FROM [User]
+WHERE LOWER(Login)=LOWER(@Login)
+	AND Passw= @Passw
+
+";
+
+            #endregion
+
+            DataTable dt = new DataTable();// при наличии данных
+            // получаем данные из запроса
+            dt = ExecuteSqlGetDataTableStatic(sqlText, parameters);
+
+
+            foreach (DataRow row in dt.Rows)
+            {
+                // попали в цикл, значит авторизовались, т.к. такой пользователь существует
+                //us = new User
+                //{
+                //    Name = (string)row["Name"],
+                //};
+
+                return true;
+            }
+
+
+            return false;
+        }
+
+        /// <summary>
+        /// Только для админа
+        /// </summary>        
+        public static List<User> GetAllUsers(string Login)
+        {
+            List<User> users= new List<User>();
+
+
+            SqlParameter[] parameters = new SqlParameter[]
+            {
+                new SqlParameter(@"Login",SqlDbType.NVarChar) { Value =Login }
+            };
+
+            #region sql
+
+            string sqlText = $@"
+declare @admin bit;
+
+set @admin=(
+SELECT count(1)
+ FROM [User]
+WHERE LOWER(Login)=LOWER(@Login)
+	AND ID_TYPE_USER=1
+)  
+
+-- вывод всех пользователей мастеров и диспетчеров
+if @admin=1
+BEGIN
+
+SELECT ID_USER,
+	Name,
+	tu.ID_TYPE_USER,
+	tu.NameTU,
+	Login,
+	Phone,
+	PasswMaster, -- Пароль мастера для вывода админу
+	DateAdd
+ FROM [User] u
+ JOIN [TypeUser] tu ON u.ID_TYPE_USER=tu.ID_TYPE_USER
+WHERE 1=1
+	AND LOWER(Login)<>LOWER(@Login)
+ORDER BY DateAdd DESC
+
+END
+
+
+";
+
+            #endregion
+
+            DataTable dt = new DataTable();// при наличии данных
+            // получаем данные из запроса
+            dt = ExecuteSqlGetDataTableStatic(sqlText, parameters);
+
+
+            foreach (DataRow row in dt.Rows)
+            {
+                TypeUser tu = new TypeUser
+                {
+                    ID_TYPE_USER= (long)row["ID_TYPE_USER"],
+                    NameTU = (string)row["NameTU"]
+                };
+
+                // попали в цикл, значит авторизовались, т.к. такой пользователь существует
+                User us = new User
+                {
+                    ID_USER=(long)row["ID_USER"],
+                    Name = (string)row["Name"],
+                    Login = (string)row["Login"],
+                    PasswMaster = (string)row["PasswMaster"],
+                    TYPE_USER = tu,
+                    DateAdd = (DateTime)row["DateAdd"],
+                    Phone = (string)row["Phone"]
+                };
+
+                users.Add(us);
+            }
+
+
+            return users;
+        }
+
+
+
+
         ////////////////
         // Методы SQL
         ////////////////
@@ -201,7 +338,11 @@ GROUP BY  u.Name
                 //example Null value
                 //new SqlParameter(@"CoolWords",SqlDbType.NVarChar) { Value = CoolWords ?? String.Empty},
 
-                //new SqlParameter(@"PROMOCODE_ID", SqlDbType.UniqueIdentifier) { Value = PROMOCODE_ID },
+                new SqlParameter(@"ID_USER", SqlDbType.NVarChar) { Value =ID_USER  },
+                new SqlParameter(@"Name", SqlDbType.NVarChar) { Value =Name  },
+                new SqlParameter(@"Passw", SqlDbType.NVarChar) { Value =Passw  },
+                new SqlParameter(@"ID_TYPE_USER", SqlDbType.NVarChar) { Value =TYPE_USER.ID_TYPE_USER  },
+                new SqlParameter(@"PasswMaster", SqlDbType.NVarChar) { Value =PasswMaster  },
 
             };
             return parameters;

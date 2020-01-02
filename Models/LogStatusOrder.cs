@@ -13,7 +13,7 @@ namespace CRMBytholod.Models
         public long ID_LOG { get; set; }
         public Order ORDER { get; set; }
         public string Status { get; set; }
-        public string User { get; set; }
+        public User User { get; set; }
         public DateTime DateChange { get; set; }
 
 

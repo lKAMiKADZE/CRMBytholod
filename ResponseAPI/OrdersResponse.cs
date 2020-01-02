@@ -22,12 +22,12 @@ namespace CRMBytholod.ResponseAPI
 
             switch (req.Action)
             {
-                case "OLD": Orders = Order.GetOldOrders(req.Sessionid); break;
+                case "OLD": Orders = Order._GetOldOrders(req.Sessionid); break;
                 case "NEW": Orders = Order.GetNewOrders(req.Sessionid); break;
-                default : Orders = new List<Order>(); break;
+                default: Orders = new List<Order>(); break;
 
             }
-            
+
         }
 
 

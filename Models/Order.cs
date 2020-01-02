@@ -56,6 +56,9 @@ namespace CRMBytholod.Models
         public string DayWeek_Date { get; set; }// хранится название дня недели и дата
 
         /////////////////////////////////
+        /// <summary>
+        /// Metod from Master mobile
+        /// </summary>
         public static List<Order> GetNewOrders(string Sessionid)
         {
             List<Order> Orders = new List<Order>();
@@ -152,9 +155,10 @@ ORDER BY DateSendMaster DESC, ID_ZAKAZ DESC
 
             return Orders;
         }
-
-
-        public static List<Order> GetOldOrders(string Sessionid)
+        /// <summary>
+        /// Metod from Master mobile
+        /// </summary>        
+        public static List<Order> _GetOldOrders(string Sessionid)
         {
             List<Order> Orders = new List<Order>();
 
@@ -257,8 +261,11 @@ ORDER BY DateClose DESC, ID_ZAKAZ DESC
 
             return Orders;
         }
-
-        public static List<Order> GetOldOrdersFiltr(string Sessionid, string Adres, DateTime DateStart, DateTime DateEnd)
+        /// <summary>
+        /// Metod from Master mobile
+        /// </summary>
+        public static List<Order> GetOldOrdersFiltr(string Sessionid, string Adres, DateTime DateStart, DateTime DateEnd,
+            bool filtr_SUCCES, bool filtr_DENY, bool filtr_POVTOR, bool filtr_DATE, bool filtr_ADRES)
         {
             List<Order> Orders = new List<Order>();
 
@@ -274,10 +281,39 @@ ORDER BY DateClose DESC, ID_ZAKAZ DESC
 
             #region sql 
 
+            string Where_povtor = "";
+            string Where_Status = "";
+            string Where_date = "";
             string Where_Adres = "";
 
-            if (!String.IsNullOrEmpty(Adres))
-                Where_Adres = "OR STREET like @Adres";
+            if (filtr_ADRES)
+                Where_Adres = "AND STREET like @Adres";
+
+            if (filtr_DATE)
+                Where_date = "AND DateClose between @DateStart AND @DateEnd";
+
+            if (filtr_POVTOR)
+                Where_povtor = "AND o.povtor=1";
+            else
+                Where_povtor = "AND o.povtor=0";
+
+
+
+            // будет активно в поиске либо оба статуса либо один из них,
+            //если оба неактивны, то не выводим данные статусы
+            if (filtr_SUCCES || filtr_DENY)
+            {
+                if (filtr_SUCCES && filtr_DENY)
+                    Where_Status = "AND s.ID_STATUS in (3,5)";
+                else
+                    if (filtr_SUCCES)
+                    Where_Status = "AND s.ID_STATUS in (5)";
+                else
+                    if (filtr_DENY)
+                    Where_Status = "AND s.ID_STATUS in (3)";                  
+            }
+            else
+                Where_Status = "AND s.ID_STATUS NOT IN (3,5)";
 
 
             string sqlText = $@"
@@ -297,18 +333,20 @@ SELECT [ID_ZAKAZ]
 	  ,[DateClose]
       ,s.[ID_STATUS]
 	  ,s.[NameStatus]
+      ,o.[Povtor]
 	  	   
   FROM [dbo].[Zakaz] o
 JOIN [User] u ON u.ID_USER=o.ID_MASTER
 JOIN [Status] s ON s.ID_STATUS=o.ID_STATUS
 WHERE 1=1
-	AND u.Sessionid=@Sessionid--'CB80665A-93E0-4E91-A982-36063D546CE6'--@Sessionid	
-	AND s.ID_STATUS in (3,5)
-	AND 
-	(
-		DateClose between @DateStart AND @DateEnd
-		{Where_Adres}
-	)
+	AND u.Sessionid=@Sessionid--'CB80665A-93E0-4E91-A982-36063D546CE6'--@Sessionid		
+    AND s.ID_STATUS NOT IN (1,2,4)-- не выводим новые заявки
+	{Where_date}
+	{Where_Adres}
+    {Where_povtor}
+    {Where_Status}
+
+	
 ORDER BY DateClose DESC, ID_ZAKAZ DESC
 
 
@@ -348,6 +386,7 @@ ORDER BY DateClose DESC, ID_ZAKAZ DESC
                     DateOpenMaster = row["DateOpenMaster"] != DBNull.Value ? (DateTime?)row["DateOpenMaster"] : null,
                     DateClose = row["DateClose"] != DBNull.Value ? (DateTime?)row["DateClose"] : null,
                     DayWeek_Date ="",
+                    Povtor=(bool)row["Povtor"],
 
 
                     STATUS = status
@@ -375,7 +414,9 @@ ORDER BY DateClose DESC, ID_ZAKAZ DESC
 
             return Orders;
         }
-
+        /// <summary>
+        /// Metod from Master mobile
+        /// </summary>
         public static List<Order> GetOldOrdersFromOrder(long ID_ZAKAZ)
         {
             List<Order> Orders = new List<Order>();
@@ -398,31 +439,31 @@ ORDER BY DateClose DESC, ID_ZAKAZ DESC
   FROM [dbo].[Zakaz] o
   JOIN [dbo].[Status] s ON s.ID_STATUS=o.ID_STATUS
   WHERE 1=1
-	AND o.ID_ZAKAZ<>2 ---- @ID_ZAKAZ
+	AND o.ID_ZAKAZ<> @ID_ZAKAZ
 	AND 
 	(
 		(	
-				STREET = (SELECT STREET FROM [dbo].[Zakaz] z WHERE z.ID_ZAKAZ=2 )	   -- @ID_ZAKAZ
-			AND	HOUSE =	 (SELECT HOUSE FROM [dbo].[Zakaz] z WHERE z.ID_ZAKAZ=2 )	   -- @ID_ZAKAZ
-			AND	KORPUS = (SELECT KORPUS FROM [dbo].[Zakaz] z WHERE z.ID_ZAKAZ=2 )	   -- @ID_ZAKAZ
-			AND	KVARTIRA = (SELECT KVARTIRA FROM [dbo].[Zakaz] z WHERE z.ID_ZAKAZ=2 )  -- @ID_ZAKAZ
+				STREET = (SELECT STREET FROM [dbo].[Zakaz] z WHERE z.ID_ZAKAZ=@ID_ZAKAZ )	   -- @ID_ZAKAZ
+			AND	HOUSE =	 (SELECT HOUSE FROM [dbo].[Zakaz] z WHERE z.ID_ZAKAZ=@ID_ZAKAZ )	   -- @ID_ZAKAZ
+			AND	KORPUS = (SELECT KORPUS FROM [dbo].[Zakaz] z WHERE z.ID_ZAKAZ=@ID_ZAKAZ )	   -- @ID_ZAKAZ
+			AND	KVARTIRA = (SELECT KVARTIRA FROM [dbo].[Zakaz] z WHERE z.ID_ZAKAZ=@ID_ZAKAZ )  -- @ID_ZAKAZ
 		)
 		OR
 		(
-				Msisdn1 = (SELECT z.Msisdn1 FROM [dbo].[Zakaz] z WHERE z.ID_ZAKAZ=2 ) -- @ID_ZAKAZ
-			OR	Msisdn1 = (SELECT z.Msisdn2 FROM [dbo].[Zakaz] z WHERE z.ID_ZAKAZ=2 ) -- @ID_ZAKAZ
-			OR	Msisdn1 = (SELECT z.Msisdn3 FROM [dbo].[Zakaz] z WHERE z.ID_ZAKAZ=2 ) -- @ID_ZAKAZ
-			
-			OR	Msisdn2 = (SELECT z.Msisdn1 FROM [dbo].[Zakaz] z WHERE z.ID_ZAKAZ=2 ) -- @ID_ZAKAZ
-			OR	Msisdn2 = (SELECT z.Msisdn2 FROM [dbo].[Zakaz] z WHERE z.ID_ZAKAZ=2 ) -- @ID_ZAKAZ
-			OR	Msisdn2 = (SELECT z.Msisdn3 FROM [dbo].[Zakaz] z WHERE z.ID_ZAKAZ=2 ) -- @ID_ZAKAZ
-			--
-			OR	Msisdn3 = (SELECT z.Msisdn1 FROM [dbo].[Zakaz] z WHERE z.ID_ZAKAZ=2 ) -- @ID_ZAKAZ
-			OR	Msisdn3 = (SELECT z.Msisdn2 FROM [dbo].[Zakaz] z WHERE z.ID_ZAKAZ=2 ) -- @ID_ZAKAZ
-			OR	Msisdn3 = (SELECT z.Msisdn3 FROM [dbo].[Zakaz] z WHERE z.ID_ZAKAZ=2 ) -- @ID_ZAKAZ
+				Msisdn1 = (SELECT z.Msisdn1 FROM [dbo].[Zakaz] z WHERE z.ID_ZAKAZ=@ID_ZAKAZ ) -- @ID_ZAKAZ
+			OR	Msisdn1 = (SELECT z.Msisdn2 FROM [dbo].[Zakaz] z WHERE z.ID_ZAKAZ=@ID_ZAKAZ ) -- @ID_ZAKAZ
+			OR	Msisdn1 = (SELECT z.Msisdn3 FROM [dbo].[Zakaz] z WHERE z.ID_ZAKAZ=@ID_ZAKAZ ) -- @ID_ZAKAZ
+			                                                                      
+			OR	Msisdn2 = (SELECT z.Msisdn1 FROM [dbo].[Zakaz] z WHERE z.ID_ZAKAZ=@ID_ZAKAZ ) -- @ID_ZAKAZ
+			OR	Msisdn2 = (SELECT z.Msisdn2 FROM [dbo].[Zakaz] z WHERE z.ID_ZAKAZ=@ID_ZAKAZ ) -- @ID_ZAKAZ
+			OR	Msisdn2 = (SELECT z.Msisdn3 FROM [dbo].[Zakaz] z WHERE z.ID_ZAKAZ=@ID_ZAKAZ ) -- @ID_ZAKAZ
+			--                                                                    
+			OR	Msisdn3 = (SELECT z.Msisdn1 FROM [dbo].[Zakaz] z WHERE z.ID_ZAKAZ=@ID_ZAKAZ ) -- @ID_ZAKAZ
+			OR	Msisdn3 = (SELECT z.Msisdn2 FROM [dbo].[Zakaz] z WHERE z.ID_ZAKAZ=@ID_ZAKAZ ) -- @ID_ZAKAZ
+			OR	Msisdn3 = (SELECT z.Msisdn3 FROM [dbo].[Zakaz] z WHERE z.ID_ZAKAZ=@ID_ZAKAZ ) -- @ID_ZAKAZ
 		)
 	)
-	AND o.ID_STATUS in (3,5)
+	AND o.Povtor=1
 	
 	ORDER BY DateClose DESC
 
@@ -461,7 +502,9 @@ ORDER BY DateClose DESC, ID_ZAKAZ DESC
 
             return Orders;
         }
-
+        /// <summary>
+        /// Metod from Master mobile
+        /// </summary>
         public static Order GetOrder(string Sessionid, long ID_ZAKAZ)
         {
             List<Order> Orders = new List<Order>();
@@ -585,9 +628,10 @@ WHERE 1=1
 
 
             return null;
-        }
-
-        
+        }        
+        /// <summary>
+        /// Metod from Master mobile
+        /// </summary>
         public static List<Order> GetNewNotifi(string Sessionid)
         {
             List<Order> Orders = new List<Order>();
@@ -661,7 +705,9 @@ WHERE 1=1
         }
 
 
-        
+        /// <summary>
+        /// Metod from Master mobile
+        /// </summary>
         public static void SetStatus_InWork(string Sessionid, long ID_ZAKAZ)
         {
             SqlParameter[] parameters = new SqlParameter[]
@@ -675,8 +721,9 @@ WHERE 1=1
 
             string sqlText = $@"
 
+  
 declare @STATUS nvarchar(50),
-		@USER nvarchar(50);
+		@USER bigint;
 
 
 
@@ -691,9 +738,9 @@ WHERE 1=1
 	)
 
 
--- получаем имя мастера и название статуса
+-- получаем айди пользователя и название статуса
 SET @USER=(
-SELECT Name FROM [dbo].[User] WHERE Sessionid=@Sessionid
+SELECT ID_USER FROM [dbo].[User] WHERE Sessionid=@Sessionid
 )
 
 SET @STATUS = (
@@ -712,6 +759,8 @@ INSERT INTO [dbo].[LogStatusOrder]
            ,@USER
            ,CURRENT_TIMESTAMP)
 
+
+
 ";
 
             #endregion
@@ -719,6 +768,9 @@ INSERT INTO [dbo].[LogStatusOrder]
             // получаем данные из запроса
             ExecuteSqlStatic(sqlText, parameters);
         }
+        /// <summary>
+        /// Metod from Master mobile
+        /// </summary>
         public static void SetStatus_Succes(string Sessionid, long ID_ZAKAZ, int MoneyAll, int MoneyDetal, int MoneyFirm)
         {
             SqlParameter[] parameters = new SqlParameter[]
@@ -736,7 +788,7 @@ INSERT INTO [dbo].[LogStatusOrder]
             string sqlText = $@"
 
 declare @STATUS nvarchar(50),
-		@USER nvarchar(50);
+		@USER bigint;
 
 
 
@@ -753,7 +805,7 @@ WHERE 1=1
 
 -- получаем имя мастера и название статуса
 SET @USER=(
-SELECT Name FROM [dbo].[User] WHERE Sessionid=@Sessionid
+SELECT ID_USER FROM [dbo].[User] WHERE Sessionid=@Sessionid
 )
 
 SET @STATUS = (
@@ -772,6 +824,8 @@ INSERT INTO [dbo].[LogStatusOrder]
            ,@USER
            ,CURRENT_TIMESTAMP)
 
+
+
 ";
 
             #endregion
@@ -779,6 +833,9 @@ INSERT INTO [dbo].[LogStatusOrder]
             // получаем данные из запроса
             ExecuteSqlStatic(sqlText, parameters);
         }
+        /// <summary>
+        /// Metod from Master mobile
+        /// </summary>
         public static void SetStatus_Denied(string Sessionid, long ID_ZAKAZ, string DescripClose)
         {
             SqlParameter[] parameters = new SqlParameter[]
@@ -794,7 +851,7 @@ INSERT INTO [dbo].[LogStatusOrder]
             string sqlText = $@"
 
 declare @STATUS nvarchar(50),
-		@USER nvarchar(50);
+		@USER bigint;
 
 
 
@@ -811,7 +868,7 @@ WHERE 1=1
 
 -- получаем имя мастера и название статуса
 SET @USER=(
-SELECT Name FROM [dbo].[User] WHERE Sessionid=@Sessionid
+SELECT ID_USER FROM [dbo].[User] WHERE Sessionid=@Sessionid
 )
 
 SET @STATUS = (
@@ -838,19 +895,55 @@ INSERT INTO [dbo].[LogStatusOrder]
             ExecuteSqlStatic(sqlText, parameters);
         }
 
-        //!!
-        public static void ChangeStatusDispetcher(string Login, long ID_ZAKAZ, long ID_STATUS)
+        
+
+        /// <summary>
+        /// Metod from site
+        /// </summary>        
+        public static void ChangeStatusDispetcher(string Login, long ID_ZAKAZ, Status Status)
         {
             SqlParameter[] parameters = new SqlParameter[]
             {
                 new SqlParameter(@"Login",SqlDbType.NVarChar) { Value =Login },
                 new SqlParameter(@"ID_ZAKAZ",SqlDbType.BigInt) { Value =ID_ZAKAZ },
-                new SqlParameter(@"ID_STATUS",SqlDbType.BigInt) { Value =ID_STATUS }
+                new SqlParameter(@"STATUS",SqlDbType.NVarChar) { Value =Status.NameStatus },
+                new SqlParameter(@"ID_STATUS",SqlDbType.BigInt) { Value =Status.ID_STATUS }
             };
 
             #region sql
 
             string sqlText = $@"
+declare @ID_USER bigint;
+
+
+
+-- изменение статуса у заявки
+UPDATE [dbo].[Zakaz] SET ID_STATUS=@ID_STATUS
+WHERE ID_ZAKAZ =(
+SELECT ID_ZAKAZ  FROM [dbo].[Zakaz] o
+JOIN [User] u ON u.ID_USER=o.ID_MASTER
+WHERE 1=1
+	AND u.Sessionid=@Sessionid	--'CB80665A-93E0-4E91-A982-36063D546CE6'--@Sessionid	--
+	AND o.ID_ZAKAZ=@ID_ZAKAZ --2--@ID_ZAKAZ --
+	)
+
+
+-- получаем айди пользователя 
+SET @ID_USER=(
+SELECT ID_USER FROM [dbo].[User] WHERE Login=@Login
+)
+
+-- Логирование изменение статуса
+INSERT INTO [dbo].[LogStatusOrder]
+           ([ID_ZAKAZ]
+           ,[STATUS]
+           ,[USER]
+           ,[DateChange])
+     VALUES
+           (@ID_ZAKAZ
+           ,@STATUS
+           ,@ID_USER
+           ,CURRENT_TIMESTAMP)
 
 
 ";
@@ -860,6 +953,130 @@ INSERT INTO [dbo].[LogStatusOrder]
             // получаем данные из запроса
             ExecuteSqlStatic(sqlText, parameters);
         }
+        /// <summary>
+        /// Metod from site
+        /// </summary>
+        public static Order GetOrderSite(string Login, long ID_ZAKAZ)
+        {
+
+            SqlParameter[] parameters = new SqlParameter[]
+            {
+                new SqlParameter(@"Login",SqlDbType.NVarChar) { Value =Login },
+                new SqlParameter(@"ID_ZAKAZ",SqlDbType.BigInt) { Value =ID_ZAKAZ }
+            };
+
+            #region sql
+
+            string sqlText = $@"
+
+-- получение заявки
+SELECT [ID_ZAKAZ]
+      ,[STREET]
+      ,[HOUSE]
+      ,[KORPUS]
+      ,[KVARTIRA]
+      ,[PODEST]
+      ,[ETAG]
+      ,[KOD_DOMOFONA]
+      ,[HOLODILNIK_DEFECT]
+      ,[DATA]
+      ,[VREMJA]
+      ,[PRIMECHANIE]
+      ,[Msisdn1]
+      ,[Msisdn2]
+      ,[Msisdn3]
+      ,org.[ID_ORGANIZATION]
+	  ,org.[NameOrg]
+      ,[DateAdd]
+      ,[DateSendMaster]
+      ,[DateOpenMaster]
+      ,s.[ID_STATUS]
+	  ,s.[NameStatus]
+      ,[MoneyAll]
+      ,[MoneyFirm]
+      ,[MoneyDetal]
+      ,[MoneyMaster]
+      ,[DescripClose]
+      ,[NameClient]
+      ,[ID_USER_ADD]
+      ,[DateClose]
+	  ,u.[Name]
+  FROM [dbo].[Zakaz] o
+JOIN [User] u ON u.ID_USER=o.ID_MASTER
+JOIN [Status] s ON s.ID_STATUS=o.ID_STATUS
+LEFT JOIN [Organization] org ON org.ID_ORGANIZATION=o.ID_ORGANIZATION
+WHERE 1=1
+	AND u.Login=@Login	--'CB80665A-93E0-4E91-A982-36063D546CE6'--@Sessionid	
+	AND o.ID_ZAKAZ=@ID_ZAKAZ --2--@ID_ZAKAZ
+";
+
+            #endregion
+
+            DataTable dt = new DataTable();// при наличии данных
+            // получаем данные из запроса
+            dt = ExecuteSqlGetDataTableStatic(sqlText, parameters);
+
+
+            foreach (DataRow row in dt.Rows)
+            {
+                Status status = new Status
+                {
+                    ID_STATUS = (long)row["ID_STATUS"],
+                    NameStatus = (string)row["NameStatus"],
+                };
+
+                Organization org = new Organization
+                {
+                    ID_ORGANIZATION = (long)row["ID_ORGANIZATION"],
+                    NameOrg = (string)row["NameOrg"],
+                };
+
+                User userMaster = new User
+                {
+                    Name = (string)row["Name"]
+                };
+
+                Order order = new Order
+                {
+                    ID_ZAKAZ = (long)row["ID_ZAKAZ"],
+                    STREET = (string)row["STREET"],
+                    HOUSE = (string)row["HOUSE"],
+                    KORPUS = (string)row["KORPUS"],
+                    KVARTIRA = (string)row["KVARTIRA"],
+                    HOLODILNIK_DEFECT = (string)row["HOLODILNIK_DEFECT"],
+                    DATA = (DateTime)row["DATA"],
+                    VREMJA = (string)row["VREMJA"],
+                    DateAdd = (DateTime)row["DateAdd"],
+                    DateSendMaster = row["DateSendMaster"] != DBNull.Value ? (DateTime?)row["DateSendMaster"] : null,
+                    DateOpenMaster = row["DateOpenMaster"] != DBNull.Value ? (DateTime?)row["DateOpenMaster"] : null,
+                    DateClose = row["DateClose"] != DBNull.Value ? (DateTime?)row["DateClose"] : null,
+
+
+                    DescripClose = (string)row["DescripClose"],
+                    KOD_DOMOFONA = (string)row["KOD_DOMOFONA"],
+                    MoneyAll = (int)row["MoneyAll"],
+                    MoneyDetal = (int)row["MoneyDetal"],
+                    MoneyFirm = (int)row["MoneyFirm"],
+                    NameClient = (string)row["NameClient"],
+                    PODEST = (string)row["PODEST"],
+                    ETAG = (string)row["ETAG"],
+                    PRIMECHANIE = (string)row["PRIMECHANIE"],
+                    USER_MASTER = userMaster,
+
+                    STATUS = status,
+                    ORGANIZATION = org
+                };
+
+                return order;
+            }
+
+
+            return null;
+        }
+
+
+
+
 
         ////////////////
         // Методы SQL
