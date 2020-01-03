@@ -69,6 +69,7 @@ namespace CRMBytholod
 
             app.UseAuthorization();
             app.UseAuthentication();// авторизация
+            //app.UseSession();
 
             app.UseEndpoints(endpoints =>
             {

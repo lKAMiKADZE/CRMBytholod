@@ -12,6 +12,8 @@ namespace CRMBytholod.Models
     {
         public long ID_STATUS { get; set; }
         public string NameStatus { get; set; }
+        public string ColorHex { get; set; }
+
 
 
 

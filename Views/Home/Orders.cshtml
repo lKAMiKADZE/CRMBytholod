@@ -7,114 +7,192 @@
 <h1>Заявки</h1>
 
 <p>
-    <input type="submit" class="btn btn-primary" asp-action="CreateOrder" value="Новая заявка" >
+    <a asp-action="CreateOrder"><input type="button" class="btn btn-primary" value="Новая заявка" /> </a>
 </p>
+
+<hr />
+
+@* Фильтр по заявкам *@
+
+<div>
+
+    <form asp-action="Orders" method="get">
+        <input hidden asp-for="Page" value="@Model.Page" />
+
+        <div class="row">
+            <div class="col-md-4">
+                <div class="form-group">
+                    <label asp-for="filtrOrders.Adres" class="control-label">Улица</label>
+                    <input asp-for="filtrOrders.Adres" class="form-control" />
+                </div>
+
+                <label>Статус заявок</label>
+                <select asp-for="filtrOrders.ID_STATUS" class="form-control">
+                    <option value="0">Все</option>
+                    <option value="1">В ОЖИДАНИИ</option>
+                    <option value="4">В РАБОТЕ</option>
+                    <option value="2">ПОВТОР</option>
+                    <option value="5">ВЫПОЛНЕН</option>
+                    <option value="3">ОТКАЗ</option>
+                </select>
+
+            </div>
+            <div class="col-md-4">
+                <div class="form-group">
+                    <label for="inputDate">Начало даты:</label>
+                    <input type="date" asp-for="filtrOrders.DateStart" class="form-control">
+                </div>
+                <div class="form-group">
+                    <label for="inputDate">Конец даты:</label>
+                    <input type="date" asp-for="filtrOrders.DateEnd" class="form-control">
+                </div>
+
+            </div>
+            
+            <div class="col-md-2">
+                <br />
+                <br />
+                <div class="form-check">
+                    <input type="checkbox" class="form-check-input" asp-for="filtrOrders.Povtor">
+                    <label class="form-check-label">Повторные заявки</label>
+                </div>
+                <br />
+                <br />
+                <input class="btn btn-secondary" type="submit" value="Поиск" />
+            </div>
+        </div>
+    </form>
+
+    <hr />
+
+    <div class="row">
+        <div class="col-md-5">
+            <nav aria-label="Page navigation example">
+                <ul class="pagination">
+                    <li class="page-item"><a class="page-link" href='@Url.Action("Orders", "Home", new { page=1, step=Model.Step, 
+                                                                    adres=Model.filtrOrders.Adres, dateStart=Model.filtrOrders.DateStart,
+                                                                    dateEnd=Model.filtrOrders.DateEnd, povtor=Model.filtrOrders.Povtor,
+                                                                    id_status=Model.filtrOrders.ID_STATUS   }, null)'>В Начало</a></li>
+                    @if (Model.Page > 1)
+                    {
+                        <li><a class="page-link" href='@Url.Action("Orders", "Home", new { page=Model.Page-1, step=Model.Step, 
+                                                                    adres=Model.filtrOrders.Adres, dateStart=Model.filtrOrders.DateStart,
+                                                                    dateEnd=Model.filtrOrders.DateEnd, povtor=Model.filtrOrders.Povtor,
+                                                                    id_status=Model.filtrOrders.ID_STATUS   }, null)'> Назад </a></li>
+                    }
+                    <li class="page-item"><b><a class="page-link" href="#">@Model.Page</a></b></li>
+
+                    <li class="page-item"><a class="page-link" href='@Url.Action("Orders", "Home", new { page=Model.Page+1, step=Model.Step, 
+                                                                    adres=Model.filtrOrders.Adres, dateStart=Model.filtrOrders.DateStart,
+                                                                    dateEnd=Model.filtrOrders.DateEnd, povtor=Model.filtrOrders.Povtor,
+                                                                    id_status=Model.filtrOrders.ID_STATUS   }, null)'>Вперед</a></li>
+
+
+                </ul>
+            </nav>
+        </div>
+        <div class="col-md-3 col-md-offset-3">
+            <nav aria-label="Page navigation example">
+                <ul class="pagination">
+                    @for (int i = 0; i < Model.Steps.Length; i++)
+                    {
+                        if (Model.Step == Model.Steps[i])//текущий выбранный параметр выделяется жирным
+                        {
+                            <li class="page-item"><a class="page-link" href='@Url.Action("Orders", "Home", new { page = Model.Page, step = Model.Steps[i],
+                                                                    adres=Model.filtrOrders.Adres, dateStart=Model.filtrOrders.DateStart,
+                                                                    dateEnd=Model.filtrOrders.DateEnd, povtor=Model.filtrOrders.Povtor,
+                                                                    id_status=Model.filtrOrders.ID_STATUS    }, null)'><b>@Model.Steps[i]</b></a></li>
+                        }
+                        else
+                        {
+                            <li class="page-item"><a class="page-link" href='@Url.Action("Orders", "Home", new {  page = Model.Page, step = Model.Steps[i],
+                                                                    adres=Model.filtrOrders.Adres, dateStart=Model.filtrOrders.DateStart,
+                                                                    dateEnd=Model.filtrOrders.DateEnd, povtor=Model.filtrOrders.Povtor,
+                                                                    id_status=Model.filtrOrders.ID_STATUS   }, null)'>@Model.Steps[i]</a></li>
+                        }
+                    }
+                </ul>
+            </nav>
+        </div>
+
+
+    </div>
+
+</div>
 
 <table class="table">
     <thead>
         <tr>
             <th>
-                ID_ZAKAZ
+                Холодильник дефект
             </th>
             <th>
-                STREET
+                Имя клиента
             </th>
             <th>
-                HOUSE
+                Адрес
             </th>
             <th>
-                KORPUS
+                Дата
             </th>
             <th>
-                KVARTIRA
+                Время
             </th>
             <th>
-                HOLODILNIK_DEFECT
+                Номер
             </th>
             <th>
-                DATA
+                Мастер
+            </th>
+            <th width="150">
+                Status
             </th>
             <th>
-                VREMJA
+                Дата создания
             </th>
-            <th>
-                DISPETCHER
-            </th>
-            <th>
-                Msisdn1
-            </th>
-            <th>
-                DateAdd
-            </th>
-            <th>
-                DateSendMaster
-            </th>
-            <th>
-                DateOpenMaster
-            </th>
-            <th>
-                NameClient
-            </th>
-            <th>
-                Povtor
-            </th>
-            <th></th>
         </tr>
     </thead>
     <tbody>
-@foreach (var item in Model.Orders) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.ID_ZAKAZ)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.STREET)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.HOUSE)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.KORPUS)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.KVARTIRA)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.HOLODILNIK_DEFECT)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.DATA)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.VREMJA)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.DISPETCHER)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Msisdn1)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.DateAdd)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.DateSendMaster)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.DateOpenMaster)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.NameClient)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Povtor)
-            </td>
-            <td>
-                @Html.ActionLink("Edit", "Edit", new { /* id=item.PrimaryKey */ }) |
-                @Html.ActionLink("Details", "Details", new { /* id=item.PrimaryKey */ }) |
-                @Html.ActionLink("Delete", "Delete", new { /* id=item.PrimaryKey */ })
-            </td>
-        </tr>
+        @foreach (var item in Model.Orders)
+        {
+            <tr>
+                <td>
+                    <a asp-action="DetailOrder" asp-route-id_zakaz="@item.ID_ZAKAZ"><b>@item.HOLODILNIK_DEFECT</b></a>
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.NameClient)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.GetAdresFull)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.GetDATA)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.VREMJA)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Msisdn1)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.USER_MASTER.Name)
+                </td>
+                <td>
+                    @switch (item.STATUS.NameStatus)
+                    {
+                        case "В ОЖИДАНИИ":<span class="label" style='background-color:@item.STATUS.ColorHex; padding: 6px;'>@item.STATUS.NameStatus</span> break;
+                    case "ПОВТОР": <span class="label" style='background-color:@item.STATUS.ColorHex; padding: 6px;'>@item.STATUS.NameStatus</span> break;
+                case "ОТКАЗ": <span class="label" style='background-color:@item.STATUS.ColorHex; padding: 6px;'>@item.STATUS.NameStatus</span> break;
+            case "В РАБОТЕ": <span class="label" style='background-color:@item.STATUS.ColorHex; padding: 6px;'>@item.STATUS.NameStatus</span> break;
+        case "ВЫПОЛНЕН": <span class="label" style='background-color:@item.STATUS.ColorHex; padding: 6px;'>@item.STATUS.NameStatus</span> break;
+    default: @item.STATUS.NameStatus; break;
 }
+
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.DateAdd)
+                </td>
+            </tr>
+        }
     </tbody>
 </table>

@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using CRMBytholod.Models;
 using CRMBytholod.ViewModels;
+using Microsoft.AspNetCore.Authorization;
 
 namespace CRMBytholod.Controllers
 {
@@ -39,18 +40,53 @@ namespace CRMBytholod.Controllers
         ////// ЗАЯВКИ
         /////////////
 
-
-        public IActionResult Orders()
+        public IActionResult Orders(int page, int step, string Adres, FiltrOrders filtrOrders)
         {
-            OrdersVM VM = new OrdersVM(User.Identity.Name);
+            if (!User.Identity.IsAuthenticated)// если неавторизован то редирект на авторизацию
+            {
+                Uri location = new Uri($"{Request.Scheme}://{Request.Host}/Account/Login");
+                return Redirect(location.AbsoluteUri);
+            }
+            OrdersVM VM = new OrdersVM(User.Identity.Name, page, step, filtrOrders);
 
 
             return View(VM);
         }
 
 
+        public IActionResult EditOrder(long ID_ZAKAZ)
+        {
+            if (!User.Identity.IsAuthenticated)// если неавторизован то редирект на авторизацию
+            {
+                Uri location = new Uri($"{Request.Scheme}://{Request.Host}/Account/Login");
+                return Redirect(location.AbsoluteUri);
+            }
 
+            return View();
+        }
 
+        public IActionResult CreateOrder()
+        {
+            if (!User.Identity.IsAuthenticated)// если неавторизован то редирект на авторизацию
+            {
+                Uri location = new Uri($"{Request.Scheme}://{Request.Host}/Account/Login");
+                return Redirect(location.AbsoluteUri);
+            }
+
+            return View();
+        }
+
+        public IActionResult DetailOrder(long ID_ZAKAZ)
+        {
+            if (!User.Identity.IsAuthenticated)// если неавторизован то редирект на авторизацию
+            {
+                Uri location = new Uri($"{Request.Scheme}://{Request.Host}/Account/Login");
+                return Redirect(location.AbsoluteUri);
+            }
+            Order order = Order.GetOrderSite("", ID_ZAKAZ);
+
+            return View(order);
+        }
 
 
     }

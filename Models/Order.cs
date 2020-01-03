@@ -6,6 +6,7 @@ using CRMBytholod.Settings;
 using Microsoft.Data.SqlClient;
 using System.Data;
 using System.Globalization;
+using CRMBytholod.ViewModels;
 
 namespace CRMBytholod.Models
 {
@@ -56,6 +57,28 @@ namespace CRMBytholod.Models
         public string DayWeek_Date { get; set; }// хранится название дня недели и дата
 
         /////////////////////////////////
+        //Свойства
+
+        public string GetAdresFull
+        {
+            get
+            {
+                if (KORPUS.Length == 0)// если корпус или нет
+                    return $"{STREET}, д {HOUSE}, кв {KVARTIRA}";
+                else
+                    return $"{STREET}, корп {KORPUS}, д {HOUSE}, кв {KVARTIRA}";
+            }
+        }
+        public string GetDATA
+        {
+            get
+            {
+                return DATA.ToShortDateString();
+            }
+        }
+
+
+
         /// <summary>
         /// Metod from Master mobile
         /// </summary>
@@ -992,6 +1015,7 @@ SELECT [ID_ZAKAZ]
       ,[DateOpenMaster]
       ,s.[ID_STATUS]
 	  ,s.[NameStatus]
+      ,s.[ColorHex]
       ,[MoneyAll]
       ,[MoneyFirm]
       ,[MoneyDetal]
@@ -1005,8 +1029,7 @@ SELECT [ID_ZAKAZ]
 JOIN [User] u ON u.ID_USER=o.ID_MASTER
 JOIN [Status] s ON s.ID_STATUS=o.ID_STATUS
 LEFT JOIN [Organization] org ON org.ID_ORGANIZATION=o.ID_ORGANIZATION
-WHERE 1=1
-	AND u.Login=@Login	--'CB80665A-93E0-4E91-A982-36063D546CE6'--@Sessionid	
+WHERE 1=1	
 	AND o.ID_ZAKAZ=@ID_ZAKAZ --2--@ID_ZAKAZ
 ";
 
@@ -1023,12 +1046,13 @@ WHERE 1=1
                 {
                     ID_STATUS = (long)row["ID_STATUS"],
                     NameStatus = (string)row["NameStatus"],
+                    ColorHex = (string)row["ColorHex"]
                 };
 
                 Organization org = new Organization
                 {
                     ID_ORGANIZATION = (long)row["ID_ORGANIZATION"],
-                    NameOrg = (string)row["NameOrg"],
+                    NameOrg = (string)row["NameOrg"]
                 };
 
                 User userMaster = new User
@@ -1077,7 +1101,7 @@ WHERE 1=1
         /// <summary>
         /// Metod from site
         /// </summary>
-        public static List<Order> GetOrdersSite()
+        public static List<Order> GetOrdersSite(int page, int step, FiltrOrders filtrOrders)
         {
             List<Order> orders = new List<Order>();
             SqlParameter[] parameters = new SqlParameter[]
@@ -1087,45 +1111,53 @@ WHERE 1=1
 
             #region sql
 
-            string sqlText = $@"
+            string sqlText = @$"
+  WITH OrdersPage AS
+(
+    SELECT 
+	ID_ZAKAZ
+	,HOLODILNIK_DEFECT
+	,u.Name	
+	,NameClient
+	,STREET
+	,HOUSE
+	,KORPUS
+	,KVARTIRA
+	,Msisdn1
+	,z.DateAdd
+	,DATA
+	,VREMJA
+	,s.NameStatus
+	,s.ColorHex
+	
+    ,ROW_NUMBER() OVER (ORDER BY z.[DateAdd] DESC) AS 'RowNumber'
+    FROM [dbo].[Zakaz] z
+	JOIN [Status] s ON s.ID_STATUS=z.ID_STATUS
+	JOIN [User] u ON u.ID_USER=z.ID_MASTER
+	WHERE 1=1
+		
+) 
 
--- получение заявки
-SELECT [ID_ZAKAZ]
-      ,[STREET]
-      ,[HOUSE]
-      ,[KORPUS]
-      ,[KVARTIRA]
-      ,[PODEST]
-      ,[ETAG]
-      ,[KOD_DOMOFONA]
-      ,[HOLODILNIK_DEFECT]
-      ,[DATA]
-      ,[VREMJA]
-      ,[PRIMECHANIE]
-      ,[Msisdn1]
-      ,[Msisdn2]
-      ,[Msisdn3]
-      ,org.[ID_ORGANIZATION]
-	  ,org.[NameOrg]
-      ,o.[DateAdd]
-      ,[DateSendMaster]
-      ,[DateOpenMaster]
-      ,s.[ID_STATUS]
-	  ,s.[NameStatus]
-      ,[MoneyAll]
-      ,[MoneyFirm]
-      ,[MoneyDetal]
-      ,[MoneyMaster]
-      ,[DescripClose]
-      ,[NameClient]
-      ,[ID_USER_ADD]
-      ,[DateClose]
-	  ,u.[Name]
-  FROM [dbo].[Zakaz] o
-JOIN [User] u ON u.ID_USER=o.ID_MASTER
-JOIN [Status] s ON s.ID_STATUS=o.ID_STATUS
-LEFT JOIN [Organization] org ON org.ID_ORGANIZATION=o.ID_ORGANIZATION
-WHERE 1=1
+SELECT
+	 ID_ZAKAZ
+	,HOLODILNIK_DEFECT
+	,Name	
+	,NameClient
+	,STREET
+	,HOUSE
+	,KORPUS
+	,KVARTIRA
+	,Msisdn1
+	,DateAdd
+	,DATA
+	,VREMJA
+	,NameStatus
+    ,ColorHex
+	,RowNumber
+FROM OrdersPage 
+WHERE RowNumber BETWEEN ({page}-1)*{step} AND {page}*{step}
+ORDER BY RowNumber ASC
+
 ";
 
             #endregion
@@ -1138,16 +1170,11 @@ WHERE 1=1
             foreach (DataRow row in dt.Rows)
             {
                 Status status = new Status
-                {
-                    ID_STATUS = (long)row["ID_STATUS"],
+                {                    
                     NameStatus = (string)row["NameStatus"],
+                    ColorHex = (string)row["ColorHex"]
                 };
 
-                Organization org = new Organization
-                {
-                    //ID_ORGANIZATION = (long)row["ID_ORGANIZATION"],
-                    //NameOrg = (string)row["NameOrg"],
-                };
 
                 User userMaster = new User
                 {
@@ -1165,16 +1192,12 @@ WHERE 1=1
                     DATA = (DateTime)row["DATA"],
                     VREMJA = (string)row["VREMJA"],
                     DateAdd = (DateTime)row["DateAdd"],
-                    DateSendMaster = row["DateSendMaster"] != DBNull.Value ? (DateTime?)row["DateSendMaster"] : null,
-                    DateOpenMaster = row["DateOpenMaster"] != DBNull.Value ? (DateTime?)row["DateOpenMaster"] : null,
-                    DateClose = row["DateClose"] != DBNull.Value ? (DateTime?)row["DateClose"] : null,
-
+                    Msisdn1 = (string)row["Msisdn1"],
 
                     NameClient = (string)row["NameClient"],
                     USER_MASTER = userMaster,
 
-                    STATUS = status,
-                    ORGANIZATION = org
+                    STATUS = status
                 };
 
                 orders.Add(order);

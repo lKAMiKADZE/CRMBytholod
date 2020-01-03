@@ -1,0 +1,124 @@
+﻿@model CRMBytholod.Models.Order
+
+@{
+    ViewData["Title"] = "CreateOrder";
+}
+
+<h1>Новая заявка</h1>
+
+<hr />
+
+<form asp-action="CreateOrder">
+    <div class="form-group">
+        <input type="submit" value="Создать" class="btn btn-primary" />
+    </div>
+    <div class="row">
+        <div class="col-md-4">
+
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+            <div class="form-group">
+                <label asp-for="HOLODILNIK_DEFECT" class="control-label"></label>
+                <input asp-for="HOLODILNIK_DEFECT" class="form-control" />
+                <span asp-validation-for="HOLODILNIK_DEFECT" class="text-danger"></span>
+            </div>
+
+
+            <div class="form-group">
+                <label asp-for="DATA" class="control-label"></label>
+                <input asp-for="DATA" class="form-control" />
+                <span asp-validation-for="DATA" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="VREMJA" class="control-label"></label>
+                <input asp-for="VREMJA" class="form-control" />
+                <span asp-validation-for="VREMJA" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="PRIMECHANIE" class="control-label"></label>
+                <input asp-for="PRIMECHANIE" class="form-control" />
+                <span asp-validation-for="PRIMECHANIE" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Msisdn1" class="control-label"></label>
+                <input asp-for="Msisdn1" class="form-control" />
+                <span asp-validation-for="Msisdn1" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Msisdn2" class="control-label"></label>
+                <input asp-for="Msisdn2" class="form-control" />
+                <span asp-validation-for="Msisdn2" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Msisdn3" class="control-label"></label>
+                <input asp-for="Msisdn3" class="form-control" />
+                <span asp-validation-for="Msisdn3" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="NameClient" class="control-label"></label>
+                <input asp-for="NameClient" class="form-control" />
+                <span asp-validation-for="NameClient" class="text-danger"></span>
+            </div>
+            <div class="form-group form-check">
+                <label class="form-check-label">
+                    <input class="form-check-input" asp-for="Povtor" /> @Html.DisplayNameFor(model => model.Povtor)
+                </label>
+            </div>
+
+
+
+        </div>
+
+        <div class="col-md-4">
+
+            <div class="form-group">
+                <label asp-for="STREET" class="control-label"></label>
+                <input asp-for="STREET" class="form-control" />
+                <span asp-validation-for="STREET" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="HOUSE" class="control-label"></label>
+                <input asp-for="HOUSE" class="form-control" />
+                <span asp-validation-for="HOUSE" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="KORPUS" class="control-label"></label>
+                <input asp-for="KORPUS" class="form-control" />
+                <span asp-validation-for="KORPUS" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="KVARTIRA" class="control-label"></label>
+                <input asp-for="KVARTIRA" class="form-control" />
+                <span asp-validation-for="KVARTIRA" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="PODEST" class="control-label"></label>
+                <input asp-for="PODEST" class="form-control" />
+                <span asp-validation-for="PODEST" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="ETAG" class="control-label"></label>
+                <input asp-for="ETAG" class="form-control" />
+                <span asp-validation-for="ETAG" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="KOD_DOMOFONA" class="control-label"></label>
+                <input asp-for="KOD_DOMOFONA" class="form-control" />
+                <span asp-validation-for="KOD_DOMOFONA" class="text-danger"></span>
+            </div>
+
+
+        </div>
+    </div>
+    <div class="form-group">
+        <input type="submit" value="Создать" class="btn btn-primary" />
+    </div>
+    <div>
+        <a asp-action="Orders">Назад</a>
+    </div>
+
+</form>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
