@@ -1,0 +1,160 @@
+﻿@model CRMBytholod.ViewModels.OrderEditVM
+
+@{
+    ViewData["Title"] = "EditOrder";
+}
+
+<h1>Изменение заявки</h1>
+
+<h4>Статус</h4>
+
+@switch (Model.order.STATUS.NameStatus)
+{
+    case "В ОЖИДАНИИ":<span class="label" style='background-color:@Model.order.STATUS.ColorHex; padding: 6px;'>@Model.order.STATUS.NameStatus</span> break;
+case "ПОВТОР": <span class="label" style='background-color:@Model.order.STATUS.ColorHex; padding: 6px;'>@Model.order.STATUS.NameStatus</span> break;
+case "ОТКАЗ": <span class="label" style='background-color:@Model.order.STATUS.ColorHex; padding: 6px;'>@Model.order.STATUS.NameStatus</span> break;
+case "В РАБОТЕ": <span class="label" style='background-color:@Model.order.STATUS.ColorHex; padding: 6px;'>@Model.order.STATUS.NameStatus</span> break;
+case "ВЫПОЛНЕН": <span class="label" style='background-color:@Model.order.STATUS.ColorHex; padding: 6px;'>@Model.order.STATUS.NameStatus</span> break;
+default: @Model.order.STATUS.NameStatus; break;
+}
+<hr />
+
+<form asp-action="EditOrder">
+
+    <div class="form-group">
+        <input type="submit" value="Сохранить" class="btn btn-primary" />
+    </div>
+
+    <div class="form-group">
+        <input hidden="hidden" asp-for="order.ID_ZAKAZ" class="form-control" />
+    </div>
+
+    <div>
+        <div class="row">
+            <div class="col-md-4">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+                <div class="form-group">
+                    <label asp-for="order.NameClient" class="control-label">Имя клиента</label>
+                    <input asp-for="order.NameClient" class="form-control" />
+                    <span asp-validation-for="order.NameClient" class="text-danger"></span>
+                </div>
+
+                <div class="form-group">
+                    <label asp-for="order.STREET" class="control-label">Улица</label>
+                    <input asp-for="order.STREET" class="form-control" />
+                    <span asp-validation-for="order.STREET" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="order.HOUSE" class="control-label">Дом</label>
+                    <input asp-for="order.HOUSE" class="form-control" />
+                    <span asp-validation-for="order.HOUSE" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="order.KORPUS" class="control-label">Корпус</label>
+                    <input asp-for="order.KORPUS" class="form-control" />
+                    <span asp-validation-for="order.KORPUS" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="order.KVARTIRA" class="control-label">Квартира</label>
+                    <input asp-for="order.KVARTIRA" class="form-control" />
+                    <span asp-validation-for="order.KVARTIRA" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="order.PODEST" class="control-label">Подъезд</label>
+                    <input asp-for="order.PODEST" class="form-control" />
+                    <span asp-validation-for="order.PODEST" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="order.ETAG" class="control-label">Этаж</label>
+                    <input asp-for="order.ETAG" class="form-control" />
+                    <span asp-validation-for="order.ETAG" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="order.KOD_DOMOFONA" class="control-label">Код домофона</label>
+                    <input asp-for="order.KOD_DOMOFONA" class="form-control" />
+                    <span asp-validation-for="order.KOD_DOMOFONA" class="text-danger"></span>
+                </div>
+            </div>
+
+
+            <div class="col-md-4">
+
+                <div class="form-group">
+                    <label asp-for="order.HOLODILNIK_DEFECT" class="control-label">Холодильник дефект</label>
+                    <input asp-for="order.HOLODILNIK_DEFECT" class="form-control" />
+                    <span asp-validation-for="order.HOLODILNIK_DEFECT" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="order.DATA" class="control-label">Дата ожидания клиента</label>
+                    @*<input asp-for="DATA" class="form-control" />*@
+                    <input type="date" asp-for="order.DATA" class="form-control">
+                    <span asp-validation-for="order.DATA" class="text-danger"></span>
+
+                </div>
+                <div class="form-group">
+                    <label asp-for="order.VREMJA" class="control-label">Время ожидания</label>
+                    <input asp-for="order.VREMJA" class="form-control" />
+                    <span asp-validation-for="order.VREMJA" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="order.PRIMECHANIE" class="control-label">Примечание</label>
+                    <input asp-for="order.PRIMECHANIE" class="form-control" />
+                    <span asp-validation-for="order.PRIMECHANIE" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="order.Msisdn1" class="control-label">Основной номер</label>
+                    <input asp-for="order.Msisdn1" class="form-control" />
+                    <span asp-validation-for="order.Msisdn1" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="order.Msisdn2" class="control-label">Доп номер 2</label>
+                    <input asp-for="order.Msisdn2" class="form-control" />
+                    <span asp-validation-for="order.Msisdn2" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="order.Msisdn3" class="control-label">Доп номер 3</label>
+                    <input asp-for="order.Msisdn3" class="form-control" />
+                    <span asp-validation-for="order.Msisdn3" class="text-danger"></span>
+                </div>
+                <div class="form-group form-check">
+                    <label class="form-check-label">
+                        <input class="form-check-input" asp-for="order.Povtor" /> Повторная заявка
+                    </label>
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="form-group">
+                    <label class="control-label">Выбрать мастера</label>
+                    <select asp-for="order.USER_MASTER.ID_USER" class="form-control">
+                        @foreach (var item in Model.MASTERs)
+                        {
+                            <option value="@item.ID_USER">@item.Name</option>
+                        }
+                    </select>
+                    <span asp-validation-for="order.USER_MASTER.ID_USER" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label class="control-label">Организация</label>
+                    <select asp-for="order.ORGANIZATION.ID_ORGANIZATION" class="form-control">
+                        @foreach (var item in Model.ORGANIZATIONs)
+                        {
+                            <option value="@item.ID_ORGANIZATION">@item.NameOrg</option>
+                        }
+                    </select>
+                    <span asp-validation-for="order.ORGANIZATION.ID_ORGANIZATION" class="text-danger"></span>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <div class="form-group">
+        <input type="submit" value="Сохранить" class="btn btn-primary" />
+    </div>
+</form>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

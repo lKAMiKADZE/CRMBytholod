@@ -1403,6 +1403,54 @@ SELECT
         }
 
 
+        /// <summary>
+        /// Metod from site
+        /// </summary>
+        public void Update(long PrevIdMaster)
+        {
+            SqlParameter[] parameters = new SqlParameter[]
+            {
+                new SqlParameter(@"ID_ZAKAZ",SqlDbType.BigInt) { Value =ID_ZAKAZ }
+            };
+
+
+            #region sql
+
+            string sqlText = @$"
+Update order
+
+";
+
+            #endregion
+
+            ExecuteSqlStatic(sqlText);
+
+        }
+        /// <summary>
+        /// Metod from site
+        /// </summary>
+        public void Save()
+        {
+            SqlParameter[] parameters = new SqlParameter[]
+            {
+                new SqlParameter(@"ID_ZAKAZ",SqlDbType.BigInt) { Value =ID_ZAKAZ }
+            };
+
+
+            #region sql
+
+            string sqlText = @$"
+Save order
+
+";
+
+            #endregion
+
+            ExecuteSqlStatic(sqlText);
+
+        }
+
+
 
 
 

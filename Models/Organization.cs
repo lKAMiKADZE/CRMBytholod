@@ -15,6 +15,55 @@ namespace CRMBytholod.Models
 
 
 
+
+        public static List<Organization> GetAllOrganization()
+        {
+            List<Organization> Orgs = new List<Organization>();
+
+
+            SqlParameter[] parameters = new SqlParameter[]
+            {
+            };
+
+            #region sql
+
+            string sqlText = $@"
+
+
+    SELECT 
+	o.ID_ORGANIZATION,
+	o.NameOrg
+   FROM [Organization] o
+
+";
+
+            #endregion
+
+            DataTable dt = new DataTable();// при наличии данных
+            // получаем данные из запроса
+            dt = ExecuteSqlGetDataTableStatic(sqlText);
+
+
+            foreach (DataRow row in dt.Rows)
+            {
+
+                // попали в цикл, значит авторизовались, т.к. такой пользователь существует
+                Organization org = new Organization
+                {
+                    ID_ORGANIZATION = (long)row["ID_ORGANIZATION"],
+                    NameOrg = (string)row["NameOrg"]
+                };
+
+                Orgs.Add(org);
+            }
+
+
+            return Orgs;
+        }
+
+
+
+
         ////////////////
         // Методы SQL
         ////////////////

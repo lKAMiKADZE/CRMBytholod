@@ -13,8 +13,7 @@
     <b>@Html.ActionLink("Редактировать", "EditOrder", new { ID_ZAKAZ = Model.order.ID_ZAKAZ })</b>
 </div>
 
-<hr />
-
+<br />
 
 @switch (Model.order.STATUS.NameStatus)
 {
@@ -69,6 +68,10 @@ default: @Model.order.STATUS.NameStatus; break;
                 <label class="">@Html.DisplayFor(model => model.order.KOD_DOMOFONA)</label>
             </div>
 
+            <div class="form-group">
+                <label class="control-label font-weight-bold">Организация</label><br />
+                <label class="">@Html.DisplayFor(model => model.order.ORGANIZATION.NameOrg)</label>
+            </div>
 
         </div>
         <div class="col-md-4">
@@ -108,11 +111,11 @@ default: @Model.order.STATUS.NameStatus; break;
                 <label class="control-label font-weight-bold">Дата закрытия </label><br />
                 <label class="">@Html.DisplayFor(model => model.order.DateClose)</label>
             </div>
-
             <div class="form-group">
                 <label class="control-label font-weight-bold">Описание закрытия (в случае отказа)</label><br />
                 <label class="">@Html.DisplayFor(model => model.order.DescripClose)</label>
             </div>
+
         </div>
         <div class="col-md-4">
 

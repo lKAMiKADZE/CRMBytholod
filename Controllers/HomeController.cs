@@ -53,7 +53,7 @@ namespace CRMBytholod.Controllers
             return View(VM);
         }
 
-
+        [HttpGet]
         public IActionResult EditOrder(long ID_ZAKAZ)
         {
             if (!User.Identity.IsAuthenticated)// если неавторизован то редирект на авторизацию
@@ -61,8 +61,23 @@ namespace CRMBytholod.Controllers
                 Uri location = new Uri($"{Request.Scheme}://{Request.Host}/Account/Login");
                 return Redirect(location.AbsoluteUri);
             }
+            OrderEditVM VM = new OrderEditVM(ID_ZAKAZ);
 
-            return View();
+
+            return View(VM);
+        }
+        [HttpPost]
+        public IActionResult EditOrder(OrderEditVM VM)
+        {
+            if (!User.Identity.IsAuthenticated)// если неавторизован то редирект на авторизацию
+            {
+                Uri location = new Uri($"{Request.Scheme}://{Request.Host}/Account/Login");
+                return Redirect(location.AbsoluteUri);
+            }
+
+            VM.order.Update(VM.PrevIDMaster);
+
+            return View(VM);
         }
 
         public IActionResult CreateOrder()

@@ -39,7 +39,7 @@ namespace CRMBytholod.ViewModels
     {
         public string Adres { get; set; }
         public long ID_STATUS { get; set; }// выпадающий список
-        public string STATUS_NAME { get; set; }// выпадающий список
+        public string Msisdn { get; set; }
         public DateTime DateStart { get; set; }
         public DateTime DateEnd { get; set; }
         public bool Povtor { get; set; }
@@ -49,6 +49,7 @@ namespace CRMBytholod.ViewModels
             DateStart = DateEnd = DateTime.Now;
             DateStart = DateStart.AddMonths(-1);
             Adres = "";
+            Msisdn = "";
             ID_STATUS = 0;
             Povtor = false;
         }

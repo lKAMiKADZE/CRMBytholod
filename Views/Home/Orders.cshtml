@@ -50,8 +50,10 @@
             </div>
             
             <div class="col-md-2">
-                <br />
-                <br />
+                <div class="form-group">
+                    <label asp-for="filtrOrders.Msisdn" class="control-label">Номер клиента</label>
+                    <input asp-for="filtrOrders.Msisdn" class="form-control" />
+                </div>
                 <div class="form-check">
                     <input type="checkbox" class="form-check-input" asp-for="filtrOrders.Povtor">
                     <label class="form-check-label">Повторные заявки</label>

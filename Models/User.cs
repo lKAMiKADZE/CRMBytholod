@@ -327,6 +327,54 @@ END
         }
 
 
+        public static List<User> GetAllMasters()
+        {
+            List<User> users = new List<User>();
+
+
+            SqlParameter[] parameters = new SqlParameter[]
+            {
+            };
+
+            #region sql
+
+            string sqlText = $@"
+ SELECT 
+  u.Name,
+  u.ID_USER
+   FROM [User] u
+  JOIN [TypeUser] tu ON tu.ID_TYPE_USER=u.ID_TYPE_USER
+  WHERE tu.ID_TYPE_USER=3
+
+  ORDER BY name ASC
+
+";
+
+            #endregion
+
+            DataTable dt = new DataTable();// при наличии данных
+            // получаем данные из запроса
+            dt = ExecuteSqlGetDataTableStatic(sqlText);
+
+
+            foreach (DataRow row in dt.Rows)
+            {
+
+                // попали в цикл, значит авторизовались, т.к. такой пользователь существует
+                User us = new User
+                {
+                    ID_USER = (long)row["ID_USER"],
+                    Name = (string)row["Name"]
+                };
+
+                users.Add(us);
+            }
+
+
+            return users;
+        }
+
+
 
 
         ////////////////
