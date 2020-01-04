@@ -1106,13 +1106,33 @@ WHERE 1=1
             List<Order> orders = new List<Order>();
             SqlParameter[] parameters = new SqlParameter[]
             {
-                //new SqlParameter(@"Login",SqlDbType.NVarChar) { Value =Login }
+                new SqlParameter(@"DateStart",SqlDbType.DateTime) { Value =filtrOrders.DateStart },
+                new SqlParameter(@"DateEnd",SqlDbType.DateTime) { Value =filtrOrders.DateEnd }
             };
+
+            string WHERE_adres = "";
+            string WHERE_betweenDate = "";
+            string WHERE_povtor = "";
+            string WHERE_idStatus = "";
+
+            if ( !String.IsNullOrEmpty(filtrOrders.Adres))
+                WHERE_adres = $" AND lower(STREET) like '%{filtrOrders.Adres.ToLower()}%'";
+
+            WHERE_betweenDate = $"AND z.DateAdd between  @DateStart AND @DateEnd";
+
+            if (filtrOrders.Povtor)
+                WHERE_povtor = "AND povtor=1";
+
+            if (filtrOrders.ID_STATUS != 0)
+                WHERE_idStatus = $"AND z.ID_STATUS = {filtrOrders.ID_STATUS}";
+
+
+
 
             #region sql
 
             string sqlText = @$"
-  WITH OrdersPage AS
+WITH OrdersPage AS
 (
     SELECT 
 	ID_ZAKAZ
@@ -1135,7 +1155,10 @@ WHERE 1=1
 	JOIN [Status] s ON s.ID_STATUS=z.ID_STATUS
 	JOIN [User] u ON u.ID_USER=z.ID_MASTER
 	WHERE 1=1
-		
+		{WHERE_adres}
+        {WHERE_betweenDate}
+        {WHERE_povtor}
+        {WHERE_idStatus}
 ) 
 
 SELECT
@@ -1164,7 +1187,7 @@ ORDER BY RowNumber ASC
 
             DataTable dt = new DataTable();// при наличии данных
             // получаем данные из запроса
-            dt = ExecuteSqlGetDataTableStatic(sqlText);
+            dt = ExecuteSqlGetDataTableStatic(sqlText, parameters);
 
 
             foreach (DataRow row in dt.Rows)

@@ -26,10 +26,9 @@ namespace CRMBytholod.ViewModels
             Step = _step;
             Page = _page;
 
-            Orders = Order.GetOrdersSite(Page,Step, filtr);
-
             filtrOrders = filtr;
-            
+
+            Orders = Order.GetOrdersSite(Page, Step, filtrOrders);
 
         }
 
@@ -48,6 +47,10 @@ namespace CRMBytholod.ViewModels
         public FiltrOrders()
         {
             DateStart = DateEnd = DateTime.Now;
+            DateStart = DateStart.AddMonths(-1);
+            Adres = "";
+            ID_STATUS = 0;
+            Povtor = false;
         }
 
 
