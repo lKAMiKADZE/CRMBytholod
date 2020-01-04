@@ -27,6 +27,77 @@ namespace CRMBytholod.Models
 
 
 
+        public static List<LogStatusOrder> GetHistoryStatusOrder(long ID_ZAKAZ)
+        {
+            List<LogStatusOrder> LogOrders = new List<LogStatusOrder>();
+            SqlParameter[] parameters = new SqlParameter[]
+            {
+                new SqlParameter(@"ID_ZAKAZ",SqlDbType.BigInt) { Value =ID_ZAKAZ }
+            };
+
+
+            #region sql
+
+            string sqlText = @$"
+
+
+-- история изменения статуса заявки
+SELECT
+	logOrder.ID_ZAKAZ
+	,logOrder.ID_LOG
+	,logOrder.DateChange
+	,logOrder.STATUS
+	,u.Name	
+
+  FROM [dbo].[Zakaz] o
+  JOIN LogStatusOrder logOrder ON logOrder.ID_ZAKAZ=o.ID_ZAKAZ
+  JOIN [User] u ON u.ID_USER=logOrder.ID_USER  
+  WHERE 1=1
+	AND o.ID_ZAKAZ=@ID_ZAKAZ
+
+ORDER BY logOrder.DateChange DESC
+";
+
+            #endregion
+
+            DataTable dt = new DataTable();// при наличии данных
+            // получаем данные из запроса
+            dt = ExecuteSqlGetDataTableStatic(sqlText, parameters);
+
+
+            foreach (DataRow row in dt.Rows)
+            {
+               
+                User user = new User
+                {
+                    Name = (string)row["Name"]
+                };
+
+                Order order = new Order
+                {
+                    ID_ZAKAZ = (long)row["ID_ZAKAZ"],
+                    
+                };
+
+                LogStatusOrder logStatusOrder = new LogStatusOrder 
+                {
+                    ORDER=order,
+                    User= user,
+                    ID_LOG=(long)row["ID_LOG"],
+                    Status= (string)row["Status"],
+                    DateChange= (DateTime)row["DateChange"]
+                };
+
+                LogOrders.Add(logStatusOrder);
+            }
+
+
+            return LogOrders;
+        }
+
+
+
+
 
 
         ////////////////

@@ -1,222 +1,278 @@
-﻿@model CRMBytholod.Models.Order
+﻿@model CRMBytholod.ViewModels.OrderDetailVM
 
 @{
-    ViewData["Title"] = "DetailOrder";
+    ViewData["Title"] = "Детали заявки";
 }
 
-<h1>DetailOrder</h1>
+<h1>Детали заявки</h1>
+
+
+<hr />
 
 <div>
-    <h4>Order</h4>
-    <hr />
-    <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.ID_ZAKAZ)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.ID_ZAKAZ)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.STREET)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.STREET)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.HOUSE)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.HOUSE)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.KORPUS)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.KORPUS)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.KVARTIRA)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.KVARTIRA)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.PODEST)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.PODEST)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.ETAG)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.ETAG)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.KOD_DOMOFONA)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.KOD_DOMOFONA)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.TELEFON_STACIONAR)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.TELEFON_STACIONAR)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.TELEFON_SOTOV)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.TELEFON_SOTOV)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.HOLODILNIK_DEFECT)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.HOLODILNIK_DEFECT)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.MASTER)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.MASTER)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.DATA)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.DATA)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.VREMJA)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.VREMJA)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.DISPETCHER)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.DISPETCHER)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.PRIMECHANIE)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.PRIMECHANIE)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.VIPOLNENIE_ZAKAZA)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.VIPOLNENIE_ZAKAZA)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Msisdn1)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Msisdn1)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Msisdn2)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Msisdn2)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Msisdn3)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Msisdn3)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.DateAdd)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.DateAdd)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.DateSendMaster)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.DateSendMaster)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.DateOpenMaster)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.DateOpenMaster)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.DateClose)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.DateClose)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.MoneyAll)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.MoneyAll)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.MoneyFirm)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.MoneyFirm)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.MoneyDetal)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.MoneyDetal)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.MoneyMaster)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.MoneyMaster)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.DescripClose)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.DescripClose)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.NameClient)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.NameClient)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Povtor)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Povtor)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.DayWeek_Date)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.DayWeek_Date)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.GetAdresFull)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.GetAdresFull)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.GetDATA)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.GetDATA)
-        </dd>
-    </dl>
+    <b>@Html.ActionLink("Редактировать", "EditOrder", new { ID_ZAKAZ = Model.order.ID_ZAKAZ })</b>
 </div>
+
+<hr />
+
+
+@switch (Model.order.STATUS.NameStatus)
+{
+    case "В ОЖИДАНИИ":<span class="label" style='background-color:@Model.order.STATUS.ColorHex; padding: 6px;'>@Model.order.STATUS.NameStatus</span> break;
+case "ПОВТОР": <span class="label" style='background-color:@Model.order.STATUS.ColorHex; padding: 6px;'>@Model.order.STATUS.NameStatus</span> break;
+case "ОТКАЗ": <span class="label" style='background-color:@Model.order.STATUS.ColorHex; padding: 6px;'>@Model.order.STATUS.NameStatus</span> break;
+case "В РАБОТЕ": <span class="label" style='background-color:@Model.order.STATUS.ColorHex; padding: 6px;'>@Model.order.STATUS.NameStatus</span> break;
+case "ВЫПОЛНЕН": <span class="label" style='background-color:@Model.order.STATUS.ColorHex; padding: 6px;'>@Model.order.STATUS.NameStatus</span> break;
+default: @Model.order.STATUS.NameStatus; break;
+}
+
 <div>
-    @Html.ActionLink("Edit", "Edit", new { /* id = Model.PrimaryKey */ }) |
-    <a asp-action="Index">Back to List</a>
+    <hr />
+
+    <div class="row">
+        <div class="col-md-4">
+            <div class="form-group">
+                <label class="control-label font-weight-bold">Холодильник дефект</label> <br />
+                <label class="">@Html.DisplayFor(model => model.order.HOLODILNIK_DEFECT)</label>
+            </div>
+            <div class="form-group">
+                <label class="control-label font-weight-bold">Имя клиента</label><br />
+                <label class="">@Html.DisplayFor(model => model.order.NameClient)</label>
+            </div>
+            <div class="form-group">
+                <label class="control-label font-weight-bold">Улица</label><br />
+                <label>@Html.DisplayFor(model => model.order.STREET)</label>
+            </div>
+            <div class="form-group">
+                <label class="control-label font-weight-bold">Дом</label><br />
+                <label class="">@Html.DisplayFor(model => model.order.HOUSE)</label>
+            </div>
+            <div class="form-group">
+                <label class="control-label font-weight-bold">Корпус</label><br />
+                <label class="">@Html.DisplayFor(model => model.order.KORPUS)</label>
+            </div>
+            <div class="form-group">
+                <label class="control-label font-weight-bold">Квартира</label><br />
+                <label class="">@Html.DisplayFor(model => model.order.KVARTIRA)</label>
+            </div>
+            <div class="form-group">
+                <label class="control-label font-weight-bold">Подъезд</label><br />
+                <label class="">@Html.DisplayFor(model => model.order.PODEST)</label>
+            </div>
+
+            <div class="form-group">
+                <label class="control-label font-weight-bold">Этаж</label><br />
+                <label class="">@Html.DisplayFor(model => model.order.ETAG)</label>
+            </div>
+            <div class="form-group">
+                <label class="control-label font-weight-bold">Код домофона</label><br />
+                <label class="">@Html.DisplayFor(model => model.order.KOD_DOMOFONA)</label>
+            </div>
+
+
+        </div>
+        <div class="col-md-4">
+            <div class="form-group">
+                <label class="control-label font-weight-bold">Дата ожидания клиента</label><br />
+                <label class="">@Html.DisplayFor(model => model.order.GetDATA)</label>
+            </div>
+            <div class="form-group">
+                <label class="control-label font-weight-bold">Время ожидания</label><br />
+                <label class="">@Html.DisplayFor(model => model.order.VREMJA)</label>
+            </div>
+            <div class="form-group">
+                <label class="control-label font-weight-bold">Основной номер</label><br />
+                <label class="">@Html.DisplayFor(model => model.order.Msisdn1)</label>
+            </div>
+            <div class="form-group">
+                <label class="control-label font-weight-bold">Доп номер 2</label><br />
+                <label class="">@Html.DisplayFor(model => model.order.Msisdn2)</label>
+            </div>
+            <div class="form-group">
+                <label class="control-label font-weight-bold">Доп номер 3</label><br />
+                <label class="">@Html.DisplayFor(model => model.order.Msisdn3)</label>
+            </div>
+            <div class="form-group">
+                <label class="control-label font-weight-bold">Дата создания</label><br />
+                <label class="">@Html.DisplayFor(model => model.order.DateAdd)</label>
+            </div>
+            <div class="form-group">
+                <label class="control-label font-weight-bold">Дата отправки Мастеру</label><br />
+                <label class="">@Html.DisplayFor(model => model.order.DateSendMaster)</label>
+            </div>
+            <div class="form-group">
+                <label class="control-label font-weight-bold">Дата открытия Мастером</label><br />
+                <label class="">@Html.DisplayFor(model => model.order.DateOpenMaster)</label>
+            </div>
+            <div class="form-group">
+                <label class="control-label font-weight-bold">Дата закрытия </label><br />
+                <label class="">@Html.DisplayFor(model => model.order.DateClose)</label>
+            </div>
+
+            <div class="form-group">
+                <label class="control-label font-weight-bold">Описание закрытия (в случае отказа)</label><br />
+                <label class="">@Html.DisplayFor(model => model.order.DescripClose)</label>
+            </div>
+        </div>
+        <div class="col-md-4">
+
+            <div class="form-group">
+                <label class="control-label font-weight-bold">Мастер</label><br />
+                <label class="">@Html.DisplayFor(model => model.order.USER_MASTER.Name)</label>
+            </div>
+            <div class="form-group">
+                <label class="control-label font-weight-bold">Создал заявку</label><br />
+                <label class="">@Html.DisplayFor(model => model.order.USER_ADD.Name)</label>
+            </div>
+
+            <div class="form-group">
+                <label class="control-label font-weight-bold">Примечание</label><br />
+                <label class="">@Html.DisplayFor(model => model.order.PRIMECHANIE)</label>
+            </div>
+            <div class="form-group">
+                <label class="control-label font-weight-bold">Получено средств</label><br />
+                <label class="">@Html.DisplayFor(model => model.order.GetMoneyAll)</label>
+            </div>
+            <div class="form-group">
+                <label class="control-label font-weight-bold">Потрачено на детали</label><br />
+                <label class="">@Html.DisplayFor(model => model.order.GetMoneyDetal)</label>
+            </div>
+            <div class="form-group">
+                <label class="control-label font-weight-bold">В фирму</label><br />
+                <label class="">@Html.DisplayFor(model => model.order.GetMoneyFirm)</label>
+            </div>
+            <div class="form-group">
+                <label class="control-label font-weight-bold">Прибыль Мастера</label><br />
+                <label class="">@Html.DisplayFor(model => model.order.GetMoneyMaster)</label>
+            </div>
+            <div class="form-group">
+                <label class="control-label font-weight-bold">Заявка является повтором</label><br />
+                <label>@Html.DisplayFor(model => model.order.GetPovtor)</label>
+            </div>
+        </div>
+    </div>
+
 </div>
+
+
+<h3>История изменения статуса</h3>
+
+@* Вывод истории статусов *@
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                Имя
+            </th>
+            <th>
+                Статус
+            </th>
+            <th>
+                Дата изменения
+            </th>
+
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model.logStatusOrder)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.User.Name)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Status)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.DateChange)
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+
+
+
+@* Вывод предыдущих заявок, если они есть *@
+@if (Model.PrevOrders.Count > 0)
+{
+    <br />
+    <h3>Предыдущие заявки клиента</h3>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>
+                    Холодильник дефект
+                </th>
+                <th>
+                    Имя клиента
+                </th>
+                <th>
+                    Адрес
+                </th>
+                <th>
+                    Дата
+                </th>
+                <th>
+                    Время
+                </th>
+                <th>
+                    Номер
+                </th>
+                <th>
+                    Мастер
+                </th>
+                <th width="150">
+                    Status
+                </th>
+                <th>
+                    Дата создания
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model.PrevOrders)
+            {
+                <tr>
+                    <td>
+                        <a asp-action="DetailOrder" asp-route-id_zakaz="@item.ID_ZAKAZ"><b>@item.HOLODILNIK_DEFECT</b></a>
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.NameClient)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.GetAdresFull)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.GetDATA)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.VREMJA)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Msisdn1)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.USER_MASTER.Name)
+                    </td>
+                    <td>
+                        @switch (item.STATUS.NameStatus)
+                        {
+                            case "В ОЖИДАНИИ":<span class="label" style='background-color:@item.STATUS.ColorHex; padding: 6px;'>@item.STATUS.NameStatus</span> break;
+                        case "ПОВТОР": <span class="label" style='background-color:@item.STATUS.ColorHex; padding: 6px;'>@item.STATUS.NameStatus</span> break;
+                    case "ОТКАЗ": <span class="label" style='background-color:@item.STATUS.ColorHex; padding: 6px;'>@item.STATUS.NameStatus</span> break;
+                case "В РАБОТЕ": <span class="label" style='background-color:@item.STATUS.ColorHex; padding: 6px;'>@item.STATUS.NameStatus</span> break;
+            case "ВЫПОЛНЕН": <span class="label" style='background-color:@item.STATUS.ColorHex; padding: 6px;'>@item.STATUS.NameStatus</span> break;
+        default: @item.STATUS.NameStatus; break;
+}
+
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.DateAdd)
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}

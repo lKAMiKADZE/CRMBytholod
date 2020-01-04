@@ -120,6 +120,8 @@
 
 </div>
 
+
+@* Вывод заявок *@
 <table class="table">
     <thead>
         <tr>
@@ -180,13 +182,13 @@
                 <td>
                     @switch (item.STATUS.NameStatus)
                     {
-                        case "В ОЖИДАНИИ":<span class="label" style='background-color:@item.STATUS.ColorHex; padding: 6px;'>@item.STATUS.NameStatus</span> break;
-                    case "ПОВТОР": <span class="label" style='background-color:@item.STATUS.ColorHex; padding: 6px;'>@item.STATUS.NameStatus</span> break;
-                case "ОТКАЗ": <span class="label" style='background-color:@item.STATUS.ColorHex; padding: 6px;'>@item.STATUS.NameStatus</span> break;
-            case "В РАБОТЕ": <span class="label" style='background-color:@item.STATUS.ColorHex; padding: 6px;'>@item.STATUS.NameStatus</span> break;
-        case "ВЫПОЛНЕН": <span class="label" style='background-color:@item.STATUS.ColorHex; padding: 6px;'>@item.STATUS.NameStatus</span> break;
-    default: @item.STATUS.NameStatus; break;
-}
+                      case "В ОЖИДАНИИ":<span class="label" style='background-color:@item.STATUS.ColorHex; padding: 6px;'>@item.STATUS.NameStatus</span> break;
+                      case "ПОВТОР": <span class="label" style='background-color:@item.STATUS.ColorHex; padding: 6px;'>@item.STATUS.NameStatus</span> break;
+                      case "ОТКАЗ": <span class="label" style='background-color:@item.STATUS.ColorHex; padding: 6px;'>@item.STATUS.NameStatus</span> break;
+                      case "В РАБОТЕ": <span class="label" style='background-color:@item.STATUS.ColorHex; padding: 6px;'>@item.STATUS.NameStatus</span> break;
+                      case "ВЫПОЛНЕН": <span class="label" style='background-color:@item.STATUS.ColorHex; padding: 6px;'>@item.STATUS.NameStatus</span> break;
+                      default: @item.STATUS.NameStatus; break;
+                    }
 
                 </td>
                 <td>

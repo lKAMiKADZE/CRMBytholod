@@ -83,9 +83,11 @@ namespace CRMBytholod.Controllers
                 Uri location = new Uri($"{Request.Scheme}://{Request.Host}/Account/Login");
                 return Redirect(location.AbsoluteUri);
             }
-            Order order = Order.GetOrderSite("", ID_ZAKAZ);
 
-            return View(order);
+            OrderDetailVM VM = new OrderDetailVM(ID_ZAKAZ);
+            //Order order = Order.GetOrderSite(ID_ZAKAZ);
+
+            return View(VM);
         }
 
 

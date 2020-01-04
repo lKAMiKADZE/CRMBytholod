@@ -77,6 +77,53 @@ namespace CRMBytholod.Models
             }
         }
 
+        public string GetMoneyAll
+        {
+            get
+            {
+                return MoneyAll + " Руб.";
+            }
+        }
+        public string GetMoneyFirm
+        {
+            get
+            {
+                return MoneyFirm + " Руб.";
+            }
+        }
+        public string GetMoneyDetal
+        {
+            get
+            {
+                return MoneyDetal + " Руб.";
+            }
+        }
+        public string GetMoneyMaster
+        {
+            get
+            {
+                return MoneyMaster+ " Руб.";
+            }
+        }
+        public string GetPovtor
+        {
+            get
+            {
+                if (Povtor)
+                    return "ДА";
+
+                return "НЕТ";
+            }
+        }
+
+
+
+        public Order()
+        {
+            USER_MASTER = new User();
+            USER_ADD = new User();
+            STATUS = new Status();
+        }
 
 
         /// <summary>
@@ -486,7 +533,6 @@ ORDER BY DateClose DESC, ID_ZAKAZ DESC
 			OR	Msisdn3 = (SELECT z.Msisdn3 FROM [dbo].[Zakaz] z WHERE z.ID_ZAKAZ=@ID_ZAKAZ ) -- @ID_ZAKAZ
 		)
 	)
-	AND o.Povtor=1
 	
 	ORDER BY DateClose DESC
 
@@ -979,12 +1025,12 @@ INSERT INTO [dbo].[LogStatusOrder]
         /// <summary>
         /// Metod from site
         /// </summary>
-        public static Order GetOrderSite(string Login, long ID_ZAKAZ)
+        public static Order GetOrderSite(long ID_ZAKAZ)
         {
 
             SqlParameter[] parameters = new SqlParameter[]
             {
-                new SqlParameter(@"Login",SqlDbType.NVarChar) { Value =Login },
+                //new SqlParameter(@"Login",SqlDbType.NVarChar) { Value =Login },
                 new SqlParameter(@"ID_ZAKAZ",SqlDbType.BigInt) { Value =ID_ZAKAZ }
             };
 
@@ -1008,9 +1054,10 @@ SELECT [ID_ZAKAZ]
       ,[Msisdn1]
       ,[Msisdn2]
       ,[Msisdn3]
+      ,[Povtor]
       ,org.[ID_ORGANIZATION]
 	  ,org.[NameOrg]
-      ,[DateAdd]
+      ,o.[DateAdd]
       ,[DateSendMaster]
       ,[DateOpenMaster]
       ,s.[ID_STATUS]
@@ -1024,9 +1071,11 @@ SELECT [ID_ZAKAZ]
       ,[NameClient]
       ,[ID_USER_ADD]
       ,[DateClose]
-	  ,u.[Name]
+	  ,u.[Name] AS NameMaster
+	  ,uadd.[Name] AS NameUserAdd
   FROM [dbo].[Zakaz] o
-JOIN [User] u ON u.ID_USER=o.ID_MASTER
+JOIN [User] u ON u.ID_USER=o.ID_MASTER -- ADD User MASTER
+JOIN [User] uadd ON uadd.ID_USER=o.ID_USER_ADD -- ADD User DISP or ADMIN
 JOIN [Status] s ON s.ID_STATUS=o.ID_STATUS
 LEFT JOIN [Organization] org ON org.ID_ORGANIZATION=o.ID_ORGANIZATION
 WHERE 1=1	
@@ -1057,7 +1106,12 @@ WHERE 1=1
 
                 User userMaster = new User
                 {
-                    Name = (string)row["Name"]
+                    Name = (string)row["NameMaster"]
+                };
+
+                User userAdd = new User()
+                {
+                    Name = (string)row["NameUserAdd"]
                 };
 
                 Order order = new Order
@@ -1081,21 +1135,29 @@ WHERE 1=1
                     MoneyAll = (int)row["MoneyAll"],
                     MoneyDetal = (int)row["MoneyDetal"],
                     MoneyFirm = (int)row["MoneyFirm"],
+                    MoneyMaster= (int)row["MoneyMaster"],                    
                     NameClient = (string)row["NameClient"],
                     PODEST = (string)row["PODEST"],
                     ETAG = (string)row["ETAG"],
                     PRIMECHANIE = (string)row["PRIMECHANIE"],
+                    Msisdn1 = (string)row["Msisdn1"],
+                    Msisdn2 = (string)row["Msisdn2"],
+                    Msisdn3 = (string)row["Msisdn3"],
+                    Povtor = (bool)row["Povtor"],
+
                     USER_MASTER = userMaster,
+                    USER_ADD= userAdd,
 
                     STATUS = status,
                     ORGANIZATION = org
+
                 };
 
                 return order;
             }
 
 
-            return null;
+            return new Order();
         }
 
         /// <summary>
@@ -1229,6 +1291,118 @@ ORDER BY RowNumber ASC
 
             return orders;
         }
+        /// <summary>
+        /// Metod from site
+        /// </summary>
+        public static List<Order> GetOrdersPrev(long ID_ZAKAZ)
+        {
+            List<Order> orders = new List<Order>();
+            SqlParameter[] parameters = new SqlParameter[]
+            {
+                new SqlParameter(@"ID_ZAKAZ",SqlDbType.BigInt) { Value =ID_ZAKAZ }
+            };
+
+
+            #region sql
+
+            string sqlText = @$"
+SELECT
+  ID_ZAKAZ
+	,HOLODILNIK_DEFECT
+	,u.Name	
+	,NameClient
+	,STREET
+	,HOUSE
+	,KORPUS
+	,KVARTIRA
+	,Msisdn1
+	,o.DateAdd
+	,DATA
+	,VREMJA
+	,s.NameStatus
+	,s.ColorHex
+  FROM [dbo].[Zakaz] o
+  JOIN [dbo].[Status] s ON s.ID_STATUS=o.ID_STATUS
+  JOIN [User] u ON u.ID_USER=o.ID_MASTER
+  WHERE 1=1
+	AND o.ID_ZAKAZ<> @ID_ZAKAZ
+	AND 
+	(
+		(	
+				STREET = (SELECT STREET FROM [dbo].[Zakaz] z WHERE z.ID_ZAKAZ=@ID_ZAKAZ )	   -- @ID_ZAKAZ
+			AND	HOUSE =	 (SELECT HOUSE FROM [dbo].[Zakaz] z WHERE z.ID_ZAKAZ=@ID_ZAKAZ )	   -- @ID_ZAKAZ
+			AND	KORPUS = (SELECT KORPUS FROM [dbo].[Zakaz] z WHERE z.ID_ZAKAZ=@ID_ZAKAZ )	   -- @ID_ZAKAZ
+			AND	KVARTIRA = (SELECT KVARTIRA FROM [dbo].[Zakaz] z WHERE z.ID_ZAKAZ=@ID_ZAKAZ )  -- @ID_ZAKAZ
+		)
+		OR
+		(
+				Msisdn1 = (SELECT z.Msisdn1 FROM [dbo].[Zakaz] z WHERE z.ID_ZAKAZ=@ID_ZAKAZ ) -- @ID_ZAKAZ
+			OR	Msisdn1 = (SELECT z.Msisdn2 FROM [dbo].[Zakaz] z WHERE z.ID_ZAKAZ=@ID_ZAKAZ ) -- @ID_ZAKAZ
+			OR	Msisdn1 = (SELECT z.Msisdn3 FROM [dbo].[Zakaz] z WHERE z.ID_ZAKAZ=@ID_ZAKAZ ) -- @ID_ZAKAZ
+			                                                                      
+			OR	Msisdn2 = (SELECT z.Msisdn1 FROM [dbo].[Zakaz] z WHERE z.ID_ZAKAZ=@ID_ZAKAZ ) -- @ID_ZAKAZ
+			OR	Msisdn2 = (SELECT z.Msisdn2 FROM [dbo].[Zakaz] z WHERE z.ID_ZAKAZ=@ID_ZAKAZ ) -- @ID_ZAKAZ
+			OR	Msisdn2 = (SELECT z.Msisdn3 FROM [dbo].[Zakaz] z WHERE z.ID_ZAKAZ=@ID_ZAKAZ ) -- @ID_ZAKAZ
+			--                                                                    
+			OR	Msisdn3 = (SELECT z.Msisdn1 FROM [dbo].[Zakaz] z WHERE z.ID_ZAKAZ=@ID_ZAKAZ ) -- @ID_ZAKAZ
+			OR	Msisdn3 = (SELECT z.Msisdn2 FROM [dbo].[Zakaz] z WHERE z.ID_ZAKAZ=@ID_ZAKAZ ) -- @ID_ZAKAZ
+			OR	Msisdn3 = (SELECT z.Msisdn3 FROM [dbo].[Zakaz] z WHERE z.ID_ZAKAZ=@ID_ZAKAZ ) -- @ID_ZAKAZ
+		)
+	)
+	
+	
+	ORDER BY DateClose DESC
+
+";
+
+            #endregion
+
+            DataTable dt = new DataTable();// при наличии данных
+            // получаем данные из запроса
+            dt = ExecuteSqlGetDataTableStatic(sqlText, parameters);
+
+
+            foreach (DataRow row in dt.Rows)
+            {
+                Status status = new Status
+                {
+                    NameStatus = (string)row["NameStatus"],
+                    ColorHex = (string)row["ColorHex"]
+                };
+
+
+                User userMaster = new User
+                {
+                    Name = (string)row["Name"]
+                };
+
+                Order order = new Order
+                {
+                    ID_ZAKAZ = (long)row["ID_ZAKAZ"],
+                    STREET = (string)row["STREET"],
+                    HOUSE = (string)row["HOUSE"],
+                    KORPUS = (string)row["KORPUS"],
+                    KVARTIRA = (string)row["KVARTIRA"],
+                    HOLODILNIK_DEFECT = (string)row["HOLODILNIK_DEFECT"],
+                    DATA = (DateTime)row["DATA"],
+                    VREMJA = (string)row["VREMJA"],
+                    DateAdd = (DateTime)row["DateAdd"],
+                    Msisdn1 = (string)row["Msisdn1"],
+
+                    NameClient = (string)row["NameClient"],
+                    USER_MASTER = userMaster,
+
+                    STATUS = status
+                };
+
+                orders.Add(order);
+            }
+
+
+            return orders;
+        }
+
+
 
 
 
