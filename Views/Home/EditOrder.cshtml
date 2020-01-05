@@ -128,6 +128,7 @@ default: @Model.order.STATUS.NameStatus; break;
                 <div class="form-group">
                     <label class="control-label">Выбрать мастера</label>
                     <select asp-for="order.USER_MASTER.ID_USER" class="form-control">
+                        <option value="@Model.order.USER_MASTER.ID_USER">@Model.order.USER_MASTER.Name</option>
                         @foreach (var item in Model.MASTERs)
                         {
                             <option value="@item.ID_USER">@item.Name</option>
@@ -138,6 +139,7 @@ default: @Model.order.STATUS.NameStatus; break;
                 <div class="form-group">
                     <label class="control-label">Организация</label>
                     <select asp-for="order.ORGANIZATION.ID_ORGANIZATION" class="form-control">
+                        <option value="@Model.order.ORGANIZATION.ID_ORGANIZATION">@Model.order.ORGANIZATION.NameOrg</option>
                         @foreach (var item in Model.ORGANIZATIONs)
                         {
                             <option value="@item.ID_ORGANIZATION">@item.NameOrg</option>

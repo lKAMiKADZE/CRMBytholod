@@ -1072,6 +1072,7 @@ SELECT [ID_ZAKAZ]
       ,[ID_USER_ADD]
       ,[DateClose]
 	  ,u.[Name] AS NameMaster
+      ,u.[ID_USER]
 	  ,uadd.[Name] AS NameUserAdd
   FROM [dbo].[Zakaz] o
 JOIN [User] u ON u.ID_USER=o.ID_MASTER -- ADD User MASTER
@@ -1106,7 +1107,8 @@ WHERE 1=1
 
                 User userMaster = new User
                 {
-                    Name = (string)row["NameMaster"]
+                    Name = (string)row["NameMaster"],
+                    ID_USER = (long)row["ID_USER"]
                 };
 
                 User userAdd = new User()
@@ -1406,24 +1408,72 @@ SELECT
         /// <summary>
         /// Metod from site
         /// </summary>
-        public void Update(long PrevIdMaster)
+        public void Update()
         {
+            long _ID_STATUS = 1;// в ожидании
+            if (Povtor)
+                _ID_STATUS = 2;// повтор
+
+
             SqlParameter[] parameters = new SqlParameter[]
             {
-                new SqlParameter(@"ID_ZAKAZ",SqlDbType.BigInt) { Value =ID_ZAKAZ }
+                new SqlParameter(@"ID_ZAKAZ",SqlDbType.BigInt) { Value =ID_ZAKAZ },
+                new SqlParameter(@"STREET",SqlDbType.NVarChar) { Value =STREET ?? "" },
+                new SqlParameter(@"HOUSE",SqlDbType.NVarChar) { Value =HOUSE ?? "" },
+                new SqlParameter(@"KORPUS",SqlDbType.NVarChar) { Value =KORPUS ?? "" },
+                new SqlParameter(@"KVARTIRA",SqlDbType.NVarChar) { Value =KVARTIRA ?? "" },
+                new SqlParameter(@"PODEST",SqlDbType.NVarChar) { Value =PODEST ?? "" },
+                new SqlParameter(@"ETAG",SqlDbType.NVarChar) { Value =ETAG ?? "" },
+                new SqlParameter(@"KOD_DOMOFONA",SqlDbType.NVarChar) { Value =KOD_DOMOFONA  ?? ""},
+                new SqlParameter(@"HOLODILNIK_DEFECT",SqlDbType.NVarChar) { Value =HOLODILNIK_DEFECT  ?? ""},
+                new SqlParameter(@"DATA",SqlDbType.DateTime) { Value =DATA },
+                new SqlParameter(@"VREMJA",SqlDbType.NVarChar) { Value =VREMJA  ?? ""},
+                new SqlParameter(@"PRIMECHANIE",SqlDbType.NVarChar) { Value = PRIMECHANIE ?? ""},
+                new SqlParameter(@"Msisdn1",SqlDbType.NVarChar) { Value =Msisdn1 ?? "" },
+                new SqlParameter(@"Msisdn2",SqlDbType.NVarChar) { Value =Msisdn2 ?? ""},
+                new SqlParameter(@"Msisdn3",SqlDbType.NVarChar) { Value =Msisdn3 ?? "" },
+                new SqlParameter(@"ID_ORGANIZATION",SqlDbType.BigInt) { Value =ORGANIZATION.ID_ORGANIZATION },
+                new SqlParameter(@"ID_MASTER",SqlDbType.BigInt) { Value =USER_MASTER.ID_USER },
+                new SqlParameter(@"ID_STATUS",SqlDbType.NVarChar) { Value =_ID_STATUS },// в ожидании или повтор
+                new SqlParameter(@"NameClient",SqlDbType.NVarChar) { Value =NameClient ?? "" },
+                new SqlParameter(@"Povtor",SqlDbType.Bit) { Value =Povtor }
             };
 
 
             #region sql
 
             string sqlText = @$"
-Update order
+UPDATE [dbo].[Zakaz]
+   SET [STREET] =	@STREET		-- <STREET, nvarchar(50),>
+      ,[HOUSE] =	@HOUSE		--	 <HOUSE, nvarchar(10),>
+      ,[KORPUS] =	@KORPUS		--	<KORPUS, nvarchar(10),>
+      ,[KVARTIRA] =	@KVARTIRA		--	 <KVARTIRA, nvarchar(10),>
+      ,[PODEST] =	@PODEST		--	<PODEST, nvarchar(10),>
+      ,[ETAG] =		@ETAG		--	<ETAG, nvarchar(10),>
+      ,[KOD_DOMOFONA] =	@KOD_DOMOFONA	--	<KOD_DOMOFONA, nvarchar(10),>
+      ,[HOLODILNIK_DEFECT] =@HOLODILNIK_DEFECT-- <HOLODILNIK_DEFECT, nvarchar(500),>
+      ,[DATA] =		@DATA		-- <DATA, datetime,>
+      ,[VREMJA] =	@VREMJA		--	<VREMJA, varchar(20),>
+      ,[PRIMECHANIE] =@PRIMECHANIE		--	<PRIMECHANIE, varchar(500),>
+      ,[Msisdn1] =	@Msisdn1		-- <Msisdn1, nvarchar(20),>
+      ,[Msisdn2] =	@Msisdn2		--<Msisdn2, nvarchar(20),>
+      ,[Msisdn3] = 	@Msisdn3		--<Msisdn3, nvarchar(20),>
+      ,[ID_ORGANIZATION] =@ID_ORGANIZATION 	--	<ID_ORGANIZATION, bigint,>
+      ,[ID_MASTER] =	@ID_MASTER	-- <ID_MASTER, bigint,>
+      ,[DateSendMaster] = null	--	<DateSendMaster, datetime,>
+      ,[DateOpenMaster] = null	--	<DateOpenMaster, datetime,>
+      ,[ID_STATUS] =	@ID_STATUS	-- <ID_STATUS, bigint,>
+      ,[NameClient] =	@NameClient	--<NameClient, varchar(50),>
+      ,[Povtor] =		@Povtor	-- <Povtor, bit,>
+ WHERE 1=1
+	AND ID_ZAKAZ=@ID_ZAKAZ
+	AND ID_STATUS NOT IN (3,5)
 
 ";
 
             #endregion
 
-            ExecuteSqlStatic(sqlText);
+            ExecuteSqlStatic(sqlText,parameters);
 
         }
         /// <summary>
@@ -1522,7 +1572,9 @@ Save order
                     {
                         await command.ExecuteNonQueryAsync();
                     }
-                    catch (Exception e) { }
+                    catch (Exception e) 
+                    {
+                    }
 
                     command.Parameters.Clear();
                 }

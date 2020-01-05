@@ -13,7 +13,10 @@ namespace CRMBytholod.ViewModels
         public List<User> MASTERs { get; set; }
         public List<Organization> ORGANIZATIONs { get; set; }
 
-        public long PrevIDMaster { get; set; }
+        public OrderEditVM()
+        {
+
+        }
 
         public OrderEditVM(long ID_ZAKAZ)
         {
@@ -21,7 +24,6 @@ namespace CRMBytholod.ViewModels
             MASTERs = User.GetAllMasters();
             ORGANIZATIONs = Organization.GetAllOrganization();
 
-            PrevIDMaster = order.USER_MASTER.ID_USER;
         }
     }
 }

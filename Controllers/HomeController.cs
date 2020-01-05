@@ -75,9 +75,12 @@ namespace CRMBytholod.Controllers
                 return Redirect(location.AbsoluteUri);
             }
 
-            VM.order.Update(VM.PrevIDMaster);
+            VM.order.Update();
 
-            return View(VM);
+            Uri locat = new Uri($"{Request.Scheme}://{Request.Host}/Home/DetailOrder?ID_ZAKAZ={VM.order.ID_ZAKAZ}");
+            return Redirect(locat.AbsoluteUri);
+
+            
         }
 
         public IActionResult CreateOrder()
