@@ -120,6 +120,7 @@ namespace CRMBytholod.Models
 
         public Order()
         {
+            DATA = DateTime.Now;
             USER_MASTER = new User();
             USER_ADD = new User();
             STATUS = new Status();
@@ -968,45 +969,26 @@ INSERT INTO [dbo].[LogStatusOrder]
 
         /// <summary>
         /// Metod from site
-        /// </summary>        
-        public static void ChangeStatusDispetcher(string Login, long ID_ZAKAZ, Status Status)
+        /// </summary>     
+        public static void ChangeStatusDispetcher(long ID_USER, long ID_ZAKAZ, string Status)
         {
             SqlParameter[] parameters = new SqlParameter[]
-            {
-                new SqlParameter(@"Login",SqlDbType.NVarChar) { Value =Login },
+            {                
                 new SqlParameter(@"ID_ZAKAZ",SqlDbType.BigInt) { Value =ID_ZAKAZ },
-                new SqlParameter(@"STATUS",SqlDbType.NVarChar) { Value =Status.NameStatus },
-                new SqlParameter(@"ID_STATUS",SqlDbType.BigInt) { Value =Status.ID_STATUS }
+                new SqlParameter(@"STATUS",SqlDbType.NVarChar) { Value =Status },
+                new SqlParameter(@"ID_USER",SqlDbType.BigInt) { Value =ID_USER }
             };
 
             #region sql
 
             string sqlText = $@"
-declare @ID_USER bigint;
 
-
-
--- изменение статуса у заявки
-UPDATE [dbo].[Zakaz] SET ID_STATUS=@ID_STATUS
-WHERE ID_ZAKAZ =(
-SELECT ID_ZAKAZ  FROM [dbo].[Zakaz] o
-JOIN [User] u ON u.ID_USER=o.ID_MASTER
-WHERE 1=1
-	AND u.Sessionid=@Sessionid	--'CB80665A-93E0-4E91-A982-36063D546CE6'--@Sessionid	--
-	AND o.ID_ZAKAZ=@ID_ZAKAZ --2--@ID_ZAKAZ --
-	)
-
-
--- получаем айди пользователя 
-SET @ID_USER=(
-SELECT ID_USER FROM [dbo].[User] WHERE Login=@Login
-)
 
 -- Логирование изменение статуса
 INSERT INTO [dbo].[LogStatusOrder]
            ([ID_ZAKAZ]
            ,[STATUS]
-           ,[USER]
+           ,[ID_USER]
            ,[DateChange])
      VALUES
            (@ID_ZAKAZ
@@ -1434,7 +1416,7 @@ SELECT
                 new SqlParameter(@"Msisdn3",SqlDbType.NVarChar) { Value =Msisdn3 ?? "" },
                 new SqlParameter(@"ID_ORGANIZATION",SqlDbType.BigInt) { Value =ORGANIZATION.ID_ORGANIZATION },
                 new SqlParameter(@"ID_MASTER",SqlDbType.BigInt) { Value =USER_MASTER.ID_USER },
-                new SqlParameter(@"ID_STATUS",SqlDbType.NVarChar) { Value =_ID_STATUS },// в ожидании или повтор
+                new SqlParameter(@"ID_STATUS",SqlDbType.BigInt) { Value =_ID_STATUS },// в ожидании или повтор
                 new SqlParameter(@"NameClient",SqlDbType.NVarChar) { Value =NameClient ?? "" },
                 new SqlParameter(@"Povtor",SqlDbType.Bit) { Value =Povtor }
             };
@@ -1475,29 +1457,171 @@ UPDATE [dbo].[Zakaz]
 
             ExecuteSqlStatic(sqlText,parameters);
 
+            string tmpStatusName = Status.GetStatusName(_ID_STATUS);
+
+            ChangeStatusDispetcher(USER_ADD.ID_USER, ID_ZAKAZ, tmpStatusName);
+
         }
         /// <summary>
         /// Metod from site
         /// </summary>
-        public void Save()
+        public long Save()
         {
+            long _ID_STATUS = 1;// в ожидании
+            if (Povtor)
+                _ID_STATUS = 2;// повтор
+
             SqlParameter[] parameters = new SqlParameter[]
             {
-                new SqlParameter(@"ID_ZAKAZ",SqlDbType.BigInt) { Value =ID_ZAKAZ }
+                new SqlParameter(@"STREET",SqlDbType.NVarChar) { Value =STREET ?? "" },
+                new SqlParameter(@"HOUSE",SqlDbType.NVarChar) { Value =HOUSE ?? "" },
+                new SqlParameter(@"KORPUS",SqlDbType.NVarChar) { Value =KORPUS ?? "" },
+                new SqlParameter(@"KVARTIRA",SqlDbType.NVarChar) { Value =KVARTIRA ?? "" },
+                new SqlParameter(@"PODEST",SqlDbType.NVarChar) { Value =PODEST ?? "" },
+                new SqlParameter(@"ETAG",SqlDbType.NVarChar) { Value =ETAG ?? "" },
+                new SqlParameter(@"KOD_DOMOFONA",SqlDbType.NVarChar) { Value =KOD_DOMOFONA  ?? ""},
+                new SqlParameter(@"HOLODILNIK_DEFECT",SqlDbType.NVarChar) { Value =HOLODILNIK_DEFECT  ?? ""},
+                new SqlParameter(@"DATA",SqlDbType.DateTime) { Value =DATA },
+                new SqlParameter(@"VREMJA",SqlDbType.NVarChar) { Value =VREMJA  ?? ""},
+                new SqlParameter(@"PRIMECHANIE",SqlDbType.NVarChar) { Value = PRIMECHANIE ?? ""},
+                new SqlParameter(@"Msisdn1",SqlDbType.NVarChar) { Value =Msisdn1 ?? "" },
+                new SqlParameter(@"Msisdn2",SqlDbType.NVarChar) { Value =Msisdn2 ?? ""},
+                new SqlParameter(@"Msisdn3",SqlDbType.NVarChar) { Value =Msisdn3 ?? "" },
+                new SqlParameter(@"ID_ORGANIZATION",SqlDbType.BigInt) { Value =ORGANIZATION.ID_ORGANIZATION },
+                new SqlParameter(@"ID_MASTER",SqlDbType.BigInt) { Value =USER_MASTER.ID_USER },
+                new SqlParameter(@"ID_STATUS",SqlDbType.BigInt) { Value =_ID_STATUS },// в ожидании или повтор
+                new SqlParameter(@"NameClient",SqlDbType.NVarChar) { Value =NameClient ?? "" },
+                new SqlParameter(@"ID_USER_ADD",SqlDbType.BigInt) { Value =USER_ADD.ID_USER },
+                new SqlParameter(@"Povtor",SqlDbType.Bit) { Value =Povtor }
+                
             };
+
+
 
 
             #region sql
 
             string sqlText = @$"
-Save order
+--Save order
+INSERT INTO [dbo].[Zakaz]
+           ([STREET]
+           ,[HOUSE]
+           ,[KORPUS]
+           ,[KVARTIRA]
+           ,[PODEST]
+           ,[ETAG]
+           ,[KOD_DOMOFONA]
+           ,[HOLODILNIK_DEFECT]
+           ,[DATA]
+           ,[VREMJA]
+           ,[PRIMECHANIE]
+           ,[Msisdn1]
+           ,[Msisdn2]
+           ,[Msisdn3]
+           ,[ID_ORGANIZATION]
+           ,[ID_MASTER]
+           ,[DateAdd]
+           ,[DateSendMaster]
+           ,[DateOpenMaster]
+           ,[ID_STATUS]
+           ,[MoneyAll]
+           ,[MoneyFirm]
+           ,[MoneyDetal]
+           ,[MoneyMaster]
+           ,[DescripClose]
+           ,[NameClient]
+           ,[ID_USER_ADD]
+           ,[DateClose]
+           ,[Povtor])
+     VALUES
+           (
+		  @STREET --<STREET, nvarchar(50),>
+          ,@HOUSE --,<HOUSE, nvarchar(10),>
+          ,@KORPUS --,<KORPUS, nvarchar(10),>
+          ,@KVARTIRA --,<KVARTIRA, nvarchar(10),>
+          ,@PODEST --,<PODEST, nvarchar(10),>
+          ,@ETAG --,<ETAG, nvarchar(10),>
+          ,@KOD_DOMOFONA --,<KOD_DOMOFONA, nvarchar(10),>
+          ,@HOLODILNIK_DEFECT --,<HOLODILNIK_DEFECT, nvarchar(500),
+          ,@DATA --,<DATA, datetime,>
+          ,@VREMJA --,<VREMJA, varchar(20),>
+          ,@PRIMECHANIE --,<PRIMECHANIE, varchar(500),>
+          ,@Msisdn1 --,<Msisdn1, nvarchar(20),>
+          ,@Msisdn2 --,<Msisdn2, nvarchar(20),>
+          ,@Msisdn3 --,<Msisdn3, nvarchar(20),>
+          ,@ID_ORGANIZATION --,<ID_ORGANIZATION, bigint,>
+          ,@ID_MASTER --,<ID_MASTER, bigint,>
+          ,CURRENT_TIMESTAMP --,<DateAdd, datetime,>
+          ,null --,<DateSendMaster, datetime,>
+          ,null --,<DateOpenMaster, datetime,>
+          ,@ID_STATUS --,<ID_STATUS, bigint,>
+          ,0 --,<MoneyAll, int,>
+          ,0 --,<MoneyFirm, int,>
+          ,0 --,<MoneyDetal, int,>
+          ,0 --,<MoneyMaster, int,>
+          ,'' --,<DescripClose, varchar(200),>
+          ,@NameClient --,<NameClient, varchar(50),>
+          ,@ID_USER_ADD --,<ID_USER_ADD, bigint,>
+          ,null --,<DateClose, datetime,>
+          ,@Povtor --,<Povtor, bit,>
+)
+
+
+--После выводим айди данного заказа
+SELECT MAX(ID_ZAKAZ) AS ID_ZAKAZ FROM [dbo].[Zakaz]
+
+
+
 
 ";
 
             #endregion
 
-            ExecuteSqlStatic(sqlText);
 
+            DataTable dt= ExecuteSqlGetDataTableStatic(sqlText,parameters);
+            foreach (DataRow row in dt.Rows)
+            {
+                string tmpStatus = "В ОЖИДАНИИ";
+                if (Povtor)
+                    tmpStatus = "ПОВТОР";
+
+                ChangeStatusDispetcher(USER_ADD.ID_USER, (long)row["ID_ZAKAZ"], tmpStatus);
+
+                return (long)row["ID_ZAKAZ"];
+            }
+
+
+
+
+            return 0;
+        }
+        /// <summary>
+        /// Metod from site
+        /// </summary>
+        public static void CloseOrderFromDispetcher( long _ID_ZAKAZ, long _ID_USER)
+        {            
+            SqlParameter[] parameters = new SqlParameter[]
+            {
+                new SqlParameter(@"ID_ZAKAZ",SqlDbType.BigInt) { Value =_ID_ZAKAZ }
+            };
+
+            #region sql
+
+            string sqlText = @$"
+
+UPDATE [dbo].[Zakaz] SET  
+    [ID_STATUS]=3
+WHERE ID_ZAKAZ=@ID_ZAKAZ
+    
+
+";
+
+            #endregion
+            
+            ExecuteSqlStatic(sqlText, parameters);
+
+            ChangeStatusDispetcher(_ID_USER, _ID_ZAKAZ,"ЗАКРЫТ ДИСПЕТЧЕРОМ");
+            
         }
 
 

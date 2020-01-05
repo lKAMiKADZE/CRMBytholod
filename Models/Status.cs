@@ -14,7 +14,26 @@ namespace CRMBytholod.Models
         public string NameStatus { get; set; }
         public string ColorHex { get; set; }
 
+        public static string GetStatusName(long ID_STATUS)
+        {
+            switch (ID_STATUS)
+            {
+                case 1:
+                    return "В ОЖИДАНИИ"; break;
+                case 2:
+                    return "ПОВТОР"; break;
+                case 3:
+                    return "ОТКАЗ"; break;
+                case 4:
+                    return "В РАБОТЕ"; break;
+                case 5:
+                    return "ВЫПОЛНЕН"; break;
+                default :
+                    return ""; break;
+            }
 
+
+        }
 
 
         ////////////////

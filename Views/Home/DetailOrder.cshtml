@@ -14,6 +14,10 @@
     <div>
         <b>@Html.ActionLink("Редактировать", "EditOrder", new { ID_ZAKAZ = Model.order.ID_ZAKAZ })</b>
     </div>
+    <br/>
+    <div>
+        <b>@Html.ActionLink("Закрыть заявку", "CloseOrder", new { ID_ZAKAZ = Model.order.ID_ZAKAZ })</b>
+    </div>
 }
 <br />
 

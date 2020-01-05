@@ -74,6 +74,8 @@ namespace CRMBytholod.Controllers
                 Uri location = new Uri($"{Request.Scheme}://{Request.Host}/Account/Login");
                 return Redirect(location.AbsoluteUri);
             }
+            
+            VM.order.USER_ADD.ID_USER = Convert.ToInt64(User.Identity.Name);// присваиваем, кто изменяет данные
 
             VM.order.Update();
 
@@ -83,6 +85,7 @@ namespace CRMBytholod.Controllers
             
         }
 
+        [HttpGet]
         public IActionResult CreateOrder()
         {
             if (!User.Identity.IsAuthenticated)// если неавторизован то редирект на авторизацию
@@ -91,7 +94,27 @@ namespace CRMBytholod.Controllers
                 return Redirect(location.AbsoluteUri);
             }
 
-            return View();
+            OrderCreateVM VM = new OrderCreateVM();
+
+
+            return View(VM);
+        }
+
+        [HttpPost]
+        public IActionResult CreateOrder(OrderCreateVM VM)
+        {
+            if (!User.Identity.IsAuthenticated)// если неавторизован то редирект на авторизацию
+            {
+                Uri location = new Uri($"{Request.Scheme}://{Request.Host}/Account/Login");
+                return Redirect(location.AbsoluteUri);
+            }
+
+            VM.order.USER_ADD.ID_USER = Convert.ToInt64(User.Identity.Name);// присваиваем, кто добавляет пользователя
+
+            long ID_ZAKAZ = VM.order.Save();
+                        
+            Uri locat = new Uri($"{Request.Scheme}://{Request.Host}/Home/DetailOrder?ID_ZAKAZ={ID_ZAKAZ}");
+            return Redirect(locat.AbsoluteUri);
         }
 
         public IActionResult DetailOrder(long ID_ZAKAZ)
@@ -106,6 +129,23 @@ namespace CRMBytholod.Controllers
             //Order order = Order.GetOrderSite(ID_ZAKAZ);
 
             return View(VM);
+        }
+
+
+
+        
+        public IActionResult CloseOrder(long ID_ZAKAZ)
+        {
+            if (!User.Identity.IsAuthenticated)// если неавторизован то редирект на авторизацию
+            {
+                Uri location = new Uri($"{Request.Scheme}://{Request.Host}/Account/Login");
+                return Redirect(location.AbsoluteUri);
+            }
+
+            Order.CloseOrderFromDispetcher(ID_ZAKAZ, Convert.ToInt64(User.Identity.Name));
+
+            Uri locat = new Uri($"{Request.Scheme}://{Request.Host}/Home/DetailOrder?ID_ZAKAZ={ID_ZAKAZ}");
+            return Redirect(locat.AbsoluteUri);
         }
 
 

@@ -128,6 +128,9 @@
     <thead>
         <tr>
             <th>
+                ID зявки
+            </th>
+            <th>
                 Холодильник дефект
             </th>
             <th>
@@ -159,44 +162,47 @@
     <tbody>
         @foreach (var item in Model.Orders)
         {
-            <tr>
-                <td>
-                    <a asp-action="DetailOrder" asp-route-id_zakaz="@item.ID_ZAKAZ"><b>@item.HOLODILNIK_DEFECT</b></a>
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.NameClient)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.GetAdresFull)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.GetDATA)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.VREMJA)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Msisdn1)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.USER_MASTER.Name)
-                </td>
-                <td>
-                    @switch (item.STATUS.NameStatus)
-                    {
-                      case "В ОЖИДАНИИ":<span class="label" style='background-color:@item.STATUS.ColorHex; padding: 6px;'>@item.STATUS.NameStatus</span> break;
-                      case "ПОВТОР": <span class="label" style='background-color:@item.STATUS.ColorHex; padding: 6px;'>@item.STATUS.NameStatus</span> break;
-                      case "ОТКАЗ": <span class="label" style='background-color:@item.STATUS.ColorHex; padding: 6px;'>@item.STATUS.NameStatus</span> break;
-                      case "В РАБОТЕ": <span class="label" style='background-color:@item.STATUS.ColorHex; padding: 6px;'>@item.STATUS.NameStatus</span> break;
-                      case "ВЫПОЛНЕН": <span class="label" style='background-color:@item.STATUS.ColorHex; padding: 6px;'>@item.STATUS.NameStatus</span> break;
-                      default: @item.STATUS.NameStatus; break;
-                    }
+        <tr>
+            <td>
+                <a asp-action="DetailOrder" asp-route-id_zakaz="@item.ID_ZAKAZ"><b>@item.ID_ZAKAZ</b></a>
+            </td>
+            <td>
+                <a asp-action="DetailOrder" asp-route-id_zakaz="@item.ID_ZAKAZ"><b>@item.HOLODILNIK_DEFECT</b></a>
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.NameClient)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.GetAdresFull)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.GetDATA)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.VREMJA)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Msisdn1)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.USER_MASTER.Name)
+            </td>
+            <td>
+                @switch (item.STATUS.NameStatus)
+                {
+                    case "В ОЖИДАНИИ":<span class="label" style='background-color:@item.STATUS.ColorHex; padding: 6px;'>@item.STATUS.NameStatus</span> break;
+                case "ПОВТОР": <span class="label" style='background-color:@item.STATUS.ColorHex; padding: 6px;'>@item.STATUS.NameStatus</span> break;
+            case "ОТКАЗ": <span class="label" style='background-color:@item.STATUS.ColorHex; padding: 6px;'>@item.STATUS.NameStatus</span> break;
+        case "В РАБОТЕ": <span class="label" style='background-color:@item.STATUS.ColorHex; padding: 6px;'>@item.STATUS.NameStatus</span> break;
+    case "ВЫПОЛНЕН": <span class="label" style='background-color:@item.STATUS.ColorHex; padding: 6px;'>@item.STATUS.NameStatus</span> break;
+    default: @item.STATUS.NameStatus; break;
+}
 
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.DateAdd)
-                </td>
-            </tr>
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.DateAdd)
+            </td>
+        </tr>
         }
     </tbody>
 </table>
