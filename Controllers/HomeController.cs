@@ -130,10 +130,7 @@ namespace CRMBytholod.Controllers
 
             return View(VM);
         }
-
-
-
-        
+                       
         public IActionResult CloseOrder(long ID_ZAKAZ)
         {
             if (!User.Identity.IsAuthenticated)// если неавторизован то редирект на авторизацию
@@ -149,5 +146,106 @@ namespace CRMBytholod.Controllers
         }
 
 
+        ////// Осуществление вызова
+        ///////////////////////////
+
+        public IActionResult CallClient()
+        {
+
+
+            return View();
+        }
+
+
+        ////// СОЗДАНИЕ НОВЫХ ПОЛЬЗОВАТЕЛЕЙ
+        ///////////////////////////////////
+
+
+        public IActionResult Users()
+        {
+            if (!User.Identity.IsAuthenticated)// если неавторизован то редирект на авторизацию
+            {
+                Uri location = new Uri($"{Request.Scheme}://{Request.Host}/Account/Login");
+                return Redirect(location.AbsoluteUri);
+            }
+
+            UsersVM VM = new UsersVM(Convert.ToInt64(User.Identity.Name));
+
+            return View(VM);
+        }
+
+
+        [HttpGet]
+        public IActionResult CreateUser()
+        {
+            if (!User.Identity.IsAuthenticated)// если неавторизован то редирект на авторизацию
+            {
+                Uri location = new Uri($"{Request.Scheme}://{Request.Host}/Account/Login");
+                return Redirect(location.AbsoluteUri);
+            }
+
+            UserCreateVM VM = new UserCreateVM();
+
+
+            return View(VM);
+        }
+        [HttpPost]
+        public IActionResult CreateUser(UserCreateVM VM)
+        {
+            if (!User.Identity.IsAuthenticated)// если неавторизован то редирект на авторизацию
+            {
+                Uri location = new Uri($"{Request.Scheme}://{Request.Host}/Account/Login");
+                return Redirect(location.AbsoluteUri);
+            }
+            VM.user.Save();
+
+            Uri locat = new Uri($"{Request.Scheme}://{Request.Host}/Home/Users");
+            return Redirect(locat.AbsoluteUri);
+
+
+        }
+
+        [HttpGet]
+        public IActionResult EditUser(long ID_USER)
+        {
+            if (!User.Identity.IsAuthenticated)// если неавторизован то редирект на авторизацию
+            {
+                Uri location = new Uri($"{Request.Scheme}://{Request.Host}/Account/Login");
+                return Redirect(location.AbsoluteUri);
+            }
+
+            UserEditVM VM = new UserEditVM(ID_USER);
+
+
+            return View(VM);
+        }
+        [HttpPost]
+        public IActionResult EditUser(UserEditVM VM)
+        {
+            if (!User.Identity.IsAuthenticated)// если неавторизован то редирект на авторизацию
+            {
+                Uri location = new Uri($"{Request.Scheme}://{Request.Host}/Account/Login");
+                return Redirect(location.AbsoluteUri);
+            }
+
+            VM.user.Update();
+            Uri locat = new Uri($"{Request.Scheme}://{Request.Host}/Home/Users");
+            return Redirect(locat.AbsoluteUri);
+
+        }
+
+        public IActionResult DeleteUser(long ID_USER)
+        {
+            if (!User.Identity.IsAuthenticated)// если неавторизован то редирект на авторизацию
+            {
+                Uri location = new Uri($"{Request.Scheme}://{Request.Host}/Account/Login");
+                return Redirect(location.AbsoluteUri);
+            }
+
+            CRMBytholod.Models.User.Delete(ID_USER);
+            Uri locat = new Uri($"{Request.Scheme}://{Request.Host}/Home/Users");
+            return Redirect(locat.AbsoluteUri);
+
+        }
     }
 }

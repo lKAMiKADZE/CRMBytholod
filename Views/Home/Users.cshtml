@@ -1,0 +1,73 @@
+﻿@model CRMBytholod.ViewModels.UsersVM
+
+@{
+    ViewData["Title"] = "Пользователи";
+}
+
+<h1>Пользователи</h1>
+
+<p>
+    <a asp-action="CreateUser"><input type="button" class="btn btn-primary" value="Добавить" /> </a>
+</p>
+
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                Имя
+            </th>
+            <th>
+                Пароль мастера
+            </th>
+            <th>
+                Логин
+            </th>
+            <th>
+                Тип пользователя
+            </th>
+            <th>
+                Телефон звонка для мастера
+            </th>
+            <th>
+                Админ
+            </th>
+            <th>
+                Дата добавления
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model.Users)
+        {
+         <tr>
+             <td>
+                 @Html.DisplayFor(modelItem => item.Name)
+             </td>
+             <td>
+                 @Html.DisplayFor(modelItem => item.PasswMaster)
+             </td>
+             <td>
+                 @Html.DisplayFor(modelItem => item.Login)
+             </td>
+             <td>
+                 @Html.DisplayFor(modelItem => item.TYPE_USER.NameTU)
+             </td>
+             <td>
+                 @Html.DisplayFor(modelItem => item.Phone)
+             </td>
+             <td>
+                 @Html.DisplayFor(modelItem => item.GetAdmin)
+             </td>
+             <td>
+                 @Html.DisplayFor(modelItem => item.DateAdd)
+             </td>
+             <td>
+                 @Html.ActionLink("Редактировать", "EditUser", new { ID_USER = item.ID_USER }) |
+                 @Html.ActionLink("Удалить", "DeleteUser", new { ID_USER = item.ID_USER })
+             </td>
+         </tr>
+        }
+    </tbody>
+</table>

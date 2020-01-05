@@ -15,6 +15,54 @@ namespace CRMBytholod.Models
 
 
 
+        public static List<TypeUser> GetAllTypeUsers()
+        {
+            List<TypeUser> tus = new List<TypeUser>();
+
+
+            SqlParameter[] parameters = new SqlParameter[]
+            {
+            };
+
+            #region sql
+
+            string sqlText = $@"
+
+SELECT 
+	ID_TYPE_USER,
+	NameTU
+	 FROM [TypeUser]
+
+
+";
+
+            #endregion
+
+            DataTable dt = new DataTable();// при наличии данных
+            // получаем данные из запроса
+            dt = ExecuteSqlGetDataTableStatic(sqlText);
+
+
+            foreach (DataRow row in dt.Rows)
+            {
+                TypeUser tu = new TypeUser
+                {
+                    ID_TYPE_USER = (long)row["ID_TYPE_USER"],
+                    NameTU = (string)row["NameTU"]
+                };
+
+
+
+                tus.Add(tu);
+            }
+
+
+            return tus;
+        }
+
+
+
+
 
         ////////////////
         // Методы SQL

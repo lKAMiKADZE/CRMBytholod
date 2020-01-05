@@ -2,6 +2,7 @@
 using Microsoft.Data.SqlClient;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Data;
 using System.Linq;
 using System.Threading.Tasks;
@@ -13,8 +14,12 @@ namespace CRMBytholod.Models
         public long ID_USER { get; set; }
         public string Name { get; set; }
         public string Passw { get; set; }
+
+        [Required(ErrorMessage = "Не указан пароль")]
         public string PasswMaster { get; set; }        
         public TypeUser TYPE_USER { get; set; }
+
+        [Required(ErrorMessage = "Не указан Логин")]
         public string Login { get; set; }
         public string Phone { get; set; }
         public string Sessionid { get; set; }
@@ -31,6 +36,22 @@ namespace CRMBytholod.Models
         public int MoneyUpMaster { get; set; }
 
         public bool Admin { get; set; }
+        public bool Deleted { get; set; }
+
+
+        ////Свойства
+
+        public string GetAdmin
+        {
+            get
+            {
+                if (Admin)
+                    return "ДА";
+
+                return "НЕТ";
+            }
+        }
+
 
         ///////////////////////////////////////
         //Методы для мобилы АПИ
@@ -64,7 +85,7 @@ BEGIN
 	WHERE 1=1
 		AND ID_TYPE_USER=3
 	    AND Login=@Login
-	    AND Passw=@Passw
+	    AND PasswMaster=@Passw
 
 	SELECT Sessionid, 1 AS Auth FROM [dbo].[User]
 	WHERE 1=1
@@ -215,7 +236,7 @@ SELECT ID_USER,
 	DateAdd
  FROM [User]
 WHERE LOWER(Login)=LOWER(@Login)
-	AND Passw= @Passw
+	AND PasswMaster= @Passw
 
 ";
 
@@ -247,14 +268,14 @@ WHERE LOWER(Login)=LOWER(@Login)
         /// <summary>
         /// Только для админа
         /// </summary>        
-        public static List<User> GetAllUsers(string Login)
+        public static List<User> GetAllUsers(long ID_USER)
         {
             List<User> users= new List<User>();
 
 
             SqlParameter[] parameters = new SqlParameter[]
             {
-                new SqlParameter(@"Login",SqlDbType.NVarChar) { Value =Login }
+                new SqlParameter(@"ID_USER",SqlDbType.BigInt) { Value =ID_USER }
             };
 
             #region sql
@@ -265,7 +286,7 @@ declare @admin bit;
 set @admin=(
 SELECT count(1)
  FROM [User]
-WHERE LOWER(Login)=LOWER(@Login)
+WHERE ID_USER=@ID_USER
 	AND ID_TYPE_USER=1
 )  
 
@@ -284,7 +305,7 @@ SELECT ID_USER,
  FROM [User] u
  JOIN [TypeUser] tu ON u.ID_TYPE_USER=tu.ID_TYPE_USER
 WHERE 1=1
-	AND LOWER(Login)<>LOWER(@Login)
+    AND Deleted=0
 ORDER BY DateAdd DESC
 
 END
@@ -307,16 +328,22 @@ END
                     NameTU = (string)row["NameTU"]
                 };
 
+                bool tmpAdmin = false;
+                if (tu.ID_TYPE_USER == 1)
+                    tmpAdmin = true;
+
+
                 // попали в цикл, значит авторизовались, т.к. такой пользователь существует
                 User us = new User
                 {
-                    ID_USER=(long)row["ID_USER"],
+                    ID_USER = (long)row["ID_USER"],
                     Name = (string)row["Name"],
                     Login = (string)row["Login"],
                     PasswMaster = (string)row["PasswMaster"],
                     TYPE_USER = tu,
                     DateAdd = (DateTime)row["DateAdd"],
-                    Phone = (string)row["Phone"]
+                    Phone = (string)row["Phone"],
+                    Admin = tmpAdmin
                 };
 
                 users.Add(us);
@@ -325,7 +352,76 @@ END
 
             return users;
         }
+        public static User GetUser(long ID_USER)
+        {
 
+
+            SqlParameter[] parameters = new SqlParameter[]
+            {
+                new SqlParameter(@"ID_USER",SqlDbType.BigInt) { Value =ID_USER }
+            };
+
+            #region sql
+
+            string sqlText = $@"
+
+SELECT [ID_USER]
+      ,[Name]
+      ,[Passw]
+      ,tu.[ID_TYPE_USER]
+	  ,tu.[NameTU]
+      ,[Login]
+      ,[Phone]
+      ,[Sessionid]
+      ,[PasswMaster]
+      ,[DateAdd]
+      ,[Deleted]
+  FROM [dbo].[User] u
+  JOIN [TypeUser] tu ON tu.ID_TYPE_USER=u.ID_TYPE_USER
+  WHERE ID_USER=@ID_USER
+  AND deleted=0
+
+
+";
+
+            #endregion
+
+            DataTable dt = new DataTable();// при наличии данных
+            // получаем данные из запроса
+            dt = ExecuteSqlGetDataTableStatic(sqlText, parameters);
+
+
+            foreach (DataRow row in dt.Rows)
+            {
+                TypeUser tu = new TypeUser
+                {
+                    ID_TYPE_USER = (long)row["ID_TYPE_USER"],
+                    NameTU = (string)row["NameTU"]
+                };
+
+                bool tmpAdmin = false;
+                if (tu.ID_TYPE_USER == 1)
+                    tmpAdmin = true;
+
+
+                // попали в цикл, значит авторизовались, т.к. такой пользователь существует
+                User us = new User
+                {
+                    ID_USER = (long)row["ID_USER"],
+                    Name = (string)row["Name"],
+                    Login = (string)row["Login"],
+                    PasswMaster = (string)row["PasswMaster"],
+                    TYPE_USER = tu,
+                    DateAdd = (DateTime)row["DateAdd"],
+                    Phone = (string)row["Phone"],
+                    Admin = tmpAdmin
+                };
+                return us;
+            }
+
+
+            return null;
+        }
 
         public static List<User> GetAllMasters()
         {
@@ -345,7 +441,7 @@ END
    FROM [User] u
   JOIN [TypeUser] tu ON tu.ID_TYPE_USER=u.ID_TYPE_USER
   WHERE tu.ID_TYPE_USER=3
-
+    AND Deleted=0
   ORDER BY name ASC
 
 ";
@@ -372,6 +468,134 @@ END
 
 
             return users;
+        }
+
+
+        public void Update()
+        {
+
+
+            SqlParameter[] parameters = new SqlParameter[]
+            {
+                new SqlParameter(@"ID_USER",SqlDbType.BigInt) { Value =ID_USER },
+                new SqlParameter(@"Name",SqlDbType.NVarChar) { Value =Name ?? "" },
+                new SqlParameter(@"Passw",SqlDbType.NVarChar) { Value =Passw ?? "" },
+                new SqlParameter(@"ID_TYPE_USER",SqlDbType.BigInt) { Value =TYPE_USER.ID_TYPE_USER },
+                new SqlParameter(@"Login",SqlDbType.NVarChar) { Value =Login ?? "" },
+                new SqlParameter(@"Phone",SqlDbType.NVarChar) { Value =Phone  ?? ""},
+                new SqlParameter(@"PasswMaster",SqlDbType.NVarChar) { Value =PasswMaster ?? "" },
+            };
+
+            #region sql
+
+            string sqlText = $@"
+UPDATE [dbo].[User]
+   SET [Name] =			@Name--<Name, nvarchar(50),>
+      ,[Passw] =		@Passw	--<Passw, nvarchar(150),>
+      ,[ID_TYPE_USER] = @ID_TYPE_USER --<ID_TYPE_USER, bigint,>
+      ,[Login] =		@Login	-- <Login, nvarchar(20),>
+      ,[Phone] =		@Phone--<Phone, nvarchar(15),>
+      ,[PasswMaster] =	@PasswMaster	-- <PasswMaster, nvarchar(50),>
+      
+ WHERE ID_USER=@ID_USER
+
+
+
+";
+
+            #endregion
+
+            // получаем данные из запроса
+            ExecuteSqlStatic(sqlText, parameters);
+
+
+
+
+        }
+
+        public static void Delete(long ID_USER)
+        {
+
+
+            SqlParameter[] parameters = new SqlParameter[]
+            {
+                new SqlParameter(@"ID_USER",SqlDbType.BigInt) { Value =ID_USER },
+                new SqlParameter(@"Deleted",SqlDbType.Bit) { Value =1 }
+            };
+
+            #region sql
+
+            string sqlText = $@"
+UPDATE [dbo].[User]
+   SET [Deleted] =	@Deleted    
+ WHERE ID_USER=@ID_USER
+
+
+
+";
+
+            #endregion
+
+            // получаем данные из запроса
+            ExecuteSqlStatic(sqlText, parameters);
+
+
+
+
+        }
+
+        public void Save()
+        {
+
+
+            SqlParameter[] parameters = new SqlParameter[]
+            {
+                new SqlParameter(@"Name",SqlDbType.NVarChar) { Value =Name ?? ""},
+                new SqlParameter(@"Passw",SqlDbType.NVarChar) { Value =Passw ?? ""},
+                new SqlParameter(@"ID_TYPE_USER",SqlDbType.BigInt) { Value =TYPE_USER.ID_TYPE_USER },
+                new SqlParameter(@"Login",SqlDbType.NVarChar) { Value =Login },
+                new SqlParameter(@"Phone",SqlDbType.NVarChar) { Value =Phone ?? "" },
+                new SqlParameter(@"PasswMaster",SqlDbType.NVarChar) { Value =PasswMaster },
+            };
+
+            #region sql
+
+            string sqlText = $@"
+INSERT INTO [dbo].[User]
+           ([Name]
+           ,[Passw]
+           ,[ID_TYPE_USER]
+           ,[Login]
+           ,[Phone]
+           ,[Sessionid]
+           ,[PasswMaster]
+           ,[DateAdd]
+           ,[Deleted])
+     VALUES
+           (
+		    @Name  --<Name, nvarchar(50),>
+           ,@Passw  --<Passw, nvarchar(150),>
+           ,@ID_TYPE_USER  --<ID_TYPE_USER, bigint,>
+           ,@Login  --<Login, nvarchar(20),>
+           ,@Phone  --<Phone, nvarchar(15),>
+           ,''  --<Sessionid, nvarchar(150),>
+           ,@PasswMaster  --<PasswMaster, nvarchar(50),>
+           ,CURRENT_TIMESTAMP  --<DateAdd, datetime,>
+           ,0  --<Deleted, bit,>
+		   )
+
+
+
+";
+
+            #endregion
+
+            // получаем данные из запроса
+            ExecuteSqlStatic(sqlText, parameters);
+
+
+
+
         }
 
 
