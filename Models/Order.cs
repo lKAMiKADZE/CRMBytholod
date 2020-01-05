@@ -511,27 +511,28 @@ ORDER BY DateClose DESC, ID_ZAKAZ DESC
   JOIN [dbo].[Status] s ON s.ID_STATUS=o.ID_STATUS
   WHERE 1=1
 	AND o.ID_ZAKAZ<> @ID_ZAKAZ
+    AND DateClose is not null
 	AND 
 	(
 		(	
-				STREET = (SELECT STREET FROM [dbo].[Zakaz] z WHERE z.ID_ZAKAZ=@ID_ZAKAZ )	   -- @ID_ZAKAZ
-			AND	HOUSE =	 (SELECT HOUSE FROM [dbo].[Zakaz] z WHERE z.ID_ZAKAZ=@ID_ZAKAZ )	   -- @ID_ZAKAZ
-			AND	KORPUS = (SELECT KORPUS FROM [dbo].[Zakaz] z WHERE z.ID_ZAKAZ=@ID_ZAKAZ )	   -- @ID_ZAKAZ
-			AND	KVARTIRA = (SELECT KVARTIRA FROM [dbo].[Zakaz] z WHERE z.ID_ZAKAZ=@ID_ZAKAZ )  -- @ID_ZAKAZ
+				STREET = (SELECT STREET FROM [dbo].[Zakaz] z WHERE z.ID_ZAKAZ=@ID_ZAKAZ AND STREET!='')	   
+			AND	HOUSE =	 (SELECT HOUSE FROM [dbo].[Zakaz] z WHERE z.ID_ZAKAZ=@ID_ZAKAZ )	   
+			AND	KORPUS = (SELECT KORPUS FROM [dbo].[Zakaz] z WHERE z.ID_ZAKAZ=@ID_ZAKAZ )	   
+			AND	KVARTIRA = (SELECT KVARTIRA FROM [dbo].[Zakaz] z WHERE z.ID_ZAKAZ=@ID_ZAKAZ )  
 		)
 		OR
 		(
-				Msisdn1 = (SELECT z.Msisdn1 FROM [dbo].[Zakaz] z WHERE z.ID_ZAKAZ=@ID_ZAKAZ ) -- @ID_ZAKAZ
-			OR	Msisdn1 = (SELECT z.Msisdn2 FROM [dbo].[Zakaz] z WHERE z.ID_ZAKAZ=@ID_ZAKAZ ) -- @ID_ZAKAZ
-			OR	Msisdn1 = (SELECT z.Msisdn3 FROM [dbo].[Zakaz] z WHERE z.ID_ZAKAZ=@ID_ZAKAZ ) -- @ID_ZAKAZ
+				Msisdn1 = (SELECT z.Msisdn1 FROM [dbo].[Zakaz] z WHERE z.ID_ZAKAZ=@ID_ZAKAZ AND Msisdn1!='' ) 
+			OR	Msisdn1 = (SELECT z.Msisdn2 FROM [dbo].[Zakaz] z WHERE z.ID_ZAKAZ=@ID_ZAKAZ AND Msisdn2!='' ) 
+			OR	Msisdn1 = (SELECT z.Msisdn3 FROM [dbo].[Zakaz] z WHERE z.ID_ZAKAZ=@ID_ZAKAZ	AND Msisdn3!='' ) 
 			                                                                      
-			OR	Msisdn2 = (SELECT z.Msisdn1 FROM [dbo].[Zakaz] z WHERE z.ID_ZAKAZ=@ID_ZAKAZ ) -- @ID_ZAKAZ
-			OR	Msisdn2 = (SELECT z.Msisdn2 FROM [dbo].[Zakaz] z WHERE z.ID_ZAKAZ=@ID_ZAKAZ ) -- @ID_ZAKAZ
-			OR	Msisdn2 = (SELECT z.Msisdn3 FROM [dbo].[Zakaz] z WHERE z.ID_ZAKAZ=@ID_ZAKAZ ) -- @ID_ZAKAZ
+			OR	Msisdn2 = (SELECT z.Msisdn1 FROM [dbo].[Zakaz] z WHERE z.ID_ZAKAZ=@ID_ZAKAZ AND Msisdn1!='' ) 
+			OR	Msisdn2 = (SELECT z.Msisdn2 FROM [dbo].[Zakaz] z WHERE z.ID_ZAKAZ=@ID_ZAKAZ AND Msisdn2!='' ) 
+			OR	Msisdn2 = (SELECT z.Msisdn3 FROM [dbo].[Zakaz] z WHERE z.ID_ZAKAZ=@ID_ZAKAZ	AND Msisdn3!='' ) 
 			--                                                                    
-			OR	Msisdn3 = (SELECT z.Msisdn1 FROM [dbo].[Zakaz] z WHERE z.ID_ZAKAZ=@ID_ZAKAZ ) -- @ID_ZAKAZ
-			OR	Msisdn3 = (SELECT z.Msisdn2 FROM [dbo].[Zakaz] z WHERE z.ID_ZAKAZ=@ID_ZAKAZ ) -- @ID_ZAKAZ
-			OR	Msisdn3 = (SELECT z.Msisdn3 FROM [dbo].[Zakaz] z WHERE z.ID_ZAKAZ=@ID_ZAKAZ ) -- @ID_ZAKAZ
+			OR	Msisdn3 = (SELECT z.Msisdn1 FROM [dbo].[Zakaz] z WHERE z.ID_ZAKAZ=@ID_ZAKAZ AND Msisdn1!='' ) 
+			OR	Msisdn3 = (SELECT z.Msisdn2 FROM [dbo].[Zakaz] z WHERE z.ID_ZAKAZ=@ID_ZAKAZ AND Msisdn2!='' ) 
+			OR	Msisdn3 = (SELECT z.Msisdn3 FROM [dbo].[Zakaz] z WHERE z.ID_ZAKAZ=@ID_ZAKAZ	AND Msisdn3!='' ) 
 		)
 	)
 	
@@ -1153,13 +1154,15 @@ WHERE 1=1
             SqlParameter[] parameters = new SqlParameter[]
             {
                 new SqlParameter(@"DateStart",SqlDbType.DateTime) { Value =filtrOrders.DateStart },
-                new SqlParameter(@"DateEnd",SqlDbType.DateTime) { Value =filtrOrders.DateEnd }
+                new SqlParameter(@"DateEnd",SqlDbType.DateTime) { Value =filtrOrders.DateEnd.AddDays(1) }
             };
+
 
             string WHERE_adres = "";
             string WHERE_betweenDate = "";
             string WHERE_povtor = "";
             string WHERE_idStatus = "";
+            string WHERE_msisdn = "";
 
             if ( !String.IsNullOrEmpty(filtrOrders.Adres))
                 WHERE_adres = $" AND lower(STREET) like '%{filtrOrders.Adres.ToLower()}%'";
@@ -1172,7 +1175,8 @@ WHERE 1=1
             if (filtrOrders.ID_STATUS != 0)
                 WHERE_idStatus = $"AND z.ID_STATUS = {filtrOrders.ID_STATUS}";
 
-
+            if (!String.IsNullOrEmpty(filtrOrders.Msisdn))
+                WHERE_msisdn = $" AND lower(msisdn1) like '%{filtrOrders.Msisdn.ToLower()}%'";
 
 
             #region sql
@@ -1205,6 +1209,7 @@ WITH OrdersPage AS
         {WHERE_betweenDate}
         {WHERE_povtor}
         {WHERE_idStatus}
+        {WHERE_msisdn}
 ) 
 
 SELECT
@@ -1289,7 +1294,9 @@ ORDER BY RowNumber ASC
 
             #region sql
 
+
             string sqlText = @$"
+
 SELECT
   ID_ZAKAZ
 	,HOLODILNIK_DEFECT
@@ -1300,6 +1307,8 @@ SELECT
 	,KORPUS
 	,KVARTIRA
 	,Msisdn1
+	,Msisdn2
+	,Msisdn3
 	,o.DateAdd
 	,DATA
 	,VREMJA
@@ -1313,29 +1322,28 @@ SELECT
 	AND 
 	(
 		(	
-				STREET = (SELECT STREET FROM [dbo].[Zakaz] z WHERE z.ID_ZAKAZ=@ID_ZAKAZ )	   -- @ID_ZAKAZ
-			AND	HOUSE =	 (SELECT HOUSE FROM [dbo].[Zakaz] z WHERE z.ID_ZAKAZ=@ID_ZAKAZ )	   -- @ID_ZAKAZ
-			AND	KORPUS = (SELECT KORPUS FROM [dbo].[Zakaz] z WHERE z.ID_ZAKAZ=@ID_ZAKAZ )	   -- @ID_ZAKAZ
-			AND	KVARTIRA = (SELECT KVARTIRA FROM [dbo].[Zakaz] z WHERE z.ID_ZAKAZ=@ID_ZAKAZ )  -- @ID_ZAKAZ
+				STREET = (SELECT STREET FROM [dbo].[Zakaz] z WHERE z.ID_ZAKAZ=@ID_ZAKAZ AND STREET!='')	   
+			AND	HOUSE =	 (SELECT HOUSE FROM [dbo].[Zakaz] z WHERE z.ID_ZAKAZ=@ID_ZAKAZ )	   
+			AND	KORPUS = (SELECT KORPUS FROM [dbo].[Zakaz] z WHERE z.ID_ZAKAZ=@ID_ZAKAZ )	   
+			AND	KVARTIRA = (SELECT KVARTIRA FROM [dbo].[Zakaz] z WHERE z.ID_ZAKAZ=@ID_ZAKAZ )  
 		)
 		OR
 		(
-				Msisdn1 = (SELECT z.Msisdn1 FROM [dbo].[Zakaz] z WHERE z.ID_ZAKAZ=@ID_ZAKAZ ) -- @ID_ZAKAZ
-			OR	Msisdn1 = (SELECT z.Msisdn2 FROM [dbo].[Zakaz] z WHERE z.ID_ZAKAZ=@ID_ZAKAZ ) -- @ID_ZAKAZ
-			OR	Msisdn1 = (SELECT z.Msisdn3 FROM [dbo].[Zakaz] z WHERE z.ID_ZAKAZ=@ID_ZAKAZ ) -- @ID_ZAKAZ
+				Msisdn1 = (SELECT z.Msisdn1 FROM [dbo].[Zakaz] z WHERE z.ID_ZAKAZ=@ID_ZAKAZ AND Msisdn1!='' ) 
+			OR	Msisdn1 = (SELECT z.Msisdn2 FROM [dbo].[Zakaz] z WHERE z.ID_ZAKAZ=@ID_ZAKAZ AND Msisdn2!='' ) 
+			OR	Msisdn1 = (SELECT z.Msisdn3 FROM [dbo].[Zakaz] z WHERE z.ID_ZAKAZ=@ID_ZAKAZ	AND Msisdn3!='' ) 
 			                                                                      
-			OR	Msisdn2 = (SELECT z.Msisdn1 FROM [dbo].[Zakaz] z WHERE z.ID_ZAKAZ=@ID_ZAKAZ ) -- @ID_ZAKAZ
-			OR	Msisdn2 = (SELECT z.Msisdn2 FROM [dbo].[Zakaz] z WHERE z.ID_ZAKAZ=@ID_ZAKAZ ) -- @ID_ZAKAZ
-			OR	Msisdn2 = (SELECT z.Msisdn3 FROM [dbo].[Zakaz] z WHERE z.ID_ZAKAZ=@ID_ZAKAZ ) -- @ID_ZAKAZ
+			OR	Msisdn2 = (SELECT z.Msisdn1 FROM [dbo].[Zakaz] z WHERE z.ID_ZAKAZ=@ID_ZAKAZ AND Msisdn1!='' ) 
+			OR	Msisdn2 = (SELECT z.Msisdn2 FROM [dbo].[Zakaz] z WHERE z.ID_ZAKAZ=@ID_ZAKAZ AND Msisdn2!='' ) 
+			OR	Msisdn2 = (SELECT z.Msisdn3 FROM [dbo].[Zakaz] z WHERE z.ID_ZAKAZ=@ID_ZAKAZ	AND Msisdn3!='' ) 
 			--                                                                    
-			OR	Msisdn3 = (SELECT z.Msisdn1 FROM [dbo].[Zakaz] z WHERE z.ID_ZAKAZ=@ID_ZAKAZ ) -- @ID_ZAKAZ
-			OR	Msisdn3 = (SELECT z.Msisdn2 FROM [dbo].[Zakaz] z WHERE z.ID_ZAKAZ=@ID_ZAKAZ ) -- @ID_ZAKAZ
-			OR	Msisdn3 = (SELECT z.Msisdn3 FROM [dbo].[Zakaz] z WHERE z.ID_ZAKAZ=@ID_ZAKAZ ) -- @ID_ZAKAZ
+			OR	Msisdn3 = (SELECT z.Msisdn1 FROM [dbo].[Zakaz] z WHERE z.ID_ZAKAZ=@ID_ZAKAZ AND Msisdn1!='' ) 
+			OR	Msisdn3 = (SELECT z.Msisdn2 FROM [dbo].[Zakaz] z WHERE z.ID_ZAKAZ=@ID_ZAKAZ AND Msisdn2!='' ) 
+			OR	Msisdn3 = (SELECT z.Msisdn3 FROM [dbo].[Zakaz] z WHERE z.ID_ZAKAZ=@ID_ZAKAZ	AND Msisdn3!='' ) 
 		)
 	)
-	
-	
-	ORDER BY DateClose DESC
+    
+	ORDER BY o.[DateAdd] DESC
 
 ";
 
