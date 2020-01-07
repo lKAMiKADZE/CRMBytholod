@@ -19,17 +19,17 @@ namespace CRMBytholod.Models
             switch (ID_STATUS)
             {
                 case 1:
-                    return "В ОЖИДАНИИ"; break;
+                    return "В ОЖИДАНИИ"; 
                 case 2:
-                    return "ПОВТОР"; break;
+                    return "ПОВТОР"; 
                 case 3:
-                    return "ОТКАЗ"; break;
+                    return "ОТКАЗ"; 
                 case 4:
-                    return "В РАБОТЕ"; break;
+                    return "В РАБОТЕ"; 
                 case 5:
-                    return "ВЫПОЛНЕН"; break;
+                    return "ВЫПОЛНЕН";
                 default :
-                    return ""; break;
+                    return ""; 
             }
 
 

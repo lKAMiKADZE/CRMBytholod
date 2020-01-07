@@ -149,11 +149,11 @@ namespace CRMBytholod.Controllers
         ////// Осуществление вызова
         ///////////////////////////
 
-        public IActionResult CallClient()
+        public IActionResult CallClient(long ID_ZAKAZ)
         {
 
-
-            return View();
+            CallClientOrderVM VM = new CallClientOrderVM(ID_ZAKAZ);
+            return View(VM);
         }
 
 

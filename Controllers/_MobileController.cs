@@ -20,7 +20,7 @@ namespace CRMBytholod.Controllers
         [HttpGet]
         public IEnumerable<string> Get()
         {
-            return new string[] { "value1", "value2" };
+            return new string[] { "value1", "2222" };
         }
 
         // GET: api/Mobile/5
@@ -31,20 +31,26 @@ namespace CRMBytholod.Controllers
         }
 
         // POST: api/Mobile
+        //[HttpPost]
+        //public string Post([FromBody] reqTest req)
+        //{
+
+        //    return $"{req.Login} - {req.Passw}";
+        //}
+
         [HttpPost]
-        public string Post([FromBody] fff req)
+        public string Post()
         {
-            return "hi";
+
+            return "{req.Login} - {req.Passw}";
         }
 
 
-
-        
     }
 
-    public class fff
+    public class reqTest
     {
-        [JsonPropertyName("value")]
-        public string value { get; set; }
+        public string Login { get; set; }
+        public string Passw { get; set; }
     }
 }

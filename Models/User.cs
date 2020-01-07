@@ -74,7 +74,7 @@ SET @isAuth=(
 WHERE 1=1
 	AND ID_TYPE_USER=3
 	AND Login=@Login
-	AND Passw=@Passw
+	AND PasswMaster=@Passw
 	)
 
 -- если авторизован и одна запись (нет дублей) то получаем айди сессии и входим
@@ -91,7 +91,7 @@ BEGIN
 	WHERE 1=1
 		AND ID_TYPE_USER=3
 	    AND Login=@Login
-    	AND Passw=@Passw
+    	AND PasswMaster=@Passw
 
 END   
 

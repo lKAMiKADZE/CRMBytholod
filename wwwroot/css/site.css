@@ -74,6 +74,17 @@ body {
 
 /*/////////////////////////////////////////////*/
 
+.btn-call-size {
+    height: 50px;
+    width: 300px;
+    color: #fff;
+    font-weight: bold;
+    background-color: #28a745;
+}
 
 
+.btn-call-size:hover {
+        color: #fff;
+        text-decoration: none;
+}
 

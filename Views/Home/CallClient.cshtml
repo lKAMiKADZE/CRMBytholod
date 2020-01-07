@@ -1,0 +1,244 @@
+﻿<html lang="ru">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Карточка клиента- CRM Быт холод</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" />
+    <script type="text/javascript" src="//cdn.voximplant.com/edge/voximplant.min.js"></script>
+</head>
+<body>
+
+    @model CRMBytholod.ViewModels.CallClientOrderVM
+
+    @{
+        Layout = null;
+    }
+
+    <br />
+    <div class="col-md-4 offset-1">
+        <div class="form-group">
+            <label class="control-label font-weight-bold">Дата ожидания клиента</label>
+            <label class=""><b>@Html.DisplayFor(model => model.order.GetDATA)</b></label>
+        </div>
+    </div>
+
+    <div>
+        <hr />
+
+        @switch (Model.order.STATUS.NameStatus)
+        {
+            case "В ОЖИДАНИИ":<span class="label " style='background-color:@Model.order.STATUS.ColorHex; padding: 6px; margin: 100px;'>@Model.order.STATUS.NameStatus</span> break;
+        case "ПОВТОР": <span class="label " style='background-color:@Model.order.STATUS.ColorHex; padding: 6px; margin: 100px;'>@Model.order.STATUS.NameStatus</span> break;
+    case "ОТКАЗ": <span class="label " style='background-color:@Model.order.STATUS.ColorHex; padding: 6px; margin: 100px;'>@Model.order.STATUS.NameStatus</span> break;
+case "В РАБОТЕ": <span class="label " style='background-color:@Model.order.STATUS.ColorHex; padding: 6px; margin: 100px;'>@Model.order.STATUS.NameStatus</span> break;
+case "ВЫПОЛНЕН": <span class="label " style='background-color:@Model.order.STATUS.ColorHex; padding: 6px; margin: 100px;'>@Model.order.STATUS.NameStatus</span> break;
+default: @Model.order.STATUS.NameStatus; break;
+}
+        <hr />
+
+        <div class="col-md-4 offset-1">
+            <div class="form-group">
+                <label class="control-label font-weight-bold">Время ожидания</label>
+                <label class=""><b>@Html.DisplayFor(model => model.order.VREMJA)</b></label>
+            </div>
+        </div>
+
+
+        <div class="row">
+            <input hidden="hidden" id="PhoneMaster" value="@Model.order.USER_MASTER.Phone"/>
+
+            <div class="col-md-4 offset-1">
+                <div class="form-group">
+                    <label class="control-label font-weight-bold">Холодильник дефект</label>
+                    <label class="">@Html.DisplayFor(model => model.order.HOLODILNIK_DEFECT)</label>
+                </div>
+                <div class="form-group">
+                    <label class="control-label font-weight-bold">Имя клиента</label>
+                    <label class="">@Html.DisplayFor(model => model.order.NameClient)</label>
+                </div>
+                <div class="form-group">
+                    <label class="control-label font-weight-bold">Адрес</label>
+                    <label>@Html.DisplayFor(model => model.order.GetAdresFull)</label>
+                    <label>@Html.DisplayFor(model => model.order.GetAdres2)</label>
+                </div>
+
+                <div class="form-group">
+                    <label class="control-label font-weight-bold">Организация</label>
+                    <label class="">@Html.DisplayFor(model => model.order.ORGANIZATION.NameOrg)</label>
+                </div>
+
+                <div class="form-group">
+                    <label class="control-label font-weight-bold">Заявка является повтором</label>
+                    <label>@Html.DisplayFor(model => model.order.GetPovtor)</label>
+                </div>
+
+                <div class="form-group">
+                    <label class="control-label font-weight-bold">Примечание</label>
+                    <label class="">@Html.DisplayFor(model => model.order.PRIMECHANIE)</label>
+                </div>
+
+
+                <div class="form-group">
+                    <label class="control-label font-weight-bold">Контакты</label>
+
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <div class="input-group-text">
+                                <input type="radio" checked name="radio" aria-label="Radio button for following text input">
+                            </div>
+                        </div>
+                        <input type="text" class="form-control" value="@Model.order.GetMsisdn1Mask">
+                    </div>
+                    @if (Model.order.GetMsisdn2Mask.Length > 0)
+                    {
+                        <div class="input-group">
+                            <div class="input-group-prepend">
+                                <div class="input-group-text">
+                                    <input type="radio" name="radio" aria-label="Radio button for following text input">
+                                </div>
+                            </div>
+                            <input type="text" class="form-control" value="@Model.order.GetMsisdn2Mask">
+                        </div>
+                    }
+
+                    @if (Model.order.GetMsisdn3Mask.Length > 0)
+                    {
+                        <div class="input-group">
+                            <div class="input-group-prepend">
+                                <div class="input-group-text">
+                                    <input type="radio" name="radio" aria-label="Radio button for following text input">
+                                </div>
+                            </div>
+                            <input type="text" class="form-control" value="@Model.order.GetMsisdn3Mask">
+                        </div>
+                    }
+
+                </div>
+
+                <input type="button" class="btn btn-call-size" id="CallBut" value="ВЫЗОВ" onclick="makecall()"  />
+
+            </div>
+
+
+            <div class="col-md-2">
+
+                <div class="form-group">
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+
+
+
+
+    <script type="text/javascript">
+        var initialized = false, // SDK загружено
+            loggedIn = false, // пользователь авторизован
+            connected = false,
+
+            call_active = false; // получено соединение с VoxImplant сервером
+
+        const voxImplant = VoxImplant.getInstance();
+
+        // добавляем прослушивателей основных событий
+        // событие загрузки SDK
+        voxImplant.addEventListener(VoxImplant.Events.SDKReady, handleSDKReady);
+        // событие установки соединения с сервером VoxImplant
+        voxImplant.addEventListener(VoxImplant.Events.ConnectionEstablished, handleConnectionEstablished);
+        // событие авторизации пользователя на сервере VoxImplant
+        voxImplant.addEventListener(VoxImplant.Events.AuthResult, handleAuthResult);
+
+        if (!initialized) voxImplant.init();
+        else {
+            // если не установлено соединение с сервером VoxImplant - устанавливаем
+            if (!voxImplant.connected()) voxImplant.connect();
+            else {
+                // если юзер не авторизован - авторизуем, если авторизован - звоним
+                if (!loggedIn) login();
+            }
+        }
+        // SDK загружен, соединяемся с VoxImplant сервером
+        function handleSDKReady() {
+            initialized = true;
+            voxImplant.connect();
+        }
+
+        // соединились с VoxImplant сервером успешно, авторизуем юзера
+        function handleConnectionEstablished() {
+            connected = true;
+            login();
+        }
+
+        // проверяем статус авторизации
+        function handleAuthResult(e) {
+            if (e.result) {
+                // Авторизовались успешно
+                loggedIn = true;
+                //makecall();
+            }
+        }
+
+        // проводим авторизацию
+        function login() {
+            // данные созданного пользователя и приложения
+            //voxImplant.login("user@call2.holodec.voximplant.com", "1qazxsw2");
+
+            var strLogin = "xamar@call2.holodec.voximplant.com";
+            voxImplant.login("xamar@call2.holodec.voximplant.com", "Xi67yoRi");
+
+
+
+
+        }
+
+        function makecall() {
+            
+            var elem = document.getElementById('CallBut');
+            var elemPhoneMaster = document.getElementById('PhoneMaster');
+
+            if (call_active == false) {
+                console.log('call 79099578732...');
+
+                elem.value = 'ЗАВЕРШИТЬ';
+                elem.style.backgroundColor = "#d51024";
+
+                //var call = voxImplant.call("79099578732");
+                call_active = true;
+            }
+            else {
+
+                console.log('call END 79099578732...');
+
+                elem.value = 'ВЫЗОВ';                
+                elem.style.backgroundColor = "#28a745";
+
+                //location.reload();
+                call_active = false;
+
+            }
+
+        }
+
+
+
+    </script>
+
+
+
+
+
+
+
+    <footer class="border-top footer text-muted">
+        <div class="container">
+            &copy; 2020 - CRM Быт холод
+        </div>
+    </footer>
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+</body>
+</html>

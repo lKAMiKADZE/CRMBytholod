@@ -44,7 +44,11 @@
             </div>
             <div class="form-group">
                 <label asp-for="user.Phone" class="control-label">Телефон для мастера, VoxImplant</label>
-                <input asp-for="user.Phone" class="form-control" />
+                <select asp-for="user.Phone" class="form-control">
+                    <option value="79993331856">79993331856</option>
+                    <option value="79993334728">79993334728</option>
+                    
+                </select>
                 <span asp-validation-for="user.Phone" class="text-danger"></span>
             </div>
 

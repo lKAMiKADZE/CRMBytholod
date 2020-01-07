@@ -7,6 +7,7 @@ using Microsoft.Data.SqlClient;
 using System.Data;
 using System.Globalization;
 using CRMBytholod.ViewModels;
+using System.ComponentModel.DataAnnotations;
 
 namespace CRMBytholod.Models
 {
@@ -22,6 +23,8 @@ namespace CRMBytholod.Models
         public string KOD_DOMOFONA { get; set; }
         public string TELEFON_STACIONAR { get; set; }
         public string TELEFON_SOTOV { get; set; }
+
+        [Required(ErrorMessage = "Не указана причина поломки")]
         public string HOLODILNIK_DEFECT { get; set; }
         public string MASTER { get; set; }
         public DateTime DATA { get; set; }
@@ -29,9 +32,10 @@ namespace CRMBytholod.Models
         public string DISPETCHER { get; set; }
         public string PRIMECHANIE { get; set; }
         public bool VIPOLNENIE_ZAKAZA { get; set; }
-        
+
         ////////////////////////
-        
+
+        [Required(ErrorMessage = "Не указан номер")]
         public string Msisdn1 { get; set; }
         public string Msisdn2 { get; set; }
         public string Msisdn3 { get; set; }
@@ -67,6 +71,14 @@ namespace CRMBytholod.Models
                     return $"{STREET}, д {HOUSE}, кв {KVARTIRA}";
                 else
                     return $"{STREET}, корп {KORPUS}, д {HOUSE}, кв {KVARTIRA}";
+            }
+        }
+
+        public string GetAdres2
+        {
+            get
+            {
+                    return $"подъезд {PODEST}, эт {ETAG}, код домофона {KOD_DOMOFONA}";
             }
         }
         public string GetDATA
@@ -116,6 +128,51 @@ namespace CRMBytholod.Models
             }
         }
 
+
+        public string GetMsisdn1Mask
+        {
+            get
+            {
+                if (Msisdn1.Length == 0)
+                    return "";
+
+                string firstMask = Msisdn1.Substring(0, 4);
+                string lastMask = Msisdn1.Substring(Msisdn1.Length-4, 4);
+
+                return $"+{firstMask} *** {lastMask}";
+
+
+            }
+        }
+        public string GetMsisdn2Mask
+        {
+            get
+            {
+                if (Msisdn2.Length == 0)
+                    return "";
+                string firstMask = Msisdn2.Substring(0, 4);
+                string lastMask = Msisdn2.Substring(Msisdn2.Length-4, 4);
+
+
+                return $"+{firstMask} *** {lastMask}";
+
+            }
+        }
+        public string GetMsisdn3Mask
+        {
+            get
+            {
+                if (Msisdn3.Length == 0)
+                    return "";
+
+                string firstMask = Msisdn3.Substring(0, 4);
+                string lastMask = Msisdn3.Substring(Msisdn3.Length-4, 4);
+
+
+                return $"+{firstMask} *** {lastMask}";
+
+            }
+        }
 
 
         public Order()
