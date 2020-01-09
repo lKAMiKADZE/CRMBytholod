@@ -15,18 +15,15 @@ namespace CRMBytholod
         public static void Main(string[] args)
         {
             CreateHostBuilder(args).Build().Run();
-
-            
-            
         }
 
         public static IHostBuilder CreateHostBuilder(string[] args) =>
            Host.CreateDefaultBuilder(args)
                .ConfigureWebHostDefaults(webBuilder =>
                {
-                   webBuilder.UseStartup<Startup>()
+                   webBuilder.UseStartup<Startup>();
                    //NEW
-                  .UseKestrel(options => options.Listen(IPAddress.Loopback, 5001)); //HTTP port
+                   //.UseKestrel(options => options.Listen(IPAddress.Loopback, 5000)); //HTTP port
 
                });
 

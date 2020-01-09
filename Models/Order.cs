@@ -1113,6 +1113,7 @@ SELECT [ID_ZAKAZ]
       ,[DateClose]
 	  ,u.[Name] AS NameMaster
       ,u.[ID_USER]
+      ,u.[Phone]
 	  ,uadd.[Name] AS NameUserAdd
   FROM [dbo].[Zakaz] o
 JOIN [User] u ON u.ID_USER=o.ID_MASTER -- ADD User MASTER
@@ -1148,7 +1149,9 @@ WHERE 1=1
                 User userMaster = new User
                 {
                     Name = (string)row["NameMaster"],
-                    ID_USER = (long)row["ID_USER"]
+                    ID_USER = (long)row["ID_USER"],
+                    Phone = (string)row["Phone"]
+
                 };
 
                 User userAdd = new User()

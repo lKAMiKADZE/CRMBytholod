@@ -46,6 +46,7 @@ default: @Model.order.STATUS.NameStatus; break;
 
 
         <div class="row">
+            @* сохраням номер мастера, с которого будет осуществляться звонок клиенту *@
             <input hidden="hidden" id="PhoneMaster" value="@Model.order.USER_MASTER.Phone"/>
 
             <div class="col-md-4 offset-1">
@@ -85,7 +86,7 @@ default: @Model.order.STATUS.NameStatus; break;
                     <div class="input-group">
                         <div class="input-group-prepend">
                             <div class="input-group-text">
-                                <input type="radio" checked name="radio" aria-label="Radio button for following text input">
+                                <input type="radio" checked name="radio" value="@Model.order.Msisdn1">
                             </div>
                         </div>
                         <input type="text" class="form-control" value="@Model.order.GetMsisdn1Mask">
@@ -107,7 +108,7 @@ default: @Model.order.STATUS.NameStatus; break;
                         <div class="input-group">
                             <div class="input-group-prepend">
                                 <div class="input-group-text">
-                                    <input type="radio" name="radio" aria-label="Radio button for following text input">
+                                    <input type="radio" name="radio"  aria-label="Radio button for following text input">
                                 </div>
                             </div>
                             <input type="text" class="form-control" value="@Model.order.GetMsisdn3Mask">
@@ -139,7 +140,12 @@ default: @Model.order.STATUS.NameStatus; break;
             loggedIn = false, // пользователь авторизован
             connected = false,
 
-            call_active = false; // получено соединение с VoxImplant сервером
+            call_active = false, // получено соединение с VoxImplant сервером
+
+            numRadButActive = "",// какой номер выбран
+            strLogin = "xamar@call.holodec.voximplant.com",
+            phoneMaster = document.getElementById('PhoneMaster').nodeValue;
+
 
         const voxImplant = VoxImplant.getInstance();
 
@@ -186,9 +192,15 @@ default: @Model.order.STATUS.NameStatus; break;
             // данные созданного пользователя и приложения
             //voxImplant.login("user@call2.holodec.voximplant.com", "1qazxsw2");
 
-            var strLogin = "xamar@call2.holodec.voximplant.com";
-            voxImplant.login("xamar@call2.holodec.voximplant.com", "Xi67yoRi");
+            
+            if (phoneMaster == "79993331856")
+                strLogin = "xamar@call.holodec.voximplant.com";
 
+            if(phoneMaster == "79993331856")
+                strLogin = "xamar@call2.holodec.voximplant.com";
+
+            voxImplant.login(strLogin, "Xi67yoRi");
+            
 
 
 
@@ -197,15 +209,19 @@ default: @Model.order.STATUS.NameStatus; break;
         function makecall() {
             
             var elem = document.getElementById('CallBut');
-            var elemPhoneMaster = document.getElementById('PhoneMaster');
+            
+
+
 
             if (call_active == false) {
                 console.log('call 79099578732...');
 
+                check();
+
                 elem.value = 'ЗАВЕРШИТЬ';
                 elem.style.backgroundColor = "#d51024";
 
-                //var call = voxImplant.call("79099578732");
+                var call = voxImplant.call(numRadButActive);
                 call_active = true;
             }
             else {
@@ -215,13 +231,25 @@ default: @Model.order.STATUS.NameStatus; break;
                 elem.value = 'ВЫЗОВ';                
                 elem.style.backgroundColor = "#28a745";
 
-                //location.reload();
+                location.reload();
                 call_active = false;
 
             }
 
         }
 
+
+
+        function check()// check rad but
+{
+    var inp = document.getElementsByName('radio');
+    for (var i = 0; i < inp.length; i++) {
+        if (inp[i].type == "radio" && inp[i].checked) {
+            alert("selected: " + inp[i].value);
+            numRadButActive = inp[i].value;
+        }
+    }
+}
 
 
     </script>
