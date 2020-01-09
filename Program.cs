@@ -24,10 +24,10 @@ namespace CRMBytholod
            Host.CreateDefaultBuilder(args)
                .ConfigureWebHostDefaults(webBuilder =>
                {
-                   webBuilder.UseStartup<Startup>();
-                   // NEW
-                   //.UseKestrel(options => options.Listen(IPAddress.Loopback, 5000)); //HTTP port
-                   //
+                   webBuilder.UseStartup<Startup>()
+                   //NEW
+                  .UseKestrel(options => options.Listen(IPAddress.Loopback, 5001)); //HTTP port
+
                });
 
 

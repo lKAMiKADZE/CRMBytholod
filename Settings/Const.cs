@@ -11,5 +11,16 @@ namespace CRMBytholod.Settings
         public const string ConnectionString = @"Data Source=tcp:crm.bytholod.com,1433;Initial Catalog=Bytholod;User ID=holodec;Password=9faw8@f2GA2";
 
         //"applicationUrl": "https://localhost:5001;http://localhost:5000"
+
+
+        //appsetingsjson
+        ///////////
+    //"Kestrel": {
+    //    "Endpoints": {
+    //        "Http": {
+    //            "Url": "http://0.0.0.0:5000"
+    //        }
+    //    }
+    //}
     }
 }

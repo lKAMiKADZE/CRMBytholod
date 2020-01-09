@@ -78,6 +78,8 @@ namespace CRMBytholod
             
             app.UseRouting();
             app.UseStaticFiles();
+            //app.UseFileServer();
+
 
             app.UseAuthorization();
             app.UseAuthentication();// авторизация
