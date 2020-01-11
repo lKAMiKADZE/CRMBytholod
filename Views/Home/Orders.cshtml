@@ -14,6 +14,8 @@
 
 @* Фильтр по заявкам *@
 
+
+
 <div>
 
     <form asp-action="Orders" method="get">
@@ -40,11 +42,11 @@
             </div>
             <div class="col-md-4">
                 <div class="form-group">
-                    <label for="inputDate">Начало даты:</label>
+                    <label for="inputDate">Дата закрытия С:</label>
                     <input type="date" asp-for="filtrOrders.DateStart" class="form-control">
                 </div>
                 <div class="form-group">
-                    <label for="inputDate">Конец даты:</label>
+                    <label for="inputDate">Дата закрытия ПО:</label>
                     <input type="date" asp-for="filtrOrders.DateEnd" class="form-control">
                 </div>
 
@@ -60,9 +62,9 @@
                     <label class="form-check-label">Повторные заявки</label>
                 </div>
                 <br />
-                
+
                 <input class="btn btn-secondary" type="submit" value="Поиск" />
-                <br/><br />
+                <br /><br />
                 <a asp-action="Orders"><input type="button" class="btn btn-info" value="Сбросить фильтр" /> </a>
             </div>
         </div>
@@ -74,23 +76,29 @@
         <div class="col-md-5">
             <nav aria-label="Page navigation example">
                 <ul class="pagination">
-                    <li class="page-item"><a class="page-link" href='@Url.Action("Orders", "Home", new { page=1, step=Model.Step, 
+                    <li class="page-item">
+                        <a class="page-link" href='@Url.Action("Orders", "Home", new { page=1, step=Model.Step,
                                                                     adres=Model.filtrOrders.Adres, dateStart=Model.filtrOrders.DateStart,
                                                                     dateEnd=Model.filtrOrders.DateEnd, povtor=Model.filtrOrders.Povtor,
-                                                                    id_status=Model.filtrOrders.ID_STATUS   }, null)'>В Начало</a></li>
+                                                                    id_status=Model.filtrOrders.ID_STATUS   }, null)'>В Начало</a>
+                    </li>
                     @if (Model.Page > 1)
                     {
-                        <li><a class="page-link" href='@Url.Action("Orders", "Home", new { page=Model.Page-1, step=Model.Step, 
+                        <li>
+                            <a class="page-link" href='@Url.Action("Orders", "Home", new { page=Model.Page-1, step=Model.Step,
                                                                     adres=Model.filtrOrders.Adres, dateStart=Model.filtrOrders.DateStart,
                                                                     dateEnd=Model.filtrOrders.DateEnd, povtor=Model.filtrOrders.Povtor,
-                                                                    id_status=Model.filtrOrders.ID_STATUS   }, null)'> Назад </a></li>
+                                                                    id_status=Model.filtrOrders.ID_STATUS   }, null)'> Назад </a>
+                        </li>
                     }
                     <li class="page-item"><b><a class="page-link" href="#">@Model.Page</a></b></li>
 
-                    <li class="page-item"><a class="page-link" href='@Url.Action("Orders", "Home", new { page=Model.Page+1, step=Model.Step, 
+                    <li class="page-item">
+                        <a class="page-link" href='@Url.Action("Orders", "Home", new { page=Model.Page+1, step=Model.Step,
                                                                     adres=Model.filtrOrders.Adres, dateStart=Model.filtrOrders.DateStart,
                                                                     dateEnd=Model.filtrOrders.DateEnd, povtor=Model.filtrOrders.Povtor,
-                                                                    id_status=Model.filtrOrders.ID_STATUS   }, null)'>Вперед</a></li>
+                                                                    id_status=Model.filtrOrders.ID_STATUS   }, null)'>Вперед</a>
+                    </li>
 
 
                 </ul>
@@ -103,19 +111,23 @@
                     {
                         if (Model.Step == Model.Steps[i])//текущий выбранный параметр выделяется жирным
                         {
-                            <li class="page-item"><a class="page-link" href='@Url.Action("Orders", "Home", new { page = Model.Page, step = Model.Steps[i],
+                            <li class="page-item">
+                                <a class="page-link" href='@Url.Action("Orders", "Home", new { page = Model.Page, step = Model.Steps[i],
                                                                     adres=Model.filtrOrders.Adres, dateStart=Model.filtrOrders.DateStart,
                                                                     dateEnd=Model.filtrOrders.DateEnd, povtor=Model.filtrOrders.Povtor,
-                                                                    id_status=Model.filtrOrders.ID_STATUS    }, null)'><b>@Model.Steps[i]</b></a></li>
-                        }
-                        else
-                        {
-                            <li class="page-item"><a class="page-link" href='@Url.Action("Orders", "Home", new {  page = Model.Page, step = Model.Steps[i],
+                                                                    id_status=Model.filtrOrders.ID_STATUS    }, null)'><b>@Model.Steps[i]</b></a>
+                                                                </li>
+                                                            }
+                                                            else
+                                                            {
+                                                                <li class="page-item">
+                                                                    <a class="page-link" href='@Url.Action("Orders", "Home", new {  page = Model.Page, step = Model.Steps[i],
                                                                     adres=Model.filtrOrders.Adres, dateStart=Model.filtrOrders.DateStart,
                                                                     dateEnd=Model.filtrOrders.DateEnd, povtor=Model.filtrOrders.Povtor,
-                                                                    id_status=Model.filtrOrders.ID_STATUS   }, null)'>@Model.Steps[i]</a></li>
-                        }
-                    }
+                                                                    id_status=Model.filtrOrders.ID_STATUS   }, null)'>@Model.Steps[i]</a>
+                                                                </li>
+                                                            }
+                                                        }
                 </ul>
             </nav>
         </div>
@@ -134,78 +146,72 @@
                 ID зявки
             </th>
             <th>
-                Холодильник дефект
-            </th>
-            <th>
-                Имя клиента
-            </th>
-            <th>
-                Адрес
-            </th>
-            <th>
                 Дата
             </th>
-            <th>
-                Время
+            <th width="230">
+                Адрес
             </th>
             <th>
                 Номер
             </th>
             <th>
+                Холодильник дефект
+            </th>
+            <th>
+                Время
+            </th>
+            <th>
                 Мастер
             </th>
             <th width="150">
-                Status
+                Статус
             </th>
             <th>
-                Дата создания
+                Организация
             </th>
         </tr>
     </thead>
     <tbody>
         @foreach (var item in Model.Orders)
         {
-        <tr>
-            <td>
-                <a asp-action="DetailOrder" asp-route-id_zakaz="@item.ID_ZAKAZ"><b>@item.ID_ZAKAZ</b></a>
-            </td>
-            <td>
-                <a asp-action="DetailOrder" asp-route-id_zakaz="@item.ID_ZAKAZ"><b>@item.HOLODILNIK_DEFECT</b></a>
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.NameClient)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.GetAdresFull)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.GetDATA)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.VREMJA)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Msisdn1)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.USER_MASTER.Name)
-            </td>
-            <td>
-                @switch (item.STATUS.NameStatus)
-                {
-                    case "В ОЖИДАНИИ":<span class="label" style='background-color:@item.STATUS.ColorHex; padding: 6px;'>@item.STATUS.NameStatus</span> break;
-                case "ПОВТОР": <span class="label" style='background-color:@item.STATUS.ColorHex; padding: 6px;'>@item.STATUS.NameStatus</span> break;
-            case "ОТКАЗ": <span class="label" style='background-color:@item.STATUS.ColorHex; padding: 6px;'>@item.STATUS.NameStatus</span> break;
-        case "В РАБОТЕ": <span class="label" style='background-color:@item.STATUS.ColorHex; padding: 6px;'>@item.STATUS.NameStatus</span> break;
-    case "ВЫПОЛНЕН": <span class="label" style='background-color:@item.STATUS.ColorHex; padding: 6px;'>@item.STATUS.NameStatus</span> break;
+            <tr>
+                <td>
+                    <a asp-action="DetailOrder" asp-route-id_zakaz="@item.ID_ZAKAZ"><b>@item.ID_ZAKAZ</b></a>
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.GetDATA)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.GetAdresFull)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Msisdn1)
+                </td>
+                <td>
+                    <a asp-action="DetailOrder" asp-route-id_zakaz="@item.ID_ZAKAZ"><b>@item.HOLODILNIK_DEFECT</b></a>
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.VREMJA)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.USER_MASTER.Name)
+                </td>
+                <td>
+                    @switch (item.STATUS.NameStatus)
+                    {
+                        case "В ОЖИДАНИИ":<span class="label" style='background-color:@item.STATUS.ColorHex; padding: 6px;'>@item.STATUS.NameStatus</span> break;
+                    case "ПОВТОР": <span class="label" style='background-color:@item.STATUS.ColorHex; padding: 6px;'>@item.STATUS.NameStatus</span> break;
+                case "ОТКАЗ": <span class="label" style='background-color:@item.STATUS.ColorHex; padding: 6px;'>@item.STATUS.NameStatus</span> break;
+            case "В РАБОТЕ": <span class="label" style='background-color:@item.STATUS.ColorHex; padding: 6px;'>@item.STATUS.NameStatus</span> break;
+        case "ВЫПОЛНЕН": <span class="label" style='background-color:@item.STATUS.ColorHex; padding: 6px;'>@item.STATUS.NameStatus</span> break;
     default: @item.STATUS.NameStatus; break;
 }
 
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.DateAdd)
-            </td>
-        </tr>
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.ORGANIZATION.NameOrg)
+                </td>
+            </tr>
         }
     </tbody>
 </table>

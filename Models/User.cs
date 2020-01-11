@@ -265,6 +265,45 @@ WHERE LOWER(Login)=LOWER(@Login)
             return false;
         }
 
+        public string AuthUserTEST(string Login, string Passw)
+        {
+
+
+            SqlParameter[] parameters = new SqlParameter[]
+            {
+                new SqlParameter(@"Login",SqlDbType.NVarChar) { Value =Login },
+                new SqlParameter(@"Passw",SqlDbType.NVarChar) { Value =Passw }
+            };
+
+            #region sql
+
+            string sqlText = $@"
+
+SELECT ID_USER,
+	Name,
+	ID_TYPE_USER,
+	Login,
+	Phone,
+	PasswMaster, -- Пароль мастера для вывода админу
+	DateAdd
+ FROM [User]
+WHERE LOWER(Login)=LOWER(@Login)
+	AND PasswMaster= @Passw
+
+";
+
+            #endregion
+
+            // получаем данные из запроса
+            string testreturn = ExecuteSqlGetDataTableStaticTEST(sqlText, parameters);
+
+
+            
+
+
+            return testreturn;
+        }
+
         /// <summary>
         /// Только для админа
         /// </summary>        
@@ -696,15 +735,15 @@ INSERT INTO [dbo].[User]
                         command.Parameters.AddRange(parameters);
                     }
 
-                    try
-                    {
+                   // try
+                   // {
                         SqlDataReader reader = command.ExecuteReader();
                         dt.Load(reader);
-                    }
-                    catch(Exception ex)
-                    {
+                   // }
+                   // catch(Exception ex)
+                   // {
 
-                    }
+                   // }
 
                     command.Parameters.Clear();
 
@@ -714,6 +753,42 @@ INSERT INTO [dbo].[User]
                 connection.Close();
             }
             return dt;
+
+        }
+
+
+        private static string ExecuteSqlGetDataTableStaticTEST(string sqlText, SqlParameter[] parameters = null)
+        {
+            DataTable dt = new DataTable();
+            using (SqlConnection connection = new SqlConnection(Const.ConnectionString))
+            {
+                connection.Open();
+
+                using (SqlCommand command = new SqlCommand(sqlText, connection))
+                {
+                    if (parameters != null)
+                    {
+                        command.Parameters.AddRange(parameters);
+                    }
+
+                    try
+                    {
+                        SqlDataReader reader = command.ExecuteReader();
+                        dt.Load(reader);
+                    }
+                    catch (Exception ex)
+                    {
+                        return ex.Message;
+                    }
+
+                    command.Parameters.Clear();
+
+
+                }
+
+                connection.Close();
+            }
+            return "OK";
 
         }
     }

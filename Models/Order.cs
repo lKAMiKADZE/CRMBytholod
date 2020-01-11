@@ -67,10 +67,10 @@ namespace CRMBytholod.Models
         {
             get
             {
-                if (KORPUS.Length == 0)// если корпус или нет
+                if (String.IsNullOrEmpty(KORPUS))// если корпус или нет
                     return $"{STREET}, д {HOUSE}, кв {KVARTIRA}";
                 else
-                    return $"{STREET}, корп {KORPUS}, д {HOUSE}, кв {KVARTIRA}";
+                    return $"{STREET}, д {HOUSE}, корп {KORPUS},  кв {KVARTIRA}";
             }
         }
 
@@ -85,7 +85,7 @@ namespace CRMBytholod.Models
         {
             get
             {
-                return DATA.ToShortDateString();
+                return $"{DATA.ToShortDateString()}\r\nПОНЕДЕЛЬНИК";
             }
         }
 
@@ -133,7 +133,7 @@ namespace CRMBytholod.Models
         {
             get
             {
-                if (Msisdn1.Length == 0)
+                if (String.IsNullOrEmpty(Msisdn1))
                     return "";
 
                 string firstMask = Msisdn1.Substring(0, 4);
@@ -148,7 +148,7 @@ namespace CRMBytholod.Models
         {
             get
             {
-                if (Msisdn2.Length == 0)
+                if (String.IsNullOrEmpty(Msisdn2))
                     return "";
                 string firstMask = Msisdn2.Substring(0, 4);
                 string lastMask = Msisdn2.Substring(Msisdn2.Length-4, 4);
@@ -162,7 +162,7 @@ namespace CRMBytholod.Models
         {
             get
             {
-                if (Msisdn3.Length == 0)
+                if (String.IsNullOrEmpty(Msisdn3))
                     return "";
 
                 string firstMask = Msisdn3.Substring(0, 4);

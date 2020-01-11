@@ -42,7 +42,7 @@ namespace CRMBytholod
                 {
                     options.LoginPath = new Microsoft.AspNetCore.Http.PathString("/Account/Login");
                 });
-            
+
 
 
             //services.AddMvc().SetCompatibilityVersion(Microsoft.AspNetCore.Mvc.CompatibilityVersion.Version_3_0);
@@ -58,7 +58,11 @@ namespace CRMBytholod
                 ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto
             });
 
-
+            //app.Use(async (httpContext, next) =>
+            //{
+            //    httpContext.Response.Headers[Microsoft.Net.Http.Headers.HeaderNames.CacheControl] = "no-cache";
+            //    await next();
+            //});
 
             //////////
 
@@ -78,7 +82,7 @@ namespace CRMBytholod
             
             app.UseRouting();
             app.UseStaticFiles();
-            //app.UseFileServer();
+           // app.UseFileServer();
 
 
             app.UseAuthorization();

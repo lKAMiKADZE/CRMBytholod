@@ -17,6 +17,6 @@
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="3.0.0" />
   </ItemGroup>
 
-  <ProjectExtensions><VisualStudio><UserProperties appsettings_1json__JsonSchema="" /></VisualStudio></ProjectExtensions>
+  <ProjectExtensions><VisualStudio><UserProperties properties_4launchsettings_1json__JsonSchema="http://json.schemastore.org/bower" appsettings_1json__JsonSchema="" /></VisualStudio></ProjectExtensions>
 
 </Project>

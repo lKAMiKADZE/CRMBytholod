@@ -14,7 +14,7 @@
     <div>
         <b>@Html.ActionLink("Редактировать", "EditOrder", new { ID_ZAKAZ = Model.order.ID_ZAKAZ })</b>
     </div>
-    <br/>
+    <br />
     <div>
         <b>@Html.ActionLink("Закрыть заявку", "CloseOrder", new { ID_ZAKAZ = Model.order.ID_ZAKAZ })</b>
     </div>
@@ -31,6 +31,148 @@ case "ВЫПОЛНЕН": <span class="label" style='background-color:@Model.orde
 default: @Model.order.STATUS.NameStatus; break;
 }
 
+@* Вывод инфо о заявке (NEW) *@
+@*<hr />
+<div>
+    <label class="control-label ">Дата ожидания клиента</label><br />
+    <label class="font-weight-bold">@Html.DisplayFor(model => model.order.GetDATA)</label>
+
+    <div class="row">
+
+
+    </div>
+
+
+    <div class="row">
+        <div class="col-md-4">
+            <div class="form-group">
+                <label class="control-label font-weight-bold">Холодильник дефект</label> <br />
+                <label class="">@Html.DisplayFor(model => model.order.HOLODILNIK_DEFECT)</label>
+            </div>
+            <div class="form-group">
+                <label class="control-label font-weight-bold">Имя клиента</label><br />
+                <label class="">@Html.DisplayFor(model => model.order.NameClient)</label>
+            </div>
+            <div class="form-group">
+                <label class="control-label font-weight-bold">Улица</label><br />
+                <label>@Html.DisplayFor(model => model.order.STREET)</label>
+            </div>
+            <div class="form-group">
+                <label class="control-label font-weight-bold">Дом</label><br />
+                <label class="">@Html.DisplayFor(model => model.order.HOUSE)</label>
+            </div>
+            <div class="form-group">
+                <label class="control-label font-weight-bold">Корпус</label><br />
+                <label class="">@Html.DisplayFor(model => model.order.KORPUS)</label>
+            </div>
+            <div class="form-group">
+                <label class="control-label font-weight-bold">Квартира</label><br />
+                <label class="">@Html.DisplayFor(model => model.order.KVARTIRA)</label>
+            </div>
+            <div class="form-group">
+                <label class="control-label font-weight-bold">Подъезд</label><br />
+                <label class="">@Html.DisplayFor(model => model.order.PODEST)</label>
+            </div>
+
+            <div class="form-group">
+                <label class="control-label font-weight-bold">Этаж</label><br />
+                <label class="">@Html.DisplayFor(model => model.order.ETAG)</label>
+            </div>
+            <div class="form-group">
+                <label class="control-label font-weight-bold">Код домофона</label><br />
+                <label class="">@Html.DisplayFor(model => model.order.KOD_DOMOFONA)</label>
+            </div>
+
+            <div class="form-group">
+                <label class="control-label font-weight-bold">Организация</label><br />
+                <label class="">@Html.DisplayFor(model => model.order.ORGANIZATION.NameOrg)</label>
+            </div>
+
+        </div>
+        <div class="col-md-4">
+            <div class="form-group">
+                <label class="control-label font-weight-bold">Дата ожидания клиента</label><br />
+                <label class="">@Html.DisplayFor(model => model.order.GetDATA)</label>
+            </div>
+            <div class="form-group">
+                <label class="control-label font-weight-bold">Время ожидания</label><br />
+                <label class="">@Html.DisplayFor(model => model.order.VREMJA)</label>
+            </div>
+            <div class="form-group">
+                <label class="control-label font-weight-bold">Основной номер</label><br />
+                <label class="">@Html.DisplayFor(model => model.order.Msisdn1)</label>
+            </div>
+            <div class="form-group">
+                <label class="control-label font-weight-bold">Доп номер 2</label><br />
+                <label class="">@Html.DisplayFor(model => model.order.Msisdn2)</label>
+            </div>
+            <div class="form-group">
+                <label class="control-label font-weight-bold">Доп номер 3</label><br />
+                <label class="">@Html.DisplayFor(model => model.order.Msisdn3)</label>
+            </div>
+            <div class="form-group">
+                <label class="control-label font-weight-bold">Дата создания</label><br />
+                <label class="">@Html.DisplayFor(model => model.order.DateAdd)</label>
+            </div>
+            <div class="form-group">
+                <label class="control-label font-weight-bold">Дата отправки Мастеру</label><br />
+                <label class="">@Html.DisplayFor(model => model.order.DateSendMaster)</label>
+            </div>
+            <div class="form-group">
+                <label class="control-label font-weight-bold">Дата открытия Мастером</label><br />
+                <label class="">@Html.DisplayFor(model => model.order.DateOpenMaster)</label>
+            </div>
+            <div class="form-group">
+                <label class="control-label font-weight-bold">Дата закрытия </label><br />
+                <label class="">@Html.DisplayFor(model => model.order.DateClose)</label>
+            </div>
+            <div class="form-group">
+                <label class="control-label font-weight-bold">Описание закрытия (в случае отказа)</label><br />
+                <label class="">@Html.DisplayFor(model => model.order.DescripClose)</label>
+            </div>
+
+        </div>
+        <div class="col-md-4">
+
+            <div class="form-group">
+                <label class="control-label font-weight-bold">Мастер</label><br />
+                <label class="">@Html.DisplayFor(model => model.order.USER_MASTER.Name)</label>
+            </div>
+            <div class="form-group">
+                <label class="control-label font-weight-bold">Создал заявку</label><br />
+                <label class="">@Html.DisplayFor(model => model.order.USER_ADD.Name)</label>
+            </div>
+
+            <div class="form-group">
+                <label class="control-label font-weight-bold">Примечание</label><br />
+                <label class="">@Html.DisplayFor(model => model.order.PRIMECHANIE)</label>
+            </div>
+            <div class="form-group">
+                <label class="control-label font-weight-bold">Получено средств</label><br />
+                <label class="">@Html.DisplayFor(model => model.order.GetMoneyAll)</label>
+            </div>
+            <div class="form-group">
+                <label class="control-label font-weight-bold">Потрачено на детали</label><br />
+                <label class="">@Html.DisplayFor(model => model.order.GetMoneyDetal)</label>
+            </div>
+            <div class="form-group">
+                <label class="control-label font-weight-bold">В фирму</label><br />
+                <label class="">@Html.DisplayFor(model => model.order.GetMoneyFirm)</label>
+            </div>
+            <div class="form-group">
+                <label class="control-label font-weight-bold">Прибыль Мастера</label><br />
+                <label class="">@Html.DisplayFor(model => model.order.GetMoneyMaster)</label>
+            </div>
+            <div class="form-group">
+                <label class="control-label font-weight-bold">Заявка является повтором</label><br />
+                <label>@Html.DisplayFor(model => model.order.GetPovtor)</label>
+            </div>
+        </div>
+    </div>
+
+</div>*@
+
+@* Вывод инфо о заявке (OLD) *@
 <div>
     <hr />
 
