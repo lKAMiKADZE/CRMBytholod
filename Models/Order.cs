@@ -1227,7 +1227,7 @@ WHERE 1=1
             if ( !String.IsNullOrEmpty(filtrOrders.Adres))
                 WHERE_adres = $" AND lower(STREET) like '%{filtrOrders.Adres.ToLower()}%'";
 
-            WHERE_betweenDate = $"AND z.DateAdd between  @DateStart AND @DateEnd";
+            WHERE_betweenDate = $"AND z.Dateadd between  @DateStart AND @DateEnd";
 
             if (filtrOrders.Povtor)
                 WHERE_povtor = "AND povtor=1";
@@ -1259,11 +1259,13 @@ WITH OrdersPage AS
 	,VREMJA
 	,s.NameStatus
 	,s.ColorHex
+	,o.NameOrg
 	
-    ,ROW_NUMBER() OVER (ORDER BY z.[DateAdd] DESC) AS 'RowNumber'
+    ,ROW_NUMBER() OVER (ORDER BY z.[DateAdd] ASC) AS 'RowNumber'
     FROM [dbo].[Zakaz] z
 	JOIN [Status] s ON s.ID_STATUS=z.ID_STATUS
 	JOIN [User] u ON u.ID_USER=z.ID_MASTER
+	JOIN [Organization] o ON o.ID_ORGANIZATION=z.ID_ORGANIZATION
 	WHERE 1=1
 		{WHERE_adres}
         {WHERE_betweenDate}
@@ -1287,6 +1289,8 @@ SELECT
 	,VREMJA
 	,NameStatus
     ,ColorHex
+	,NameOrg
+
 	,RowNumber
 FROM OrdersPage 
 WHERE RowNumber BETWEEN ({page}-1)*{step} AND {page}*{step}
@@ -1309,6 +1313,10 @@ ORDER BY RowNumber ASC
                     ColorHex = (string)row["ColorHex"]
                 };
 
+                Organization o = new Organization
+                {
+                    NameOrg = (string)row["NameOrg"]
+                };
 
                 User userMaster = new User
                 {
@@ -1331,7 +1339,8 @@ ORDER BY RowNumber ASC
                     NameClient = (string)row["NameClient"],
                     USER_MASTER = userMaster,
 
-                    STATUS = status
+                    STATUS = status,
+                    ORGANIZATION=o
                 };
 
                 orders.Add(order);
