@@ -9,10 +9,12 @@
 <hr />
 
 
-<form asp-action="CreateOrder">
+<form asp-action="CreateOrder" >
 
     <div class="form-group">
-        <input type="submit" value="Создать" class="btn btn-primary" />
+        @*<input type="submit" value="Создать" class="btn btn-primary" />*@
+
+        @*<input type="button" class="btn btn-primary" value="Создать" onclick="this.parentNode.submit();">*@
     </div>
 
 
@@ -32,7 +34,7 @@
                 <div class="form-group">
                     <label class="control-label">Выбрать мастера</label>
                     <select asp-for="order.USER_MASTER.ID_USER" class="form-control">
-                        @*<option value="@Model.order.USER_MASTER.ID_USER">@Model.order.USER_MASTER.Name</option>*@
+                        <option value="0">Пусто</option>
                         @foreach (var item in Model.MASTERs)
                         {
                             <option value="@item.ID_USER">@item.Name</option>
@@ -58,15 +60,15 @@
         <div class="row">
             <div class="col-md-3">
                 <div class="form-group">
-                    <label asp-for="order.STREET" class="control-label">Населенный пункт</label>
-                    <input asp-for="order.STREET" class="form-control" value="Москва" />
-                    <span asp-validation-for="order.STREET" class="text-danger"></span>
+                    <label asp-for="order.City" class="control-label">Населенный пункт</label>
+                    <input asp-for="order.City" class="form-control" value="Москва" autocomplete="off" />
+                    <span asp-validation-for="order.City" class="text-danger"></span>
                 </div>
             </div>
             <div class="col-md-6">
                 <div class="form-group">
                     <label asp-for="order.STREET" class="control-label">Улица</label>
-                    <input asp-for="order.STREET" class="form-control" />
+                    <input asp-for="order.STREET" class="form-control" autocomplete="off" />
                     <span asp-validation-for="order.STREET" class="text-danger"></span>
                 </div>
             </div>
@@ -78,7 +80,7 @@
 
                 <div class="form-group">
                     <label asp-for="order.HOUSE" class="control-label">Дом</label>
-                    <input asp-for="order.HOUSE" class="form-control" />
+                    <input asp-for="order.HOUSE" class="form-control" autocomplete="off" />
                     <span asp-validation-for="order.HOUSE" class="text-danger"></span>
                 </div>
             </div>
@@ -86,7 +88,7 @@
 
                 <div class="form-group">
                     <label asp-for="order.KORPUS" class="control-label">Корпус</label>
-                    <input asp-for="order.KORPUS" class="form-control" />
+                    <input asp-for="order.KORPUS" class="form-control" autocomplete="off" />
                     <span asp-validation-for="order.KORPUS" class="text-danger"></span>
                 </div>
             </div>
@@ -94,7 +96,7 @@
 
                 <div class="form-group">
                     <label asp-for="order.KVARTIRA" class="control-label">Квартира</label>
-                    <input asp-for="order.KVARTIRA" class="form-control" />
+                    <input asp-for="order.KVARTIRA" class="form-control" autocomplete="off" />
                     <span asp-validation-for="order.KVARTIRA" class="text-danger"></span>
                 </div>
             </div>
@@ -102,7 +104,7 @@
 
                 <div class="form-group">
                     <label asp-for="order.PODEST" class="control-label">Подъезд</label>
-                    <input asp-for="order.PODEST" class="form-control" />
+                    <input asp-for="order.PODEST" class="form-control" autocomplete="off" />
                     <span asp-validation-for="order.PODEST" class="text-danger"></span>
                 </div>
             </div>
@@ -110,7 +112,7 @@
 
                 <div class="form-group">
                     <label asp-for="order.ETAG" class="control-label">Этаж</label>
-                    <input asp-for="order.ETAG" class="form-control" />
+                    <input asp-for="order.ETAG" class="form-control" autocomplete="off" />
                     <span asp-validation-for="order.ETAG" class="text-danger"></span>
                 </div>
             </div>
@@ -118,7 +120,7 @@
 
                 <div class="form-group">
                     <label asp-for="order.KOD_DOMOFONA" class="control-label">Код домофона</label>
-                    <input asp-for="order.KOD_DOMOFONA" class="form-control" />
+                    <input asp-for="order.KOD_DOMOFONA" class="form-control" autocomplete="off" />
                     <span asp-validation-for="order.KOD_DOMOFONA" class="text-danger"></span>
                 </div>
             </div>
@@ -130,7 +132,7 @@
 
                 <div class="form-group">
                     <label asp-for="order.Msisdn1" class="control-label">Основной номер</label>
-                    <input asp-for="order.Msisdn1" class="form-control" />
+                    <input asp-for="order.Msisdn1" class="form-control" autocomplete="off" />
                     <span asp-validation-for="order.Msisdn1" class="text-danger"></span>
                 </div>
             </div>
@@ -138,7 +140,7 @@
 
                 <div class="form-group">
                     <label asp-for="order.Msisdn2" class="control-label">Доп номер 2</label>
-                    <input asp-for="order.Msisdn2" class="form-control" />
+                    <input asp-for="order.Msisdn2" class="form-control" autocomplete="off" />
                     <span asp-validation-for="order.Msisdn2" class="text-danger"></span>
                 </div>
             </div>
@@ -146,7 +148,7 @@
 
                 <div class="form-group">
                     <label asp-for="order.Msisdn3" class="control-label">Доп номер 3</label>
-                    <input asp-for="order.Msisdn3" class="form-control" />
+                    <input asp-for="order.Msisdn3" class="form-control" autocomplete="off" />
                     <span asp-validation-for="order.Msisdn3" class="text-danger"></span>
                 </div>
             </div>
@@ -156,14 +158,14 @@
             <div class="col-md-4">
                 <div class="form-group">
                     <label asp-for="order.HOLODILNIK_DEFECT" class="control-label">Холодильник дефект</label>
-                    <input asp-for="order.HOLODILNIK_DEFECT" class="form-control" />
+                    <input asp-for="order.HOLODILNIK_DEFECT" class="form-control" autocomplete="off" />
                     <span asp-validation-for="order.HOLODILNIK_DEFECT" class="text-danger"></span>
                 </div>
             </div>
             <div class="col-md-3">
                 <div class="form-group">
                     <label asp-for="order.VREMJA" class="control-label">Время ожидания</label>
-                    <input asp-for="order.VREMJA" class="form-control" />
+                    <input asp-for="order.VREMJA" class="form-control" autocomplete="off" />
                     <span asp-validation-for="order.VREMJA" class="text-danger"></span>
                 </div>
             </div>
@@ -173,15 +175,15 @@
         <div class="row">
             <div class="col-md-2">
                 <div class="form-group">
-                    <label asp-for="order.PRIMECHANIE" class="control-label">Промокод</label>
-                    <input asp-for="order.PRIMECHANIE" class="form-control" />
-                    <span asp-validation-for="order.PRIMECHANIE" class="text-danger"></span>
+                    <label asp-for="order.Promocode" class="control-label">Промокод</label>
+                    <input asp-for="order.Promocode" class="form-control" autocomplete="off" />
+                    <span asp-validation-for="order.Promocode" class="text-danger"></span>
                 </div>
             </div>
             <div class="col-md-4">
                 <div class="form-group">
                     <label asp-for="order.PRIMECHANIE" class="control-label">Примечание</label>
-                    <input asp-for="order.PRIMECHANIE" class="form-control" />
+                    <input asp-for="order.PRIMECHANIE" class="form-control" autocomplete="off" />
                     <span asp-validation-for="order.PRIMECHANIE" class="text-danger"></span>
                 </div>
             </div>
@@ -199,7 +201,7 @@
             <div class="col-md-2">
                 <div class="form-group">
                     <label asp-for="order.NameClient" class="control-label">Имя клиента</label>
-                    <input asp-for="order.NameClient" class="form-control" />
+                    <input asp-for="order.NameClient" class="form-control" autocomplete="off" />
                     <span asp-validation-for="order.NameClient" class="text-danger"></span>
                 </div>
             </div>
@@ -217,10 +219,13 @@
 
     <div class="form-group">
         <input type="submit" value="Создать" class="btn btn-primary" />
+        @*<input type="button"   class="btn btn-primary" value="Создать" onclick="this.parentNode.submit();">*@
     </div>
 </form>
 
+<script type="text/javascript">
 
+</script>
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}

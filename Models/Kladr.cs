@@ -26,7 +26,7 @@ namespace CRMBytholod.Models
 
             SqlParameter[] parameters = new SqlParameter[]
             {
-                new SqlParameter(@"NameStreet",SqlDbType.BigInt) { Value =shortStreet }
+                new SqlParameter(@"NameStreet",SqlDbType.NVarChar) { Value =shortStreet }
             };
 
             #region sql

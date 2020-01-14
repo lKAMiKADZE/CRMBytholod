@@ -19,8 +19,8 @@ namespace CRMBytholod.ViewModels
 
         public OrdersVM( string id_user, int _page, int _step, FiltrOrders filtr )
         {
-            Steps = new int[] { 5, 10, 20, 50, 100 };
-            if (_step == 0) _step = 10;
+            Steps = new int[] { 50,100,150,200};
+            if (_step == 0) _step = 50;
             if (_page == 0) _page = 1;
                         
             Step = _step;
@@ -40,14 +40,14 @@ namespace CRMBytholod.ViewModels
         public string Adres { get; set; }
         public long ID_STATUS { get; set; }// выпадающий список
         public string Msisdn { get; set; }
-        public DateTime DateStart { get; set; }
-        public DateTime DateEnd { get; set; }
+        public DateTime? DateStart { get; set; }
+        public DateTime? DateEnd { get; set; }
         public bool Povtor { get; set; }
 
         public FiltrOrders()
         {
-            DateStart = DateEnd = DateTime.Now;
-            DateStart = DateStart.AddMonths(-1);
+            DateStart = null;//DateEnd = DateTime.Now;
+            DateStart = null ;
             Adres = "";
             Msisdn = "";
             ID_STATUS = 0;

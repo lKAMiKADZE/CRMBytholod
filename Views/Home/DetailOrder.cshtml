@@ -9,17 +9,22 @@
 
 <hr />
 
-@if (Model.order.STATUS.ID_STATUS != 5 && Model.order.STATUS.ID_STATUS != 3)
+@if (Model.order.STATUS.ID_STATUS != 3 && Model.order.STATUS.ID_STATUS != 5)
 {
     <div>
         <b>@Html.ActionLink("Редактировать", "EditOrder", new { ID_ZAKAZ = Model.order.ID_ZAKAZ })</b>
     </div>
     <br />
-    <div>
-        <b>@Html.ActionLink("Закрыть заявку", "CloseOrder", new { ID_ZAKAZ = Model.order.ID_ZAKAZ })</b>
-    </div>
 }
-<br />
+
+@if (Model.order.STATUS.ID_STATUS != 3)
+{
+
+    <div>
+        <b>@Html.ActionLink("Отказная заявка", "CloseOrder", new { ID_ZAKAZ = Model.order.ID_ZAKAZ })</b>
+    </div>
+    <br />
+}
 
 @switch (Model.order.STATUS.NameStatus)
 {
@@ -69,9 +74,9 @@ default: @Model.order.STATUS.NameStatus; break;
     <div class="row">
         <div class="col-md-3">
             <div class="form-group">
-                <label asp-for="order.STREET" class="control-label">Населенный пункт</label>
-                <input asp-for="order.STREET" class="form-control" value="Москва" readonly />
-                <span asp-validation-for="order.STREET" class="text-danger"></span>
+                <label asp-for="order.City" class="control-label">Населенный пункт</label>
+                <input asp-for="order.City" class="form-control" value="Москва" readonly />
+                <span asp-validation-for="order.City" class="text-danger"></span>
             </div>
         </div>
         <div class="col-md-6">
@@ -184,9 +189,9 @@ default: @Model.order.STATUS.NameStatus; break;
     <div class="row">
         <div class="col-md-2">
             <div class="form-group">
-                <label asp-for="order.PRIMECHANIE" class="control-label">Промокод</label>
-                <input asp-for="order.PRIMECHANIE" class="form-control" readonly />
-                <span asp-validation-for="order.PRIMECHANIE" class="text-danger"></span>
+                <label asp-for="order.Promocode" class="control-label">Промокод</label>
+                <input asp-for="order.Promocode" class="form-control" readonly />
+                <span asp-validation-for="order.Promocode" class="text-danger"></span>
             </div>
         </div>
         <div class="col-md-4">
@@ -226,26 +231,26 @@ default: @Model.order.STATUS.NameStatus; break;
     <div class="row">
         <div class="col-md-3">
             <div class="form-group">
-                <label class="control-label font-weight-bold">Дата создания</label>
-                <input asp-for="order.DateAdd" class="form-control" readonly />
+                <label class="control-label font-weight-bold">Время создания</label>
+                <input asp-for="order.GetDateAdd" class="form-control" readonly />
             </div>
         </div>
         <div class="col-md-3">
             <div class="form-group">
-                <label class="control-label font-weight-bold">Дата отправки Мастеру</label>
-                <input asp-for="order.DateSendMaster" class="form-control" readonly />
+                <label class="control-label font-weight-bold">Время отправки Мастеру</label>
+                <input asp-for="order.GetDateSendMaster" class="form-control" readonly />
             </div>
         </div>
         <div class="col-md-3">
             <div class="form-group">
-                <label class="control-label font-weight-bold">Дата открытия Мастером</label>
-                <input asp-for="order.DateOpenMaster" class="form-control" readonly />
+                <label class="control-label font-weight-bold">Время открытия Мастером</label>
+                <input asp-for="order.GetDateOpenMaster" class="form-control" readonly />
             </div>
         </div>
         <div class="col-md-3">
             <div class="form-group">
-                <label class="control-label font-weight-bold">Дата закрытия </label>
-                <input asp-for="order.DateClose" class="form-control" readonly />
+                <label class="control-label font-weight-bold">Время закрытия </label>
+                <input asp-for="order.GetDateClose" class="form-control" readonly />
             </div>
         </div>
 

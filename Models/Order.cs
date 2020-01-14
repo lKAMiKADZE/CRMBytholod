@@ -54,6 +54,9 @@ namespace CRMBytholod.Models
         public string DescripClose { get; set; }
         public string NameClient { get; set; }
         public bool Povtor { get; set; }
+        public string City { get; set; }
+        public string Promocode { get; set; }
+        
 
         //dop param
         /////////////////////////////////
@@ -85,7 +88,48 @@ namespace CRMBytholod.Models
         {
             get
             {
-                return $"{DATA.ToShortDateString()}\r\nПОНЕДЕЛЬНИК";
+
+                // получение дня недели и даты, но заполняется только уникальная дата, т.е. новый день недели, должен быть у самой первой записи
+                string RUdate =  DATA.ToString("dddd", CultureInfo.GetCultureInfo("ru-ru"));
+
+                return $"{DATA.ToShortDateString()}\r\n{RUdate.ToUpper()}";
+            }
+        }
+        public string GetDateAdd
+        {
+            get
+            {
+                return DateAdd.ToString("dd/MM/yy HH:mm:ss ");
+            }
+        }
+        public string GetDateClose
+        {
+            get
+            {
+                if (!DateClose.HasValue)
+                    return "";
+
+                return DateClose.Value.ToString("dd/MM/yy HH:mm:ss ");
+            }
+        }
+        public string GetDateOpenMaster
+        {
+            get
+            {
+                if (!DateOpenMaster.HasValue)
+                    return "";
+
+                return DateOpenMaster.Value.ToString("dd/MM/yy HH:mm:ss ");
+            }
+        }
+        public string GetDateSendMaster
+        {
+            get
+            {
+                if (!DateSendMaster.HasValue)
+                    return "";
+
+                return DateSendMaster.Value.ToString("dd/MM/yy HH:mm:ss ");
             }
         }
 
@@ -127,13 +171,12 @@ namespace CRMBytholod.Models
                 return "НЕТ";
             }
         }
-
-
+        
         public string GetMsisdn1Mask
         {
             get
             {
-                if (String.IsNullOrEmpty(Msisdn1))
+                if (String.IsNullOrEmpty(Msisdn1) || Msisdn1.Length < 11)
                     return "";
 
                 string firstMask = Msisdn1.Substring(0, 4);
@@ -148,7 +191,7 @@ namespace CRMBytholod.Models
         {
             get
             {
-                if (String.IsNullOrEmpty(Msisdn2))
+                if (String.IsNullOrEmpty(Msisdn2) || Msisdn2.Length<11)
                     return "";
                 string firstMask = Msisdn2.Substring(0, 4);
                 string lastMask = Msisdn2.Substring(Msisdn2.Length-4, 4);
@@ -162,7 +205,7 @@ namespace CRMBytholod.Models
         {
             get
             {
-                if (String.IsNullOrEmpty(Msisdn3))
+                if (String.IsNullOrEmpty(Msisdn3) || Msisdn3.Length < 11)
                     return "";
 
                 string firstMask = Msisdn3.Substring(0, 4);
@@ -173,6 +216,11 @@ namespace CRMBytholod.Models
 
             }
         }
+
+
+
+
+
 
 
         public Order()
@@ -1115,6 +1163,8 @@ SELECT [ID_ZAKAZ]
       ,u.[ID_USER]
       ,u.[Phone]
 	  ,uadd.[Name] AS NameUserAdd
+	  ,o.[City]
+	  ,o.[Promocode]
   FROM [dbo].[Zakaz] o
 JOIN [User] u ON u.ID_USER=o.ID_MASTER -- ADD User MASTER
 JOIN [User] uadd ON uadd.ID_USER=o.ID_USER_ADD -- ADD User DISP or ADMIN
@@ -1189,6 +1239,8 @@ WHERE 1=1
                     Msisdn2 = (string)row["Msisdn2"],
                     Msisdn3 = (string)row["Msisdn3"],
                     Povtor = (bool)row["Povtor"],
+                    Promocode = (string)row["Promocode"],
+                    City = (string)row["City"],
 
                     USER_MASTER = userMaster,
                     USER_ADD= userAdd,
@@ -1211,11 +1263,15 @@ WHERE 1=1
         public static List<Order> GetOrdersSite(int page, int step, FiltrOrders filtrOrders)
         {
             List<Order> orders = new List<Order>();
-            SqlParameter[] parameters = new SqlParameter[]
-            {
-                new SqlParameter(@"DateStart",SqlDbType.DateTime) { Value =filtrOrders.DateStart },
-                new SqlParameter(@"DateEnd",SqlDbType.DateTime) { Value =filtrOrders.DateEnd.AddDays(1) }
-            };
+            // обработка дат проверка на налл
+
+
+
+            DateTime _start, _end;
+
+            _start = _end = DateTime.Now;
+
+            
 
 
             string WHERE_adres = "";
@@ -1223,11 +1279,33 @@ WHERE 1=1
             string WHERE_povtor = "";
             string WHERE_idStatus = "";
             string WHERE_msisdn = "";
+            string WHERE_Default_DATA = "AND DATA>=cast(getdate() as date)";
 
-            if ( !String.IsNullOrEmpty(filtrOrders.Adres))
+            string ORDERBY = "z.[DATA] ASC";
+
+            if (filtrOrders.DateStart.HasValue && filtrOrders.DateEnd.HasValue)
+            {
+                _start = filtrOrders.DateStart.Value;
+                _end = filtrOrders.DateEnd.Value;
+
+                ORDERBY = "z.[DATA] DESC";
+                WHERE_Default_DATA = "";
+            }
+
+
+            SqlParameter[] parameters = new SqlParameter[]
+            {
+                new SqlParameter(@"DateStart",SqlDbType.DateTime) { Value =_start },
+                new SqlParameter(@"DateEnd",SqlDbType.DateTime) { Value =_end.AddSeconds(1) }
+            };
+
+
+
+            if (!String.IsNullOrEmpty(filtrOrders.Adres))
                 WHERE_adres = $" AND lower(STREET) like '%{filtrOrders.Adres.ToLower()}%'";
 
-            WHERE_betweenDate = $"AND z.Dateadd between  @DateStart AND @DateEnd";
+            if (filtrOrders.DateStart.HasValue && filtrOrders.DateEnd.HasValue)
+                WHERE_betweenDate = $"AND z.DATA between  @DateStart AND @DateEnd";
 
             if (filtrOrders.Povtor)
                 WHERE_povtor = "AND povtor=1";
@@ -1261,17 +1339,20 @@ WITH OrdersPage AS
 	,s.ColorHex
 	,o.NameOrg
 	
-    ,ROW_NUMBER() OVER (ORDER BY z.[DateAdd] ASC) AS 'RowNumber'
+    ,ROW_NUMBER() OVER (ORDER BY {ORDERBY} ) AS 'RowNumber'
     FROM [dbo].[Zakaz] z
 	JOIN [Status] s ON s.ID_STATUS=z.ID_STATUS
 	JOIN [User] u ON u.ID_USER=z.ID_MASTER
 	JOIN [Organization] o ON o.ID_ORGANIZATION=z.ID_ORGANIZATION
 	WHERE 1=1
+        {WHERE_Default_DATA}
+
 		{WHERE_adres}
         {WHERE_betweenDate}
         {WHERE_povtor}
         {WHERE_idStatus}
         {WHERE_msisdn}
+        
 ) 
 
 SELECT
@@ -1308,7 +1389,7 @@ ORDER BY RowNumber ASC
             foreach (DataRow row in dt.Rows)
             {
                 Status status = new Status
-                {                    
+                {
                     NameStatus = (string)row["NameStatus"],
                     ColorHex = (string)row["ColorHex"]
                 };
@@ -1340,7 +1421,7 @@ ORDER BY RowNumber ASC
                     USER_MASTER = userMaster,
 
                     STATUS = status,
-                    ORGANIZATION=o
+                    ORGANIZATION = o
                 };
 
                 orders.Add(order);
@@ -1495,7 +1576,9 @@ SELECT
                 new SqlParameter(@"ID_MASTER",SqlDbType.BigInt) { Value =USER_MASTER.ID_USER },
                 new SqlParameter(@"ID_STATUS",SqlDbType.BigInt) { Value =_ID_STATUS },// в ожидании или повтор
                 new SqlParameter(@"NameClient",SqlDbType.NVarChar) { Value =NameClient ?? "" },
-                new SqlParameter(@"Povtor",SqlDbType.Bit) { Value =Povtor }
+                new SqlParameter(@"Povtor",SqlDbType.Bit) { Value =Povtor },
+                new SqlParameter(@"Promocode",SqlDbType.NVarChar) { Value =Promocode??"" },
+                new SqlParameter(@"City",SqlDbType.NVarChar) { Value =City ?? ""}
             };
 
 
@@ -1524,6 +1607,8 @@ UPDATE [dbo].[Zakaz]
       ,[ID_STATUS] =	@ID_STATUS	-- <ID_STATUS, bigint,>
       ,[NameClient] =	@NameClient	--<NameClient, varchar(50),>
       ,[Povtor] =		@Povtor	-- <Povtor, bit,>
+      ,[Promocode]  =@Promocode --Promocode
+      ,[City] =          @City  --City
  WHERE 1=1
 	AND ID_ZAKAZ=@ID_ZAKAZ
 	AND ID_STATUS NOT IN (3,5)
@@ -1569,8 +1654,10 @@ UPDATE [dbo].[Zakaz]
                 new SqlParameter(@"ID_STATUS",SqlDbType.BigInt) { Value =_ID_STATUS },// в ожидании или повтор
                 new SqlParameter(@"NameClient",SqlDbType.NVarChar) { Value =NameClient ?? "" },
                 new SqlParameter(@"ID_USER_ADD",SqlDbType.BigInt) { Value =USER_ADD.ID_USER },
-                new SqlParameter(@"Povtor",SqlDbType.Bit) { Value =Povtor }
-                
+                new SqlParameter(@"Povtor",SqlDbType.Bit) { Value =Povtor },
+                new SqlParameter(@"Promocode",SqlDbType.NVarChar) { Value =Promocode??"" },
+                new SqlParameter(@"City",SqlDbType.NVarChar) { Value =City ?? ""}
+
             };
 
 
@@ -1580,6 +1667,7 @@ UPDATE [dbo].[Zakaz]
 
             string sqlText = @$"
 --Save order
+
 INSERT INTO [dbo].[Zakaz]
            ([STREET]
            ,[HOUSE]
@@ -1609,7 +1697,10 @@ INSERT INTO [dbo].[Zakaz]
            ,[NameClient]
            ,[ID_USER_ADD]
            ,[DateClose]
-           ,[Povtor])
+           ,[Povtor]
+		   ,[Promocode]
+		   ,[City]
+		   )
      VALUES
            (
 		  @STREET --<STREET, nvarchar(50),>
@@ -1641,6 +1732,8 @@ INSERT INTO [dbo].[Zakaz]
           ,@ID_USER_ADD --,<ID_USER_ADD, bigint,>
           ,null --,<DateClose, datetime,>
           ,@Povtor --,<Povtor, bit,>
+		  ,@Promocode      --,[Promocode]
+		  ,@City      --,[City]
 )
 
 
@@ -1688,6 +1781,11 @@ SELECT MAX(ID_ZAKAZ) AS ID_ZAKAZ FROM [dbo].[Zakaz]
 
 UPDATE [dbo].[Zakaz] SET  
     [ID_STATUS]=3
+	,[MoneyAll]=0
+	,[MoneyDetal]=0
+	,[MoneyFirm]=0
+	,[MoneyMaster]=0
+	,[DateClose]=CURRENT_TIMESTAMP
 WHERE ID_ZAKAZ=@ID_ZAKAZ
     
 
