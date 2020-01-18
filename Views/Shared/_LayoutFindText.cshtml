@@ -9,8 +9,19 @@
 
 
 
+    <link rel="stylesheet" href='http://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.0.3/css/bootstrap.min.css'
+          media="screen" />
+    <script type="text/javascript" src='http://ajax.aspnetcdn.com/ajax/jQuery/jquery-1.8.3.min.js'></script>
+    <script type="text/javascript" src='http://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.0.3/js/bootstrap.min.js'></script>
+    <script type="text/javascript" src="http://cdn.rawgit.com/bassjobsen/Bootstrap-3-Typeahead/master/bootstrap3-typeahead.min.js"></script>
+    @*<link rel="Stylesheet" href="https://twitter.github.io/typeahead.js/css/examples.css" />*@
+
+
+
 </head>
 <body>
+
+
     <header>
         <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
             <div class="container">
@@ -21,16 +32,7 @@
                 </button>
                 <div class="navbar-collapse collapse d-sm-inline-flex flex-sm-row-reverse">
 
-                    <ul class="navbar-nav flex-grow-1">
-                        @if (User.Identity.Name == null)
-                        {
-                            <li class="nav-item"><b><a class="nav-link text-dark" asp-area="" asp-controller="Account" asp-action="Login">Вход</a></b></li>
-                        }
-                        else
-                        {
-                            <li class="nav-item"><b><a class="nav-link text-dark" asp-controller="Account" asp-action="Logout">@Context.Request.Cookies["Login"] Выход</a></b></li>
-                        }
-                    </ul>
+                    
                     <ul class="navbar-nav flex-grow-1">
                         @if (User.Identity.Name != null)
                         {
@@ -52,12 +54,13 @@
 
     <footer class="border-top footer text-muted">
         <div class="container">
-            &copy; 2020 - CRM Быт холод 
+            &copy; 2020 - CRM Быт холод
         </div>
     </footer>
-    <script src="~/lib/jquery/dist/jquery.min.js"></script>
-    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
+
+
+
     @RenderSection("Scripts", required: false)
 </body>
 </html>

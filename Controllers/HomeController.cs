@@ -248,8 +248,34 @@ namespace CRMBytholod.Controllers
 
         }
 
+        public IActionResult GetStreets(string street)
+        {
+            List<Kladr> kladrs = Kladr.GetLikeStreet(street);
 
 
+            return PartialView(kladrs);
+        }
+
+
+        public IActionResult test()
+        {
+
+            ViewBag.Message = "CustomerName: " + " CustomerId: " ;
+            return View();
+        }
+
+
+
+        
+        public JsonResult AutoComplete(string prefix)
+        {
+
+            List<Kladr> kladrs = Kladr.GetLikeStreet(prefix);
+
+         return Json(kladrs);
+        }
+
+       
 
     }
 }

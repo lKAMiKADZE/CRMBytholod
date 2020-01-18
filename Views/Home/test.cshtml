@@ -1,0 +1,108 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit http://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+    Layout = null;
+}
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Index</title>
+    <style type="text/css">
+        body {
+            font-family: Arial;
+            font-size: 10pt;
+            padding: 10pt;
+        }
+    </style>
+</head>
+<body>
+
+    @*<link rel="stylesheet" href='http://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.0.3/css/bootstrap.min.css'
+          media="screen" />*@
+    <script type="text/javascript" src='http://ajax.aspnetcdn.com/ajax/jQuery/jquery-1.8.3.min.js'></script>
+    <script type="text/javascript" src='http://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.0.3/js/bootstrap.min.js'></script>
+    <script type="text/javascript" src="http://cdn.rawgit.com/bassjobsen/Bootstrap-3-Typeahead/master/bootstrap3-typeahead.min.js"></script>
+
+    @*    <link rel="Stylesheet" href="https://twitter.github.io/typeahead.js/css/examples.css" />*@
+
+    <script type="text/javascript">
+
+        $(function () {
+            $("#txtCustomer").typeahead({
+                hint: true,
+                highlight: true,
+                minLength: 1,
+                source: function (request, response) {
+                    $.ajax({
+                        url: '/Home/AutoComplete?prefix=' + request,
+                        //data: "{ 'prefix': '" + request + "'}",
+                        dataType: "json",
+                        type: "GET",
+                        contentType: "application/json; charset=utf-8",
+                        success: function (data) {
+                            items = [];
+                            map = {};
+                            $.each(data, function (i, item) {
+
+                                /////
+                                //var divtag = document.getElementById('divdata');
+
+                                //var newp = document.createElement('p');
+                                //newp.innerHTML=
+
+                                //divtag.insertAdjacentElement('afterend', newp);
+
+
+                                //////////
+
+                                var id = item.iD_KLADR;
+                                var name = item.nameStreet;
+                                map[name] = { id: id, name: name };
+                                items.push(name);
+                            });
+                            response(items);
+                            $(".dropdown-menu").css("height", "auto");
+                        },
+                        error: function (response) {
+                            alert(response.responseText);
+                        },
+                        failure: function (response) {
+                            alert(response.responseText);
+                        }
+                    });
+                },
+                updater: function (item) {
+                    $('#hfCustomer').val(map[item].id);
+                    return item;
+                }
+            });
+        });
+
+    </script>
+
+
+
+    @*@using (Html.BeginForm("test", "Home", FormMethod.Post))
+    {*@
+
+<form method="post" action="/Home/test">
+    <input type="text" id="txtCustomer" name="CustomerName" autocomplete="off" style="width:300px" /> //class="form-control"
+    <input type="hidden" id="hfCustomer" name="CustomerId" />
+    <br />
+    <input type="submit" id="btnSubmit" value="Submit" />
+    <br />
+    <br />
+    @ViewBag.Message
+
+
+    <div id="divdata">
+
+    </div>
+</form>
+        @*}*@
+
+
+</body>
+</html>
