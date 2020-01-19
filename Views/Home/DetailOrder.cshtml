@@ -74,7 +74,7 @@ default: @Model.order.STATUS.NameStatus; break;
         <div class="col-md-3">
             <div class="form-group">
                 <label asp-for="order.City" class="control-label">Населенный пункт</label>
-                <input asp-for="order.City" class="form-control" value="Москва" readonly />
+                <input asp-for="order.City" class="form-control" readonly />
                 <span asp-validation-for="order.City" class="text-danger"></span>
             </div>
         </div>

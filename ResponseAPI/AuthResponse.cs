@@ -3,6 +3,7 @@ using CRMBytholod.RequestAPI;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
 
@@ -10,6 +11,7 @@ namespace CRMBytholod.ResponseAPI
 {
     public class AuthResponse
     {
+        [JsonPropertyName("Login")]
         public bool isAuth { get; private set; }
         public string Sessionid { get; private set; }
 
