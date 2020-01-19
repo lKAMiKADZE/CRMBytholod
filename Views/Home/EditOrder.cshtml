@@ -5,52 +5,60 @@
     Layout = "_LayoutFindText";
 }
 <script type="text/javascript">
-
-    $(function () {
-        $("#order_STREET").typeahead({
-            hint: true,
-            highlight: true,
-            minLength: 1,
-            source: function (request, response) {
-                $.ajax({
-                    url: '/Home/AutoComplete?prefix=' + request,
-                    //data: "{ 'prefix': '" + request + "'}",
-                    dataType: "json",
-                    type: "GET",
-                    contentType: "application/json; charset=utf-8",
-                    success: function (data) {
-                        items = [];
-                        map = {};
-                        $.each(data, function (i, item) {
-                            var id = item.iD_KLADR;
-                            var name = item.nameStreet;
-                            map[name] = { id: id, name: name };
-                            items.push(name);
-                        });
-                        response(items);
-                        $(".dropdown-menu").css("height", "auto");
-                    },
-                    error: function (response) {
-                        alert(response.responseText);
-                    },
-                    failure: function (response) {
-                        alert(response.responseText);
-                    }
-                });
-            },
-            updater: function (item) {
-                $('#hfCustomer').val(map[item].id);
-                return item;
-            }
-        });
-
-
-
+    
+    // добавление слова при вводе улицы
+   // $(function () {
+   //     $("#order_STREET").typeahead({
+   //         hint: true,
+   //         highlight: true,
+   //         minLength: 1,
+   //         source: function (request, response) {
+   //             $.ajax({
+   //                 url: '/Home/AutoComplete?prefix=' + request,
+   //                 //data: "{ 'prefix': '" + request + "'}",
+   //                 dataType: "json",
+   //                 type: "GET",
+   //                 contentType: "application/json; charset=utf-8",
+   //                 success: function (data) {
+   //                     items = [];
+   //                     map = {};
+   //                     $.each(data, function (i, item) {
+   //                         var id = item.iD_KLADR;
+   //                         var name = item.nameStreet;
+   //                         map[name] = { id: id, name: name };
+   //                         items.push(name);
+   //                     });
+   //                     response(items);
+   //                     $(".dropdown-menu").css("height", "auto");
+   //                 },
+   //                 error: function (response) {
+   //                     alert(response.responseText);
+   //                 },
+   //                 failure: function (response) {
+   //                     alert(response.responseText);
+   //                 }
+   //             });
+   //         },
+   //         updater: function (item) {
+   //             $('#hfCustomer').val(map[item].id);
+   //             return item;
+   //         }
+   //     });
 
 
-    });
 
 
+
+   // });
+
+   // // отключение кнопки enter
+   // $(document).ready(function() {
+   //   $("#form").keydown(function(event){
+   //     if(event.keyCode == 13) {
+   //       event.preventDefault();
+   //       return false;
+   //   }
+   //});
 
 
 </script>
@@ -71,11 +79,10 @@ default: @Model.order.STATUS.NameStatus; break;
 
 
 @* Новая форма изменения заявки *@
-<form asp-action="EditOrder">
+<form asp-action="EditOrder" id="form">
 
     <div class="form-group">
-        @*<input type="submit" value="Сохранить" class="btn btn-primary" />*@
-        @*<input type="button" class="btn btn-primary" value="Сохранить" onclick="this.parentNode.submit();">*@
+        <input type="submit" value="Сохранить" class="btn btn-primary" />
     </div>
 
     <div class="form-group">
@@ -286,7 +293,6 @@ default: @Model.order.STATUS.NameStatus; break;
 
     <div class="form-group">
         <input type="submit" value="Сохранить" class="btn btn-primary" />
-        @*<input type="button" class="btn btn-primary" value="Сохранить" onclick="this.parentNode.submit();">*@
     </div>
 </form>
 

@@ -3,13 +3,25 @@
 @{
     ViewData["Title"] = "Изменение пользователя";
 }
+<script type="text/javascript">
 
-    <h1>Изменение пользователя</h1>
+
+   // $(document).ready(function() {
+   //   $("#form").keydown(function(event){
+   //     if(event.keyCode == 13) {
+   //       event.preventDefault();
+   //       return false;
+   //   }
+   //});
+
+
+</script>
+<h1>Изменение пользователя</h1>
 
 <hr />
 <div class="row">
     <div class="col-md-4">
-        <form asp-action="EditUser">
+        <form asp-action="EditUser" id="form">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-group">
                 <input hidden asp-for="user.ID_USER" class="form-control" />

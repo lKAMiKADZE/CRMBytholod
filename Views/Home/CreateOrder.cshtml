@@ -6,6 +6,7 @@
 
 <script type="text/javascript">
 
+    // добавление слова при вводе улицы
     $(function () {
         $("#order_STREET").typeahead({
             hint: true,
@@ -51,6 +52,16 @@
     });
 
 
+    // отключение кнопки enter
+    $(document).ready(function() {
+      $("#form").keydown(function(event){
+        if(event.keyCode == 13) {
+          event.preventDefault();
+          return false;
+      }
+   });
+});
+
 
 
 </script>
@@ -63,12 +74,11 @@
 
 
 
-<form asp-action="CreateOrder">
+<form asp-action="CreateOrder" id="form">
 
     <div class="form-group">
-        @*<input type="submit" value="Создать" class="btn btn-primary" />*@
+        <input type="submit" value="Создать" class="btn btn-primary" />
 
-        @*<input type="button" class="btn btn-primary" value="Создать" onclick="this.parentNode.submit();">*@
     </div>
 
 
@@ -275,7 +285,6 @@
 
     <div class="form-group">
         <input type="submit" value="Создать" class="btn btn-primary" />
-        @*<input type="button"   class="btn btn-primary" value="Создать" onclick="this.parentNode.submit();">*@
     </div>
 </form>
 

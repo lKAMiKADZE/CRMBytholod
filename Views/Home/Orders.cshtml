@@ -2,6 +2,7 @@
 
 @{
     ViewData["Title"] = "Заявки";
+    //Layout = "_LayoutFindText";
 }
 
 <h1>Заявки</h1>
@@ -18,7 +19,7 @@
 
 <div>
 
-    <form asp-action="Orders" method="get">
+    <form asp-action="Orders" method="get" id="form">
         <input hidden asp-for="Page" value="@Model.Page" />
         <input hidden asp-for="Step" value="@Model.Step" />
 
@@ -26,7 +27,9 @@
             <div class="col-md-4">
                 <div class="form-group">
                     <label asp-for="filtrOrders.Adres" class="control-label">Улица</label>
-                    <input asp-for="filtrOrders.Adres" class="form-control" />
+                    <input asp-for="filtrOrders.Adres" class="form-control" autocomplete="off"/>
+
+                    <input type="hidden" id="hfCustomer" name="CustomerId" />
                 </div>
 
                 <label>Статус заявок</label>
@@ -55,7 +58,7 @@
             <div class="col-md-2">
                 <div class="form-group">
                     <label asp-for="filtrOrders.Msisdn" class="control-label">Номер клиента</label>
-                    <input asp-for="filtrOrders.Msisdn" class="form-control" />
+                    <input asp-for="filtrOrders.Msisdn" class="form-control" autocomplete="off" />
                 </div>
                 <div class="form-check">
                     <input type="checkbox" class="form-check-input" asp-for="filtrOrders.Povtor">
