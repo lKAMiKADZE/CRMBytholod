@@ -36,8 +36,10 @@ namespace CRMBytholod.Models
         ////////////////////////
 
         [Required(ErrorMessage = "Не указан номер")]
+        //[HTMLMaskAttribute("mask", "7(999) 999-9999")] //phone format 
         public string Msisdn1 { get; set; }
         public string Msisdn2 { get; set; }
+
         public string Msisdn3 { get; set; }
         public Organization ORGANIZATION { get; set; }
         public User USER_MASTER { get; set; }
@@ -229,6 +231,7 @@ namespace CRMBytholod.Models
             USER_MASTER = new User();
             USER_ADD = new User();
             STATUS = new Status();
+            Msisdn1 = Msisdn2 = Msisdn3 = "7";
         }
 
 
@@ -283,7 +286,7 @@ JOIN [User] u ON u.ID_USER=o.ID_MASTER
 JOIN [Status] s ON s.ID_STATUS=o.ID_STATUS
 WHERE 1=1
 	AND u.Sessionid=@Sessionid	--'CB80665A-93E0-4E91-A982-36063D546CE6'--@Sessionid	
-	AND s.ID_STATUS in (1,2,4)
+	--AND s.ID_STATUS in (1,2,4)
 ORDER BY DateSendMaster DESC, ID_ZAKAZ DESC
 
 ";
@@ -1633,6 +1636,14 @@ UPDATE [dbo].[Zakaz]
             if (Povtor)
                 _ID_STATUS = 2;// повтор
 
+            if(String.IsNullOrEmpty(Msisdn1) || Msisdn1.Length<=1)            
+                Msisdn1 = "";
+            if (String.IsNullOrEmpty(Msisdn2) || Msisdn2.Length <=1)
+                Msisdn2 = "";
+            if (String.IsNullOrEmpty(Msisdn3) || Msisdn3.Length <=1)
+                Msisdn3 = "";
+
+
             SqlParameter[] parameters = new SqlParameter[]
             {
                 new SqlParameter(@"STREET",SqlDbType.NVarChar) { Value =STREET ?? "" },
@@ -1660,7 +1671,7 @@ UPDATE [dbo].[Zakaz]
 
             };
 
-
+            
 
 
             #region sql

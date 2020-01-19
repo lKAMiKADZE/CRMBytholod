@@ -43,7 +43,11 @@ namespace CRMBytholod
                     options.LoginPath = new Microsoft.AspNetCore.Http.PathString("/Account/Login");
                 });
 
+            // для включение проверки по маске
+            //services.AddMvc().AddMvcOptions(opts => {
 
+            //    opts.ModelMetadataDetailsProviders.Add(new Settings.CustomMetadataProvider());
+            //});
 
             //services.AddMvc().SetCompatibilityVersion(Microsoft.AspNetCore.Mvc.CompatibilityVersion.Version_3_0);
 
