@@ -3,11 +3,16 @@
 }
 
     <div class="text-center">
+        <img src="~/logo.png" style="width: 400px"/>
+
         <h1 class="display-4">Добро пожаловать</h1>
-        <h3>CRM Быт холод 7</h3>
+        <h3>CRM Бытхолод V2</h3>
         <br>
         @if (User.Identity.Name != null)
         {
             <p style="font-size: x-large;">Перейти в <a asp-action="Orders">заявки</a>.</p>
         }
+
+        <input hidden value="V2"/>
+
     </div>
