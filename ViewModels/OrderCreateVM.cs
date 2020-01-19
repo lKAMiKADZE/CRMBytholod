@@ -16,10 +16,11 @@ namespace CRMBytholod.ViewModels
       
         public OrderCreateVM()
         {
-            //order = Order.GetOrderSite(ID_ZAKAZ);
+            ORGANIZATIONs = Organization.GetAllOrganization();
             order = new Order();
             MASTERs = User.GetAllMasters();
-            ORGANIZATIONs = Organization.GetAllOrganization();
+           
+
 
         }
     }

@@ -231,6 +231,7 @@ namespace CRMBytholod.Models
             USER_MASTER = new User();
             USER_ADD = new User();
             STATUS = new Status();
+            ORGANIZATION = new Organization();
             Msisdn1 = Msisdn2 = Msisdn3 = "7";
         }
 

@@ -735,15 +735,15 @@ INSERT INTO [dbo].[User]
                         command.Parameters.AddRange(parameters);
                     }
 
-                   // try
-                   // {
+                    try
+                    {
                         SqlDataReader reader = command.ExecuteReader();
                         dt.Load(reader);
-                   // }
-                   // catch(Exception ex)
-                   // {
+                    }
+                    catch (Exception ex)
+                    {
 
-                   // }
+                    }
 
                     command.Parameters.Clear();
 

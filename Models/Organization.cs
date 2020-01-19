@@ -33,7 +33,8 @@ namespace CRMBytholod.Models
     SELECT 
 	o.ID_ORGANIZATION,
 	o.NameOrg
-   FROM [Organization] o
+   FROM [Bytholod].[dbo].[Organization] o
+ORDER BY NameOrg ASC
 
 ";
 
@@ -46,8 +47,6 @@ namespace CRMBytholod.Models
 
             foreach (DataRow row in dt.Rows)
             {
-
-                // попали в цикл, значит авторизовались, т.к. такой пользователь существует
                 Organization org = new Organization
                 {
                     ID_ORGANIZATION = (long)row["ID_ORGANIZATION"],
