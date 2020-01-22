@@ -266,6 +266,7 @@ WHERE 1=1
 	AND DateSendMaster is null
 )
 
+
 -- сортируем данные сначала по дате прихода заявок к мастеру, а после, если время одинаковое, сортируем по айди заказу,
 --таким образом не будут заявки перемешиваться
 SELECT [ID_ZAKAZ]
@@ -281,14 +282,44 @@ SELECT [ID_ZAKAZ]
       ,[DateOpenMaster]	  
       ,s.[ID_STATUS]
 	  ,s.[NameStatus]
+      ,s.[ColorHex]
 	  ,[Povtor]
   FROM [dbo].[Zakaz] o
 JOIN [User] u ON u.ID_USER=o.ID_MASTER
 JOIN [Status] s ON s.ID_STATUS=o.ID_STATUS
 WHERE 1=1
-	AND u.Sessionid=@Sessionid	--'CB80665A-93E0-4E91-A982-36063D546CE6'--@Sessionid	
-	--AND s.ID_STATUS in (1,2,4)
+	AND u.Sessionid=@Sessionid		--'CB80665A-93E0-4E91-A982-36063D546CE6'--@Sessionid	
+	AND s.ID_STATUS in (1,2,4)
+--ORDER BY DateSendMaster DESC, ID_ZAKAZ DESC
+
+UNION
+
+SELECT [ID_ZAKAZ]
+      ,[STREET]
+      ,[HOUSE]
+      ,[KORPUS]
+      ,[KVARTIRA]
+      ,[HOLODILNIK_DEFECT]
+      ,[DATA]
+      ,[VREMJA]
+      ,o.[DateAdd]
+      ,[DateSendMaster]
+      ,[DateOpenMaster]	  
+      ,s.[ID_STATUS]
+	  ,s.[NameStatus]
+      ,s.[ColorHex]
+	  ,[Povtor]
+  FROM [dbo].[Zakaz] o
+JOIN [User] u ON u.ID_USER=o.ID_MASTER
+JOIN [Status] s ON s.ID_STATUS=o.ID_STATUS
+WHERE 1=1
+	AND u.Sessionid=@Sessionid		--'CB80665A-93E0-4E91-A982-36063D546CE6'--@Sessionid	
+	AND s.ID_STATUS in (3,5)
+	AND cast(DateSendMaster As Date) =cast(CURRENT_TIMESTAMP As Date)
 ORDER BY DateSendMaster DESC, ID_ZAKAZ DESC
+
+
+
 
 ";
 
@@ -305,6 +336,7 @@ ORDER BY DateSendMaster DESC, ID_ZAKAZ DESC
                 {
                     ID_STATUS = (long)row["ID_STATUS"],
                     NameStatus = (string)row["NameStatus"],
+                    ColorHex = (string)row["ColorHex"]
                 };
 
 
@@ -449,7 +481,19 @@ ORDER BY DateClose DESC, ID_ZAKAZ DESC
         {
             List<Order> Orders = new List<Order>();
 
+            if (String.IsNullOrEmpty(Adres))
+                Adres = "";
+
             Adres = "%" + Adres + "%";
+
+
+
+
+            if (!filtr_DATE)
+            {
+                DateEnd = DateTime.Now;
+                DateStart = DateTime.Now;
+            }
 
             SqlParameter[] parameters = new SqlParameter[]
             {
@@ -475,7 +519,7 @@ ORDER BY DateClose DESC, ID_ZAKAZ DESC
             if (filtr_POVTOR)
                 Where_povtor = "AND o.povtor=1";
             else
-                Where_povtor = "AND o.povtor=0";
+                Where_povtor = "";
 
 
 
@@ -492,8 +536,8 @@ ORDER BY DateClose DESC, ID_ZAKAZ DESC
                     if (filtr_DENY)
                     Where_Status = "AND s.ID_STATUS in (3)";                  
             }
-            else
-                Where_Status = "AND s.ID_STATUS NOT IN (3,5)";
+            //else
+               // Where_Status = "AND s.ID_STATUS NOT IN (3,5)";
 
 
             string sqlText = $@"
@@ -513,6 +557,7 @@ SELECT [ID_ZAKAZ]
 	  ,[DateClose]
       ,s.[ID_STATUS]
 	  ,s.[NameStatus]
+      ,s.[ColorHex]
       ,o.[Povtor]
 	  	   
   FROM [dbo].[Zakaz] o
@@ -546,6 +591,7 @@ ORDER BY DateClose DESC, ID_ZAKAZ DESC
                 {
                     ID_STATUS = (long)row["ID_STATUS"],
                     NameStatus = (string)row["NameStatus"],
+                    ColorHex = (string)row["ColorHex"]
                 };
 
                 //!!! сделать обработку и присвоить к DayWeek_Date
@@ -612,10 +658,15 @@ ORDER BY DateClose DESC, ID_ZAKAZ DESC
             string sqlText = $@" 
   SELECT
    ID_ZAKAZ
+  ,[STREET]
+  ,[HOUSE]
+  ,[KORPUS]
+  ,[KVARTIRA]
   ,HOLODILNIK_DEFECT
   ,DateClose
   ,s.ID_STATUS
   ,s.NameStatus
+  ,s.ColorHex
   FROM [dbo].[Zakaz] o
   JOIN [dbo].[Status] s ON s.ID_STATUS=o.ID_STATUS
   WHERE 1=1
@@ -656,12 +707,15 @@ ORDER BY DateClose DESC, ID_ZAKAZ DESC
             dt = ExecuteSqlGetDataTableStatic(sqlText, parameters);
 
 
+            string prevRUdate = "";
+
             foreach (DataRow row in dt.Rows)
             {
                 Status status = new Status
                 {
                     ID_STATUS = (long)row["ID_STATUS"],
                     NameStatus = (string)row["NameStatus"],
+                    ColorHex = (string)row["ColorHex"]
                 };
 
 
@@ -670,11 +724,30 @@ ORDER BY DateClose DESC, ID_ZAKAZ DESC
                     ID_ZAKAZ = (long)row["ID_ZAKAZ"],
                     HOLODILNIK_DEFECT = (string)row["HOLODILNIK_DEFECT"],
                     DateClose = row["DateClose"] != DBNull.Value ? (DateTime?)row["DateClose"] : null,
+                    DayWeek_Date = "",
+                    STREET = (string)row["STREET"],
+                    HOUSE = (string)row["HOUSE"],
+                    KORPUS = (string)row["KORPUS"],
+                    KVARTIRA = (string)row["KVARTIRA"],
                     STATUS = status
                 };
 
 
 
+                // получение дня недели и даты, но заполняется только уникальная дата, т.е. новый день недели, должен быть у самой первой записи
+                string RUdate = ((DateTime)row["DateClose"]).ToString("dddd dd/MM/yyyy", CultureInfo.GetCultureInfo("ru-ru"));
+
+                //выполняется в 1 цикле
+                if (String.IsNullOrEmpty(prevRUdate))
+                {
+                    prevRUdate = RUdate;// запоминаем дата для сравнения в след цикле
+                    order.DayWeek_Date = RUdate;
+                }
+
+                if (!prevRUdate.Equals(RUdate))
+                    order.DayWeek_Date = RUdate;
+
+                prevRUdate = RUdate;
 
                 Orders.Add(order);
             }
@@ -685,7 +758,7 @@ ORDER BY DateClose DESC, ID_ZAKAZ DESC
         /// <summary>
         /// Metod from Master mobile
         /// </summary>
-        public static Order GetOrder(string Sessionid, long ID_ZAKAZ)
+        public  static Order GetOrder(string Sessionid, long ID_ZAKAZ)
         {
             List<Order> Orders = new List<Order>();
 
@@ -702,7 +775,7 @@ ORDER BY DateClose DESC, ID_ZAKAZ DESC
 
 -- установка времени первого открытия заявки
 UPDATE [dbo].[Zakaz] SET DateOpenMaster = CURRENT_TIMESTAMP
-WHERE-DateOpenMaster is null
+WHERE DateOpenMaster is null
 	AND ID_ZAKAZ=@ID_ZAKAZ
 
 -- получение заявки
@@ -723,11 +796,12 @@ SELECT [ID_ZAKAZ]
       ,[Msisdn3]
       ,org.[ID_ORGANIZATION]
 	  ,org.[NameOrg]
-      ,[DateAdd]
+      ,o.[DateAdd]
       ,[DateSendMaster]
       ,[DateOpenMaster]
       ,s.[ID_STATUS]
 	  ,s.[NameStatus]
+      ,s.[ColorHex]
       ,[MoneyAll]
       ,[MoneyFirm]
       ,[MoneyDetal]
@@ -737,6 +811,8 @@ SELECT [ID_ZAKAZ]
       ,[ID_USER_ADD]
       ,[DateClose]
 	  ,u.[Name]
+      ,[Povtor]
+	  ,[City]
   FROM [dbo].[Zakaz] o
 JOIN [User] u ON u.ID_USER=o.ID_MASTER
 JOIN [Status] s ON s.ID_STATUS=o.ID_STATUS
@@ -759,6 +835,7 @@ WHERE 1=1
                 {
                     ID_STATUS = (long)row["ID_STATUS"],
                     NameStatus = (string)row["NameStatus"],
+                    ColorHex = (string)row["ColorHex"]
                 };
 
                 Organization org = new Organization
@@ -797,8 +874,11 @@ WHERE 1=1
                     PODEST = (string)row["PODEST"],
                     ETAG = (string)row["ETAG"],
                     PRIMECHANIE = (string)row["PRIMECHANIE"],
-                    USER_MASTER = userMaster,
+                    Povtor= (bool)row["Povtor"],
+                    City = (string)row["City"],
+                    
 
+                    USER_MASTER = userMaster,
                     STATUS = status,
                     ORGANIZATION=org
                 };
@@ -825,17 +905,7 @@ WHERE 1=1
             #region sql
 
             string sqlText = $@"
--- установка времени отправки уведомления мастеру
-UPDATE [dbo].[Zakaz] SET DateSendMaster =CURRENT_TIMESTAMP
-WHERE DateSendMaster is null
-	AND ID_MASTER = (
-	SELECT ID_USER FROM [User] 
-	WHERE 1=1
-		AND Sessionid=	@Sessionid	--'2847C1CF-9DAE-4FD0-826F-C5A8BFD507C8'--@Sessionid	
-	
-	)
-	AND ID_STATUS in (1,2)
-	AND DateSendMaster is null
+
 	
 -- Выводим все новые заказы мастера
 
@@ -849,6 +919,19 @@ WHERE 1=1
 	AND u.Sessionid=@Sessionid	--'CB80665A-93E0-4E91-A982-36063D546CE6'--@Sessionid	
 	AND s.ID_STATUS in (1,2)
 	AND o.DateSendMaster is null
+
+-- установка времени отправки уведомления мастеру
+UPDATE [dbo].[Zakaz] SET DateSendMaster =CURRENT_TIMESTAMP
+WHERE DateSendMaster is null
+	AND ID_MASTER = (
+	SELECT ID_USER FROM [User] 
+	WHERE 1=1
+		AND Sessionid=	@Sessionid	--'2847C1CF-9DAE-4FD0-826F-C5A8BFD507C8'--@Sessionid	
+	
+	)
+	AND ID_STATUS in (1,2)
+	AND DateSendMaster is null
+
 
 ";
 
@@ -931,7 +1014,7 @@ SELECT NameStatus FROM [dbo].[Status] WHERE ID_STATUS=@ID_STATUS
 INSERT INTO [dbo].[LogStatusOrder]
            ([ID_ZAKAZ]
            ,[STATUS]
-           ,[USER]
+           ,[ID_USER]
            ,[DateChange])
      VALUES
            (@ID_ZAKAZ
@@ -996,7 +1079,7 @@ SELECT NameStatus FROM [dbo].[Status] WHERE ID_STATUS=@ID_STATUS
 INSERT INTO [dbo].[LogStatusOrder]
            ([ID_ZAKAZ]
            ,[STATUS]
-           ,[USER]
+           ,[ID_USER]
            ,[DateChange])
      VALUES
            (@ID_ZAKAZ
@@ -1059,7 +1142,7 @@ SELECT NameStatus FROM [dbo].[Status] WHERE ID_STATUS=@ID_STATUS
 INSERT INTO [dbo].[LogStatusOrder]
            ([ID_ZAKAZ]
            ,[STATUS]
-           ,[USER]
+           ,[ID_USER]
            ,[DateChange])
      VALUES
            (@ID_ZAKAZ
@@ -1798,6 +1881,7 @@ UPDATE [dbo].[Zakaz] SET
 	,[MoneyFirm]=0
 	,[MoneyMaster]=0
 	,[DateClose]=CURRENT_TIMESTAMP
+    ,[DateSendMaster]=CURRENT_TIMESTAMP
 WHERE ID_ZAKAZ=@ID_ZAKAZ
     
 
@@ -1908,15 +1992,15 @@ WHERE ID_ZAKAZ=@ID_ZAKAZ
                         command.Parameters.AddRange(parameters);
                     }
 
-                    try
-                    {
+                    //try
+                    //{
                         SqlDataReader reader = command.ExecuteReader();
                         dt.Load(reader);
-                    }
-                    catch (Exception ex)
-                    {
+                    //}
+                    //catch (Exception ex)
+                    //{
 
-                    }
+                    //}
 
                     command.Parameters.Clear();
 

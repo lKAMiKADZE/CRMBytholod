@@ -22,6 +22,8 @@ namespace CRMBytholod.ResponseAPI
 
             if (Order.Povtor)// если заявка является повтором, то подгружаем еще и список пред заявок
                 PrevOrders = Order.GetOldOrdersFromOrder(req.ID_ZAKAZ);
+            else
+                PrevOrders = new List<Order>();
 
         }
 
