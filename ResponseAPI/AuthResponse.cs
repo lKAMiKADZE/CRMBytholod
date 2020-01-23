@@ -11,7 +11,7 @@ namespace CRMBytholod.ResponseAPI
 {
     public class AuthResponse
     {
-        [JsonPropertyName("Login")]
+        [JsonPropertyName("isAuth")]
         public bool isAuth { get; private set; }
         public string Sessionid { get; private set; }
 

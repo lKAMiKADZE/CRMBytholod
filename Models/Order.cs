@@ -1056,7 +1056,7 @@ declare @STATUS nvarchar(50),
 
 
 -- изменение статуса у заявки
-UPDATE [dbo].[Zakaz] SET ID_STATUS=@ID_STATUS, MoneyAll=@MoneyAll, MoneyDetal=@MoneyDetal, MoneyFirm=@MoneyFirm, DateClose=CURRENT_TIMESTAMP, MoneyMaster=(MoneyAll-MoneyDetal-MoneyFirm)
+UPDATE [dbo].[Zakaz] SET ID_STATUS=@ID_STATUS, MoneyAll=@MoneyAll, MoneyDetal=@MoneyDetal, MoneyFirm=@MoneyFirm, DateClose=CURRENT_TIMESTAMP, MoneyMaster=(@MoneyAll-@MoneyDetal-@MoneyFirm)
 WHERE ID_ZAKAZ =(
 SELECT ID_ZAKAZ  FROM [dbo].[Zakaz] o
 JOIN [User] u ON u.ID_USER=o.ID_MASTER

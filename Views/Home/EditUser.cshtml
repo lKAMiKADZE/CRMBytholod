@@ -6,16 +6,17 @@
 <script type="text/javascript">
 
 
-   // $(document).ready(function() {
-   //   $("#form").keydown(function(event){
-   //     if(event.keyCode == 13) {
-   //       event.preventDefault();
-   //       return false;
-   //   }
-   //});
+    $(document).ready(function() {
+      $("#form").keydown(function(event){
+        if(event.keyCode == 13) {
+          event.preventDefault();
+          return false;
+      }
+   });
 
 
 </script>
+
 <h1>Изменение пользователя</h1>
 
 <hr />
@@ -29,7 +30,7 @@
             </div>
             <div class="form-group">
                 <label asp-for="user.Name" class="control-label">Имя</label>
-                <input asp-for="user.Name" class="form-control" />
+                <input asp-for="user.Name" class="form-control" autocomplete="off"/>
                 <span asp-validation-for="user.Name" class="text-danger"></span>
             </div>
             <div class="form-group">
@@ -46,12 +47,12 @@
 
             <div class="form-group">
                 <label asp-for="user.Login" class="control-label">Логин</label>
-                <input asp-for="user.Login" class="form-control" />
+                <input asp-for="user.Login" class="form-control" autocomplete="off"/>
                 <span asp-validation-for="user.Login" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="user.PasswMaster" class="control-label">Пароль</label>
-                <input asp-for="user.PasswMaster" class="form-control" />
+                <input asp-for="user.PasswMaster" class="form-control" autocomplete="off"/>
                 <span asp-validation-for="user.PasswMaster" class="text-danger"></span>
             </div>
             <div class="form-group">

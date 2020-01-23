@@ -49,7 +49,7 @@ namespace CRMBytholod
             //    opts.ModelMetadataDetailsProviders.Add(new Settings.CustomMetadataProvider());
             //});
 
-            //services.AddMvc().SetCompatibilityVersion(Microsoft.AspNetCore.Mvc.CompatibilityVersion.Version_3_0);
+            services.AddMvc().SetCompatibilityVersion(Microsoft.AspNetCore.Mvc.CompatibilityVersion.Version_3_0);
 
 
         }
@@ -86,7 +86,7 @@ namespace CRMBytholod
             
             app.UseRouting();
             app.UseStaticFiles();
-           // app.UseFileServer();
+            app.UseFileServer();
 
 
             app.UseAuthorization();

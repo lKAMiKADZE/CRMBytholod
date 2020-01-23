@@ -4,14 +4,14 @@
 // Write your JavaScript code.
 
 // отключение кнопки формы
-$(document).ready(function () {
-    $("#form").keydown(function (event) {
-        if (event.keyCode == 13) {
-            event.preventDefault();
-            return false;
-        }
-    })
-});
+//$(document).ready(function () {
+//    $("#form").keydown(function (event) {
+//        if (event.keyCode == 13) {
+//            event.preventDefault();
+//            return false;
+//        }
+//    })
+//});
 
 
 // получение улицы при создании изменении заявки filtrOrders_Adres

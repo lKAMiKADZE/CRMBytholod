@@ -59,7 +59,7 @@ namespace CRMBytholod.Models
         {
             SqlParameter[] parameters = new SqlParameter[]
             {
-                new SqlParameter(@"Login",SqlDbType.NVarChar) { Value =Login },
+                new SqlParameter(@"Login",SqlDbType.NVarChar) { Value =Login.ToLower() },
                 new SqlParameter(@"Passw",SqlDbType.NVarChar) { Value =Passw }
             };
             
@@ -73,7 +73,7 @@ SET @isAuth=(
  SELECT count(1)  FROM [dbo].[User]
 WHERE 1=1
 	AND ID_TYPE_USER=3
-	AND Login=@Login
+	AND LOWER(Login)=LOWER(@Login)
 	AND PasswMaster=@Passw
 	)
 
@@ -84,13 +84,14 @@ BEGIN
 	UPDATE [dbo].[User] SET Sessionid= NEWID()
 	WHERE 1=1
 		AND ID_TYPE_USER=3
-	    AND Login=@Login
+	    AND LOWER(Login)=LOWER(@Login)
 	    AND PasswMaster=@Passw
+        AND Deleted=0
 
 	SELECT Sessionid, 1 AS Auth FROM [dbo].[User]
 	WHERE 1=1
 		AND ID_TYPE_USER=3
-	    AND Login=@Login
+	    AND LOWER(Login)=LOWER(@Login)
     	AND PasswMaster=@Passw
 
 END   
@@ -237,6 +238,7 @@ SELECT ID_USER,
  FROM [User]
 WHERE LOWER(Login)=LOWER(@Login)
 	AND PasswMaster= @Passw
+    AND Deleted=0
 
 ";
 
@@ -617,7 +619,7 @@ INSERT INTO [dbo].[User]
            ,@ID_TYPE_USER  --<ID_TYPE_USER, bigint,>
            ,@Login  --<Login, nvarchar(20),>
            ,@Phone  --<Phone, nvarchar(15),>
-           ,''  --<Sessionid, nvarchar(150),>
+           ,'111'  --<Sessionid, nvarchar(150),>
            ,@PasswMaster  --<PasswMaster, nvarchar(50),>
            ,CURRENT_TIMESTAMP  --<DateAdd, datetime,>
            ,0  --<Deleted, bit,>
