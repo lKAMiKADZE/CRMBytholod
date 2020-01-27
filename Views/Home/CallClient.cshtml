@@ -2,7 +2,7 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Карточка клиента- CRM Быт холод</title>
+    <title>Карточка клиента- CRM Бытхолод</title>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" />
     <script type="text/javascript" src="//cdn.voximplant.com/edge/voximplant.min.js"></script>
@@ -51,32 +51,32 @@ default: @Model.order.STATUS.NameStatus; break;
 
             <div class="col-md-4 offset-1">
                 <div class="form-group">
-                    <label class="control-label font-weight-bold">Холодильник дефект</label>
-                    <label class="">@Html.DisplayFor(model => model.order.HOLODILNIK_DEFECT)</label>
+                    <label class="control-label ">Холодильник дефект</label>
+                    <label class="font-weight-bold">@Html.DisplayFor(model => model.order.HOLODILNIK_DEFECT)</label>
                 </div>
                 <div class="form-group">
-                    <label class="control-label font-weight-bold">Имя клиента</label>
-                    <label class="">@Html.DisplayFor(model => model.order.NameClient)</label>
+                    <label class="control-label ">Имя клиента</label>
+                    <label class="font-weight-bold">@Html.DisplayFor(model => model.order.NameClient)</label>
                 </div>
                 <div class="form-group">
-                    <label class="control-label font-weight-bold">Адрес</label>
-                    <label>@Html.DisplayFor(model => model.order.GetAdresFull)</label>
-                    <label>@Html.DisplayFor(model => model.order.GetAdres2)</label>
-                </div>
-
-                <div class="form-group">
-                    <label class="control-label font-weight-bold">Организация</label>
-                    <label class="">@Html.DisplayFor(model => model.order.ORGANIZATION.NameOrg)</label>
+                    <label class="control-label ">Адрес</label>
+                    <label class="font-weight-bold">@Html.DisplayFor(model => model.order.GetAdresFull)</label>
+                    <label class="font-weight-bold">@Html.DisplayFor(model => model.order.GetAdres2)</label>
                 </div>
 
                 <div class="form-group">
-                    <label class="control-label font-weight-bold">Заявка является повтором</label>
-                    <label>@Html.DisplayFor(model => model.order.GetPovtor)</label>
+                    <label class="control-label ">Организация</label>
+                    <label class="font-weight-bold">@Html.DisplayFor(model => model.order.ORGANIZATION.NameOrg)</label>
                 </div>
 
                 <div class="form-group">
-                    <label class="control-label font-weight-bold">Примечание</label>
-                    <label class="">@Html.DisplayFor(model => model.order.PRIMECHANIE)</label>
+                    <label class="control-label ">Заявка является повтором</label>
+                    <label class="font-weight-bold">@Html.DisplayFor(model => model.order.GetPovtor)</label>
+                </div>
+
+                <div class="form-group">
+                    <label class="control-label ">Примечание</label>
+                    <label class="font-weight-bold">@Html.DisplayFor(model => model.order.PRIMECHANIE)</label>
                 </div>
 
 
@@ -86,20 +86,21 @@ default: @Model.order.STATUS.NameStatus; break;
                     <div class="input-group">
                         <div class="input-group-prepend">
                             <div class="input-group-text">
-                                <input type="radio" checked name="radio" value="@Model.order.Msisdn1">
+                                <input type="radio" checked name="radio" value="@Model.order.GetMsisdn1">
                             </div>
                         </div>
-                        <input type="text" class="form-control" value="@Model.order.GetMsisdn1Mask">
+                        <input type="text" readonly class="form-control" value="@Model.order.GetMsisdn1Mask">
                     </div>
+
                     @if (Model.order.GetMsisdn2Mask.Length > 0)
                     {
                         <div class="input-group">
                             <div class="input-group-prepend">
                                 <div class="input-group-text">
-                                    <input type="radio" name="radio" aria-label="Radio button for following text input">
+                                    <input type="radio"  name="radio" value="@Model.order.GetMsisdn2">
                                 </div>
                             </div>
-                            <input type="text" class="form-control" value="@Model.order.GetMsisdn2Mask">
+                            <input type="text" readonly class="form-control" value="@Model.order.GetMsisdn2Mask">
                         </div>
                     }
 
@@ -108,10 +109,10 @@ default: @Model.order.STATUS.NameStatus; break;
                         <div class="input-group">
                             <div class="input-group-prepend">
                                 <div class="input-group-text">
-                                    <input type="radio" name="radio"  aria-label="Radio button for following text input">
+                                    <input type="radio"  name="radio" value="@Model.order.GetMsisdn3">
                                 </div>
                             </div>
-                            <input type="text" class="form-control" value="@Model.order.GetMsisdn3Mask">
+                            <input type="text" readonly class="form-control" value="@Model.order.GetMsisdn3Mask">
                         </div>
                     }
 
@@ -214,19 +215,19 @@ default: @Model.order.STATUS.NameStatus; break;
 
 
             if (call_active == false) {
-                console.log('call 79099578732...');
+                //console.log('call 79099578732...');
 
-                check();
+                check();// проверка какой номер выбран
 
                 elem.value = 'ЗАВЕРШИТЬ';
                 elem.style.backgroundColor = "#d51024";
-
+                                
                 var call = voxImplant.call(numRadButActive);
                 call_active = true;
             }
             else {
 
-                console.log('call END 79099578732...');
+                //console.log('call END 79099578732...');
 
                 elem.value = 'ВЫЗОВ';                
                 elem.style.backgroundColor = "#28a745";
@@ -262,7 +263,7 @@ function check()// check rad but
 
     <footer class="border-top footer text-muted">
         <div class="container">
-            &copy; 2020 - CRM Быт холод
+            &copy; 2020 - CRM Бытхолод
         </div>
     </footer>
     <script src="~/lib/jquery/dist/jquery.min.js"></script>

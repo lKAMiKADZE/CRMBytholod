@@ -5,10 +5,10 @@
     //Layout = "_LayoutFindText";
 }
 
-<h1>Заявки</h1>
+<h1>Заказы</h1>
 
 <p>
-    <a asp-action="CreateOrder"><input type="button" class="btn btn-primary" value="Новая заявка" /> </a>
+    <a asp-action="CreateOrder"><input type="button" class="btn btn-primary" value="Новый заказ" /> </a>
 </p>
 
 <hr />
@@ -32,15 +32,30 @@
                     <input type="hidden" id="hfCustomer" name="CustomerId" />
                 </div>
 
-                <label>Статус заявок</label>
-                <select asp-for="filtrOrders.ID_STATUS" class="form-control">
-                    <option value="0">Все</option>
-                    <option value="1">В ОЖИДАНИИ</option>
-                    <option value="4">В РАБОТЕ</option>
-                    <option value="2">ПОВТОР</option>
-                    <option value="5">ВЫПОЛНЕН</option>
-                    <option value="3">ОТКАЗ</option>
-                </select>
+                
+                <div class="form-group">
+                    <label>Статус заказа</label>
+                    <select asp-for="filtrOrders.ID_STATUS" class="form-control">
+                        <option value="0">Все</option>
+                        <option value="1">В ОЖИДАНИИ</option>
+                        <option value="4">В РАБОТЕ</option>
+                        <option value="2">ПОВТОР</option>
+                        <option value="5">ВЫПОЛНЕН</option>
+                        <option value="3">ОТКАЗ</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label class="control-label">Выбрать мастера</label>
+                    <select asp-for="filtrOrders.Master.ID_USER" class="form-control">
+                        <option value="4">—</option>
+                        @foreach (var item in Model.MASTERs)
+                        {
+                            <option value="@item.ID_USER">@item.Name</option>
+                        }
+                    </select>
+                </div>
+
 
             </div>
             <div class="col-md-4">
@@ -52,23 +67,27 @@
                     <label for="inputDate">Дата закрытия ПО:</label>
                     <input type="date" asp-for="filtrOrders.DateEnd" class="form-control">
                 </div>
+                <div class="form-group">
+                    <label for="inputDate">По конкретной дате</label>
+                    <input type="date" asp-for="filtrOrders.DateOne" class="form-control">
+                </div>
 
             </div>
 
             <div class="col-md-2">
                 <div class="form-group">
-                    <label asp-for="filtrOrders.Msisdn" class="control-label">Номер клиента</label>
+                    <label asp-for="filtrOrders.Msisdn" class="control-label">Номер телефона</label>
                     <input asp-for="filtrOrders.Msisdn" class="form-control" autocomplete="off" />
                 </div>
                 <div class="form-check">
-                    <input type="checkbox" class="form-check-input" asp-for="filtrOrders.Povtor">
-                    <label class="form-check-label">Повторные заявки</label>
+                    <input type="checkbox" class="form-check-input chekboxLarge" asp-for="filtrOrders.Povtor" >
+                    <label class="form-check-label">Повторный заказ</label>
                 </div>
                 <br />
 
                 <input class="btn btn-secondary" type="submit" value="Поиск" />
                 <br /><br />
-                <a asp-action="Orders"><input type="button" class="btn btn-info" value="Сбросить фильтр" /> </a>
+                <a asp-action="Orders"><input type="button" class="btn btn-info " value="Сбросить фильтр" /> </a>
             </div>
         </div>
     </form>
@@ -146,12 +165,12 @@
     <thead>
         <tr>
             <th>
-                ID зявки
+                ID
             </th>
             <th>
                 Дата
             </th>
-            <th width="230">
+            <th >
                 Адрес
             </th>
             <th>
@@ -170,7 +189,7 @@
                 Статус
             </th>
             <th>
-                Организация
+                Промокод
             </th>
         </tr>
     </thead>
@@ -212,7 +231,7 @@
 
                 </td>
                 <td>
-                    @Html.DisplayFor(modelItem => item.ORGANIZATION.NameOrg)
+                    @Html.DisplayFor(modelItem => item.Promocode)
                 </td>
             </tr>
         }

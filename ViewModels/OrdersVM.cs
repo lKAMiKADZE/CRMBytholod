@@ -15,12 +15,13 @@ namespace CRMBytholod.ViewModels
         public int Step { get; set; }
 
         public FiltrOrders filtrOrders { get; set; }
+        public List<User> MASTERs { get; set; }
 
 
         public OrdersVM( string id_user, int _page, int _step, FiltrOrders filtr )
         {
             Steps = new int[] { 50,100,150,200};
-            if (_step == 0) _step = 50;
+            if (_step == 0) _step = 200;
             if (_page == 0) _page = 1;
                         
             Step = _step;
@@ -29,6 +30,7 @@ namespace CRMBytholod.ViewModels
             filtrOrders = filtr;
 
             Orders = Order.GetOrdersSite(Page, Step, filtrOrders);
+            MASTERs = User.GetAllMasters();
 
         }
 
@@ -43,6 +45,8 @@ namespace CRMBytholod.ViewModels
         public DateTime? DateStart { get; set; }
         public DateTime? DateEnd { get; set; }
         public bool Povtor { get; set; }
+        public User Master { get; set; }
+        public DateTime? DateOne { get; set; }
 
         public FiltrOrders()
         {

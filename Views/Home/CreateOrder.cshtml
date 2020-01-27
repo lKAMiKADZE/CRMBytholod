@@ -1,6 +1,6 @@
 ﻿@model CRMBytholod.ViewModels.OrderCreateVM
 @{
-    ViewData["Title"] = "Новая заявка";
+    ViewData["Title"] = "Новый заказ";
     Layout = "_LayoutFindText";
 }
 
@@ -70,7 +70,7 @@
 
 </script>
 
-<h1>Новая заявка</h1>
+<h1>Новый заказ</h1>
 
 <hr />
 
@@ -102,7 +102,7 @@
                 <div class="form-group">
                     <label class="control-label">Выбрать мастера</label>
                     <select asp-for="order.USER_MASTER.ID_USER" class="form-control">
-                        <option value="4">Пусто</option>
+                        <option value="4">—</option>
                         @foreach (var item in Model.MASTERs)
                         {
                             <option value="@item.ID_USER">@item.Name</option>
@@ -265,7 +265,7 @@
             <div class="col-md-3">
                 <div class="form-group form-check">
                     <label class="form-check-label">
-                        Повторная заявка
+                        Повторка
                         <br />
                         <input class="form-check-input" asp-for="order.Povtor" />
 

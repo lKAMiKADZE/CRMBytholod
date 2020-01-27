@@ -73,9 +73,9 @@ namespace CRMBytholod.Models
             get
             {
                 if (String.IsNullOrEmpty(KORPUS))// если корпус или нет
-                    return $"{STREET}, д {HOUSE}, кв {KVARTIRA}";
+                    return $"{City}, {STREET}, дом {HOUSE} кв. {KVARTIRA}".Trim();
                 else
-                    return $"{STREET}, д {HOUSE}, корп {KORPUS},  кв {KVARTIRA}";
+                    return $"{City}, {STREET}, дом {HOUSE} корп. {KORPUS} кв. {KVARTIRA}".Trim();
             }
         }
 
@@ -181,8 +181,11 @@ namespace CRMBytholod.Models
                 if (String.IsNullOrEmpty(Msisdn1) || Msisdn1.Length < 11)
                     return "";
 
-                string firstMask = Msisdn1.Substring(0, 4);
-                string lastMask = Msisdn1.Substring(Msisdn1.Length-4, 4);
+                string _msisdn = Msisdn1;
+                _msisdn = ConvertMsisdn(_msisdn);
+
+                string firstMask = _msisdn.Substring(0, 4);
+                string lastMask = _msisdn.Substring(_msisdn.Length-4, 4);
 
                 return $"+{firstMask} *** {lastMask}";
 
@@ -195,8 +198,12 @@ namespace CRMBytholod.Models
             {
                 if (String.IsNullOrEmpty(Msisdn2) || Msisdn2.Length<11)
                     return "";
-                string firstMask = Msisdn2.Substring(0, 4);
-                string lastMask = Msisdn2.Substring(Msisdn2.Length-4, 4);
+
+                string _msisdn = Msisdn2;
+                _msisdn = ConvertMsisdn(_msisdn);
+
+                string firstMask = _msisdn.Substring(0, 4);
+                string lastMask = _msisdn.Substring(_msisdn.Length-4, 4);
 
 
                 return $"+{firstMask} *** {lastMask}";
@@ -210,8 +217,11 @@ namespace CRMBytholod.Models
                 if (String.IsNullOrEmpty(Msisdn3) || Msisdn3.Length < 11)
                     return "";
 
-                string firstMask = Msisdn3.Substring(0, 4);
-                string lastMask = Msisdn3.Substring(Msisdn3.Length-4, 4);
+                string _msisdn = Msisdn3;
+                _msisdn = ConvertMsisdn(_msisdn);
+
+                string firstMask = _msisdn.Substring(0, 4);
+                string lastMask = _msisdn.Substring(_msisdn.Length-4, 4);
 
 
                 return $"+{firstMask} *** {lastMask}";
@@ -219,6 +229,42 @@ namespace CRMBytholod.Models
             }
         }
 
+
+        public string GetMsisdn1
+        {
+            get
+            {
+                if (String.IsNullOrEmpty(Msisdn1) || Msisdn1.Length < 11)
+                    return "";
+
+                return "+"+ConvertMsisdn(Msisdn1);
+
+
+            }
+        }
+        public string GetMsisdn2
+        {
+            get
+            {
+                if (String.IsNullOrEmpty(Msisdn2) || Msisdn2.Length < 11)
+                    return "";
+
+                return "+" + ConvertMsisdn(Msisdn2);
+
+            }
+        }
+        public string GetMsisdn3
+        {
+            get
+            {
+                if (String.IsNullOrEmpty(Msisdn3) || Msisdn3.Length < 11)
+                    return "";
+
+                
+                return "+" + ConvertMsisdn(Msisdn3);
+
+            }
+        }
 
 
 
@@ -284,39 +330,16 @@ SELECT [ID_ZAKAZ]
 	  ,s.[NameStatus]
       ,s.[ColorHex]
 	  ,[Povtor]
+      ,[City]
+      ,[DateClose]
   FROM [dbo].[Zakaz] o
 JOIN [User] u ON u.ID_USER=o.ID_MASTER
 JOIN [Status] s ON s.ID_STATUS=o.ID_STATUS
 WHERE 1=1
 	AND u.Sessionid=@Sessionid		--'CB80665A-93E0-4E91-A982-36063D546CE6'--@Sessionid	
-	AND s.ID_STATUS in (1,2,4)
---ORDER BY DateSendMaster DESC, ID_ZAKAZ DESC
+	AND [DATA]>=CURRENT_TIMESTAMP-30
 
-UNION
-
-SELECT [ID_ZAKAZ]
-      ,[STREET]
-      ,[HOUSE]
-      ,[KORPUS]
-      ,[KVARTIRA]
-      ,[HOLODILNIK_DEFECT]
-      ,[DATA]
-      ,[VREMJA]
-      ,o.[DateAdd]
-      ,[DateSendMaster]
-      ,[DateOpenMaster]	  
-      ,s.[ID_STATUS]
-	  ,s.[NameStatus]
-      ,s.[ColorHex]
-	  ,[Povtor]
-  FROM [dbo].[Zakaz] o
-JOIN [User] u ON u.ID_USER=o.ID_MASTER
-JOIN [Status] s ON s.ID_STATUS=o.ID_STATUS
-WHERE 1=1
-	AND u.Sessionid=@Sessionid		--'CB80665A-93E0-4E91-A982-36063D546CE6'--@Sessionid	
-	AND s.ID_STATUS in (3,5)
-	AND cast(DateSendMaster As Date) =cast(CURRENT_TIMESTAMP As Date)
-ORDER BY DateSendMaster DESC, ID_ZAKAZ DESC
+ORDER BY [DATA] DESC, ID_ZAKAZ DESC
 
 
 
@@ -329,6 +352,7 @@ ORDER BY DateSendMaster DESC, ID_ZAKAZ DESC
             // получаем данные из запроса
             dt = ExecuteSqlGetDataTableStatic(sqlText, parameters);
 
+            string prevRUdate = "";
 
             foreach (DataRow row in dt.Rows)
             {
@@ -356,10 +380,28 @@ ORDER BY DateSendMaster DESC, ID_ZAKAZ DESC
                     DateSendMaster = row["DateSendMaster"] != DBNull.Value ? (DateTime?)row["DateSendMaster"] : null,
                     DateOpenMaster = row["DateOpenMaster"] != DBNull.Value ? (DateTime?)row["DateOpenMaster"] : null,
                     Povtor= (bool)row["Povtor"],
+                    City = (string)row["City"],
+                    DayWeek_Date = "",
+                    DateClose = row["DateClose"] != DBNull.Value ? (DateTime?)row["DateClose"] : null,
+
+
                     STATUS = status
                 };
 
+                // получение дня недели и даты, но заполняется только уникальная дата, т.е. новый день недели, должен быть у самой первой записи
+                string RUdate = row["DATA"]  != DBNull.Value ? ((DateTime)row["DATA"]).ToString("dddd dd/MM/yyyy", CultureInfo.GetCultureInfo("ru-ru")) : "";
 
+                //выполняется в 1 цикле
+                if (String.IsNullOrEmpty(prevRUdate))
+                {
+                    prevRUdate = RUdate;// запоминаем дата для сравнения в след цикле
+                    order.DayWeek_Date = RUdate;
+                }
+
+                if (!prevRUdate.Equals(RUdate))
+                    order.DayWeek_Date = RUdate;
+
+                prevRUdate = RUdate;
 
                 Orders.Add(order);
             }
@@ -559,7 +601,7 @@ SELECT [ID_ZAKAZ]
 	  ,s.[NameStatus]
       ,s.[ColorHex]
       ,o.[Povtor]
-	  	   
+	  ,[City]	   
   FROM [dbo].[Zakaz] o
 JOIN [User] u ON u.ID_USER=o.ID_MASTER
 JOIN [Status] s ON s.ID_STATUS=o.ID_STATUS
@@ -613,6 +655,8 @@ ORDER BY DateClose DESC, ID_ZAKAZ DESC
                     DateClose = row["DateClose"] != DBNull.Value ? (DateTime?)row["DateClose"] : null,
                     DayWeek_Date ="",
                     Povtor=(bool)row["Povtor"],
+                    City = (string)row["City"],
+                    
 
 
                     STATUS = status
@@ -856,6 +900,7 @@ WHERE 1=1
                     HOUSE = (string)row["HOUSE"],
                     KORPUS = (string)row["KORPUS"],
                     KVARTIRA = (string)row["KVARTIRA"],
+                    City = (string)row["City"],
                     HOLODILNIK_DEFECT = (string)row["HOLODILNIK_DEFECT"],
                     DATA = (DateTime)row["DATA"],
                     VREMJA = (string)row["VREMJA"],
@@ -870,12 +915,12 @@ WHERE 1=1
                     MoneyAll = (int)row["MoneyAll"],
                     MoneyDetal = (int)row["MoneyDetal"],
                     MoneyFirm = (int)row["MoneyFirm"],
+                    MoneyMaster = (int)row["MoneyMaster"],
                     NameClient = (string)row["NameClient"],
                     PODEST = (string)row["PODEST"],
                     ETAG = (string)row["ETAG"],
                     PRIMECHANIE = (string)row["PRIMECHANIE"],
                     Povtor= (bool)row["Povtor"],
-                    City = (string)row["City"],
                     
 
                     USER_MASTER = userMaster,
@@ -909,8 +954,13 @@ WHERE 1=1
 	
 -- Выводим все новые заказы мастера
 
-SELECT ID_ZAKAZ,
-		HOLODILNIK_DEFECT
+SELECT [ID_ZAKAZ]
+	  ,[HOLODILNIK_DEFECT]
+      ,[STREET]
+      ,[HOUSE]
+      ,[KORPUS]
+      ,[KVARTIRA]
+	  ,[City]
 				
 FROM [dbo].[Zakaz] o
 JOIN [User] u ON u.ID_USER=o.ID_MASTER
@@ -954,6 +1004,11 @@ WHERE DateSendMaster is null
                 {
                     ID_ZAKAZ = (long)row["ID_ZAKAZ"],
                     HOLODILNIK_DEFECT = (string)row["HOLODILNIK_DEFECT"],
+                    STREET = (string)row["STREET"],
+                    HOUSE = (string)row["HOUSE"],
+                    KORPUS = (string)row["KORPUS"],
+                    KVARTIRA = (string)row["KVARTIRA"],
+                    City = (string)row["City"],
 
                     USER_MASTER = userMaster,
                     STATUS = status,
@@ -1425,6 +1480,7 @@ WITH OrdersPage AS
 	,s.NameStatus
 	,s.ColorHex
 	,o.NameOrg
+    ,Promocode
 	
     ,ROW_NUMBER() OVER (ORDER BY {ORDERBY} ) AS 'RowNumber'
     FROM [dbo].[Zakaz] z
@@ -1458,6 +1514,7 @@ SELECT
 	,NameStatus
     ,ColorHex
 	,NameOrg
+    ,Promocode
 
 	,RowNumber
 FROM OrdersPage 
@@ -1505,8 +1562,10 @@ ORDER BY RowNumber ASC
                     Msisdn1 = (string)row["Msisdn1"],
 
                     NameClient = (string)row["NameClient"],
-                    USER_MASTER = userMaster,
+                    Promocode = (string)row["Promocode"],
+                    
 
+                    USER_MASTER = userMaster,
                     STATUS = status,
                     ORGANIZATION = o
                 };
@@ -1895,6 +1954,18 @@ WHERE ID_ZAKAZ=@ID_ZAKAZ
             
         }
 
+
+
+        
+        // /////////////// 
+        // вспомогательные методы
+
+        private string ConvertMsisdn(string msisdn)
+        {
+
+            msisdn = msisdn.Replace("+", "").Replace(" ", "").Replace("-", "").Replace("(", "").Replace(")", "");
+            return msisdn;
+        }
 
 
 

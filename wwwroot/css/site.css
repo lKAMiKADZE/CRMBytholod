@@ -129,3 +129,11 @@ body {
     background-clip: padding-box;
 }
 
+
+
+/*Увеличение чекбокса*/
+.chekboxLarge {
+    transform: scale(1.4);
+    opacity: 0.9;
+    cursor: pointer;
+}
