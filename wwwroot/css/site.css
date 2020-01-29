@@ -137,3 +137,22 @@ body {
     opacity: 0.9;
     cursor: pointer;
 }
+
+/*Прилипала фильтра */
+.sticky {
+    position: sticky;
+    bottom: 0;
+    min-height: 2em;
+    background: lightpink;
+}
+
+
+.menuh:hover {
+    background-color: #E0E0E0;
+}
+
+
+TD, TH {
+    padding: 3px; /* Поля вокруг содержимого таблицы */
+    border: 1px solid #dee2e6;; /* Параметры рамки */
+}

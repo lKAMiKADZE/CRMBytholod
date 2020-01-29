@@ -94,7 +94,9 @@ namespace CRMBytholod.Models
                 // получение дня недели и даты, но заполняется только уникальная дата, т.е. новый день недели, должен быть у самой первой записи
                 string RUdate =  DATA.ToString("dddd", CultureInfo.GetCultureInfo("ru-ru"));
 
-                return $"{DATA.ToShortDateString()}\r\n{RUdate.ToUpper()}";
+                RUdate = RUdate.Substring(0, 1).ToUpper() + (RUdate.Length > 1 ? RUdate.Substring(1) : "");
+
+                return $"{DATA.ToShortDateString()}\r\n{RUdate}";
             }
         }
         public string GetDateAdd
@@ -1409,12 +1411,12 @@ WHERE 1=1
 
 
 
-            DateTime _start, _end;
+            DateTime _start, _end, _dateOne;
 
-            _start = _end = DateTime.Now;
+            _start = _end = _dateOne = DateTime.Now;
+
 
             
-
 
             string WHERE_adres = "";
             string WHERE_betweenDate = "";
@@ -1422,6 +1424,8 @@ WHERE 1=1
             string WHERE_idStatus = "";
             string WHERE_msisdn = "";
             string WHERE_Default_DATA = "AND DATA>=cast(getdate() as date)";
+            string WHERE_dateOne = "";
+            string WHERE_master = "";
 
             string ORDERBY = "z.[DATA] ASC";
 
@@ -1434,11 +1438,20 @@ WHERE 1=1
                 WHERE_Default_DATA = "";
             }
 
+            if (filtrOrders.DateOne.HasValue)
+            {
+                _dateOne = filtrOrders.DateOne.Value;
+                WHERE_dateOne = $"AND z.DATA=cast(@DateOne as date)";
+                WHERE_Default_DATA = "";
+
+            }
+
 
             SqlParameter[] parameters = new SqlParameter[]
             {
                 new SqlParameter(@"DateStart",SqlDbType.DateTime) { Value =_start },
-                new SqlParameter(@"DateEnd",SqlDbType.DateTime) { Value =_end.AddSeconds(1) }
+                new SqlParameter(@"DateEnd",SqlDbType.DateTime) { Value =_end.AddSeconds(1) },
+                new SqlParameter(@"DateOne",SqlDbType.DateTime) { Value =_dateOne }
             };
 
 
@@ -1457,6 +1470,11 @@ WHERE 1=1
 
             if (!String.IsNullOrEmpty(filtrOrders.Msisdn))
                 WHERE_msisdn = $" AND lower(msisdn1) like '%{filtrOrders.Msisdn.ToLower()}%'";
+
+            if (filtrOrders.ID_Master >= 0)
+            {
+                WHERE_master = $"AND z.ID_MASTER={filtrOrders.ID_Master}";
+            }
 
 
             #region sql
@@ -1481,6 +1499,7 @@ WITH OrdersPage AS
 	,s.ColorHex
 	,o.NameOrg
     ,Promocode
+    ,City
 	
     ,ROW_NUMBER() OVER (ORDER BY {ORDERBY} ) AS 'RowNumber'
     FROM [dbo].[Zakaz] z
@@ -1495,6 +1514,9 @@ WITH OrdersPage AS
         {WHERE_povtor}
         {WHERE_idStatus}
         {WHERE_msisdn}
+
+        {WHERE_dateOne}
+        {WHERE_master}
         
 ) 
 
@@ -1515,6 +1537,7 @@ SELECT
     ,ColorHex
 	,NameOrg
     ,Promocode
+    ,City
 
 	,RowNumber
 FROM OrdersPage 
@@ -1563,7 +1586,10 @@ ORDER BY RowNumber ASC
 
                     NameClient = (string)row["NameClient"],
                     Promocode = (string)row["Promocode"],
+                    City = (string)row["City"],
                     
+
+
 
                     USER_MASTER = userMaster,
                     STATUS = status,
@@ -1610,6 +1636,7 @@ SELECT
 	,VREMJA
 	,s.NameStatus
 	,s.ColorHex
+    ,City
   FROM [dbo].[Zakaz] o
   JOIN [dbo].[Status] s ON s.ID_STATUS=o.ID_STATUS
   JOIN [User] u ON u.ID_USER=o.ID_MASTER
@@ -1678,8 +1705,9 @@ SELECT
                     Msisdn1 = (string)row["Msisdn1"],
 
                     NameClient = (string)row["NameClient"],
-                    USER_MASTER = userMaster,
+                    City = (string)row["City"],
 
+                    USER_MASTER = userMaster,
                     STATUS = status
                 };
 

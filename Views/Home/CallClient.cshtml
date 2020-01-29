@@ -1,19 +1,21 @@
-﻿<html lang="ru">
+﻿@model CRMBytholod.ViewModels.CallClientOrderVM
+
+@{
+    Layout = null;
+}
+
+<html>
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Карточка клиента- CRM Бытхолод</title>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" />
-    <script type="text/javascript" src="//cdn.voximplant.com/edge/voximplant.min.js"></script>
+    <script type="text/javascript" src="https://cdn.voximplant.com/edge/voximplant.min.js"></script>
 </head>
 <body>
 
-    @model CRMBytholod.ViewModels.CallClientOrderVM
 
-    @{
-        Layout = null;
-    }
 
     <br />
     <div class="col-md-4 offset-1">
@@ -47,7 +49,7 @@ default: @Model.order.STATUS.NameStatus; break;
 
         <div class="row">
             @* сохраням номер мастера, с которого будет осуществляться звонок клиенту *@
-            <input hidden="hidden" id="PhoneMaster" value="@Model.order.USER_MASTER.Phone"/>
+            <input hidden="hidden" id="PhoneMaster" value="@Model.order.USER_MASTER.Phone" />
 
             <div class="col-md-4 offset-1">
                 <div class="form-group">
@@ -97,7 +99,7 @@ default: @Model.order.STATUS.NameStatus; break;
                         <div class="input-group">
                             <div class="input-group-prepend">
                                 <div class="input-group-text">
-                                    <input type="radio"  name="radio" value="@Model.order.GetMsisdn2">
+                                    <input type="radio" name="radio" value="@Model.order.GetMsisdn2">
                                 </div>
                             </div>
                             <input type="text" readonly class="form-control" value="@Model.order.GetMsisdn2Mask">
@@ -109,7 +111,7 @@ default: @Model.order.STATUS.NameStatus; break;
                         <div class="input-group">
                             <div class="input-group-prepend">
                                 <div class="input-group-text">
-                                    <input type="radio"  name="radio" value="@Model.order.GetMsisdn3">
+                                    <input type="radio" name="radio" value="@Model.order.GetMsisdn3">
                                 </div>
                             </div>
                             <input type="text" readonly class="form-control" value="@Model.order.GetMsisdn3Mask">
@@ -118,7 +120,7 @@ default: @Model.order.STATUS.NameStatus; break;
 
                 </div>
 
-                <input type="button" class="btn btn-call-size" id="CallBut" value="ВЫЗОВ" onclick="makecall()"  />
+                <input type="button" class="btn btn-call-size" id="CallBut" value="ВЫЗОВ" onclick="makecall()" />
 
             </div>
 
@@ -145,7 +147,7 @@ default: @Model.order.STATUS.NameStatus; break;
 
             numRadButActive = "",// какой номер выбран
             strLogin = "xamar@call.holodec.voximplant.com",
-            phoneMaster = document.getElementById('PhoneMaster').nodeValue;
+            phoneMaster = document.getElementById('PhoneMaster').defaultValue
 
 
         const voxImplant = VoxImplant.getInstance();
@@ -157,6 +159,8 @@ default: @Model.order.STATUS.NameStatus; break;
         voxImplant.addEventListener(VoxImplant.Events.ConnectionEstablished, handleConnectionEstablished);
         // событие авторизации пользователя на сервере VoxImplant
         voxImplant.addEventListener(VoxImplant.Events.AuthResult, handleAuthResult);
+
+        voxImplant.showDebugInfo = true;// DEBUG
 
         if (!initialized) voxImplant.init();
         else {
@@ -193,67 +197,68 @@ default: @Model.order.STATUS.NameStatus; break;
             // данные созданного пользователя и приложения
             //voxImplant.login("user@call2.holodec.voximplant.com", "1qazxsw2");
 
-            
+
             if (phoneMaster == "79993331856")
                 strLogin = "xamar@call.holodec.voximplant.com";
 
-            if(phoneMaster == "79993331856")
+            if (phoneMaster == "79993334728")
                 strLogin = "xamar@call2.holodec.voximplant.com";
 
             voxImplant.login(strLogin, "Xi67yoRi");
-            
+
 
 
 
         }
 
         function makecall() {
-            
+
             var elem = document.getElementById('CallBut');
-            
 
 
+            if (loggedIn) {
 
-            if (call_active == false) {
-                //console.log('call 79099578732...');
+                if (call_active == false) {
+                    //console.log('call 79099578732...');
 
-                check();// проверка какой номер выбран
+                    check();// проверка какой номер выбран
 
-                elem.value = 'ЗАВЕРШИТЬ';
-                elem.style.backgroundColor = "#d51024";
-                                
-                var call = voxImplant.call(numRadButActive);
-                call_active = true;
-            }
-            else {
+                    elem.value = 'ЗАВЕРШИТЬ';
+                    elem.style.backgroundColor = "#d51024";
 
-                //console.log('call END 79099578732...');
+                    var call = voxImplant.call(numRadButActive);
+                    call_active = true;
+                }
+                else {
 
-                elem.value = 'ВЫЗОВ';                
-                elem.style.backgroundColor = "#28a745";
+                    //console.log('call END 79099578732...');
 
-                location.reload();
-                call_active = false;
+                    elem.value = 'ВЫЗОВ';
+                    elem.style.backgroundColor = "#28a745";
 
+                    location.reload();
+                    call_active = false;
+
+                }
             }
 
         }
 
 
 
-function check()// check rad but
-{
-    var inp = document.getElementsByName('radio');
-    for (var i = 0; i < inp.length; i++) {
-        if (inp[i].type == "radio" && inp[i].checked) {
-           // alert("selected: " + inp[i].value);
-            numRadButActive = inp[i].value;
+        function check()// check rad but
+        {
+            var inp = document.getElementsByName('radio');
+            for (var i = 0; i < inp.length; i++) {
+                if (inp[i].type == "radio" && inp[i].checked) {
+                    // alert("selected: " + inp[i].value);
+                    numRadButActive = inp[i].value;
+                }
+            }
         }
-    }
-}
 
 
-</script>
+    </script>
 
 
 
@@ -268,6 +273,6 @@ function check()// check rad but
     </footer>
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="~/js/site.js" asp-append-version="true"></script>
+  @*  <script src="~/js/site.js" asp-append-version="true"></script>*@
 </body>
 </html>

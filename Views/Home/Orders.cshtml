@@ -2,13 +2,13 @@
 
 @{
     ViewData["Title"] = "Заявки";
-    //Layout = "_LayoutFindText";
+    Layout = "_LayoutFindText";
 }
 
 <h1>Заказы</h1>
 
 <p>
-    <a asp-action="CreateOrder"><input type="button" class="btn btn-primary" value="Новый заказ" /> </a>
+    <a asp-action="CreateOrder"><input type="button" class="btn btn-info" value="Новый заказ" /> </a>
 </p>
 
 <hr />
@@ -37,18 +37,18 @@
                     <label>Статус заказа</label>
                     <select asp-for="filtrOrders.ID_STATUS" class="form-control">
                         <option value="0">Все</option>
-                        <option value="1">В ОЖИДАНИИ</option>
-                        <option value="4">В РАБОТЕ</option>
-                        <option value="2">ПОВТОР</option>
-                        <option value="5">ВЫПОЛНЕН</option>
-                        <option value="3">ОТКАЗ</option>
+                        <option value="1">В ожидании</option>
+                        <option value="4">В работе</option>
+                        <option value="2">Повтор</option>
+                        <option value="5">Выполнен</option>
+                        <option value="3">Отказ</option>
                     </select>
                 </div>
 
                 <div class="form-group">
                     <label class="control-label">Выбрать мастера</label>
-                    <select asp-for="filtrOrders.Master.ID_USER" class="form-control">
-                        <option value="4">—</option>
+                    <select asp-for="filtrOrders.ID_Master" class="form-control">
+                        <option value="-1">Все мастера</option>
                         @foreach (var item in Model.MASTERs)
                         {
                             <option value="@item.ID_USER">@item.Name</option>
@@ -80,14 +80,18 @@
                     <input asp-for="filtrOrders.Msisdn" class="form-control" autocomplete="off" />
                 </div>
                 <div class="form-check">
-                    <input type="checkbox" class="form-check-input chekboxLarge" asp-for="filtrOrders.Povtor" >
                     <label class="form-check-label">Повторный заказ</label>
+                    <br />
+                    <input type="checkbox" class="form-check-input chekboxLarge" asp-for="filtrOrders.Povtor">
                 </div>
-                <br />
-
-                <input class="btn btn-secondary" type="submit" value="Поиск" />
-                <br /><br />
-                <a asp-action="Orders"><input type="button" class="btn btn-info " value="Сбросить фильтр" /> </a>
+                
+                <div class="form-group">
+                    <br /><br />
+                    <br /><br />
+                    <input class="btn btn-secondary" type="submit" value="Поиск" />
+                    <br /><br />
+                    <a asp-action="Orders"><input type="button" class="btn btn-info " value="Сбросить фильтр" /> </a>
+                </div>
             </div>
         </div>
     </form>
@@ -102,7 +106,10 @@
                         <a class="page-link" href='@Url.Action("Orders", "Home", new { page=1, step=Model.Step,
                                                                     adres=Model.filtrOrders.Adres, dateStart=Model.filtrOrders.DateStart,
                                                                     dateEnd=Model.filtrOrders.DateEnd, povtor=Model.filtrOrders.Povtor,
-                                                                    id_status=Model.filtrOrders.ID_STATUS   }, null)'>В Начало</a>
+                                                                    id_status=Model.filtrOrders.ID_STATUS,
+                                                                    ID_Master=Model.filtrOrders.ID_Master,
+                                                                    DateOne=Model.filtrOrders.DateOne
+                                                                    }, null)'>В Начало</a>
                     </li>
                     @if (Model.Page > 1)
                     {
@@ -110,16 +117,24 @@
                             <a class="page-link" href='@Url.Action("Orders", "Home", new { page=Model.Page-1, step=Model.Step,
                                                                     adres=Model.filtrOrders.Adres, dateStart=Model.filtrOrders.DateStart,
                                                                     dateEnd=Model.filtrOrders.DateEnd, povtor=Model.filtrOrders.Povtor,
-                                                                    id_status=Model.filtrOrders.ID_STATUS   }, null)'> Назад </a>
+                                                                    id_status=Model.filtrOrders.ID_STATUS,
+                                                                    ID_Master=Model.filtrOrders.ID_Master,
+                                                                    DateOne=Model.filtrOrders.DateOne
+                                                                    }, null)'>Назад</a>
                         </li>
                     }
-                    <li class="page-item"><b><a class="page-link" href="#">@Model.Page</a></b></li>
+                    <li class="page-item">
+                        <a class="page-link" href="#"><b>@Model.Page</b></a>
+                    </li>
 
                     <li class="page-item">
                         <a class="page-link" href='@Url.Action("Orders", "Home", new { page=Model.Page+1, step=Model.Step,
                                                                     adres=Model.filtrOrders.Adres, dateStart=Model.filtrOrders.DateStart,
                                                                     dateEnd=Model.filtrOrders.DateEnd, povtor=Model.filtrOrders.Povtor,
-                                                                    id_status=Model.filtrOrders.ID_STATUS   }, null)'>Вперед</a>
+                                                                    id_status=Model.filtrOrders.ID_STATUS,  
+                                                                    ID_Master=Model.filtrOrders.ID_Master,
+                                                                    DateOne=Model.filtrOrders.DateOne
+                                                                    }, null)'>Вперед</a>
                     </li>
 
 
@@ -138,18 +153,18 @@
                                                                     adres=Model.filtrOrders.Adres, dateStart=Model.filtrOrders.DateStart,
                                                                     dateEnd=Model.filtrOrders.DateEnd, povtor=Model.filtrOrders.Povtor,
                                                                     id_status=Model.filtrOrders.ID_STATUS    }, null)'><b>@Model.Steps[i]</b></a>
-                                                                </li>
-                                                            }
-                                                            else
-                                                            {
-                                                                <li class="page-item">
-                                                                    <a class="page-link" href='@Url.Action("Orders", "Home", new {  page = Model.Page, step = Model.Steps[i],
-                                                                    adres=Model.filtrOrders.Adres, dateStart=Model.filtrOrders.DateStart,
-                                                                    dateEnd=Model.filtrOrders.DateEnd, povtor=Model.filtrOrders.Povtor,
-                                                                    id_status=Model.filtrOrders.ID_STATUS   }, null)'>@Model.Steps[i]</a>
-                                                                </li>
-                                                            }
-                                                        }
+                            </li>
+                        }
+                        else
+                        {
+                            <li class="page-item">
+                                <a class="page-link" href='@Url.Action("Orders", "Home", new {  page = Model.Page, step = Model.Steps[i],
+                                adres=Model.filtrOrders.Adres, dateStart=Model.filtrOrders.DateStart,
+                                dateEnd=Model.filtrOrders.DateEnd, povtor=Model.filtrOrders.Povtor,
+                                id_status=Model.filtrOrders.ID_STATUS   }, null)'>@Model.Steps[i]</a>
+                            </li>
+                        }
+                    }
                 </ul>
             </nav>
         </div>
@@ -221,12 +236,12 @@
                 <td>
                     @switch (item.STATUS.NameStatus)
                     {
-                        case "В ОЖИДАНИИ":<span class="label" style='background-color:@item.STATUS.ColorHex; padding: 6px;'>@item.STATUS.NameStatus</span> break;
-                    case "ПОВТОР": <span class="label" style='background-color:@item.STATUS.ColorHex; padding: 6px;'>@item.STATUS.NameStatus</span> break;
-                case "ОТКАЗ": <span class="label" style='background-color:@item.STATUS.ColorHex; padding: 6px;'>@item.STATUS.NameStatus</span> break;
-            case "В РАБОТЕ": <span class="label" style='background-color:@item.STATUS.ColorHex; padding: 6px;'>@item.STATUS.NameStatus</span> break;
-        case "ВЫПОЛНЕН": <span class="label" style='background-color:@item.STATUS.ColorHex; padding: 6px;'>@item.STATUS.NameStatus</span> break;
-    default: @item.STATUS.NameStatus; break;
+                        case "В ОЖИДАНИИ":<span class="   " style='background-color:@item.STATUS.ColorHex; padding: 6px;'>@item.STATUS.GetNameStatus</span> break;
+                        case "ПОВТОР": <span class=" " style='background-color:@item.STATUS.ColorHex; padding: 6px;'>@item.STATUS.GetNameStatus</span> break;
+                        case "ОТКАЗ": <span class="  " style='background-color:@item.STATUS.ColorHex; padding: 6px;'>@item.STATUS.GetNameStatus</span> break;
+                        case "В РАБОТЕ": <span class=" " style='background-color:@item.STATUS.ColorHex; padding: 6px;'>@item.STATUS.GetNameStatus</span> break;
+                        case "ВЫПОЛНЕН": <span class=" " style='background-color:@item.STATUS.ColorHex; padding: 6px;'>@item.STATUS.GetNameStatus</span> break;
+                        default: @item.STATUS.NameStatus; break;
 }
 
                 </td>

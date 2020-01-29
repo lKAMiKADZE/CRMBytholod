@@ -68,11 +68,11 @@
 
 @switch (Model.order.STATUS.NameStatus)
 {
-    case "В ОЖИДАНИИ":<span class="label" style='background-color:@Model.order.STATUS.ColorHex; padding: 6px;'>@Model.order.STATUS.NameStatus</span> break;
-case "ПОВТОР": <span class="label" style='background-color:@Model.order.STATUS.ColorHex; padding: 6px;'>@Model.order.STATUS.NameStatus</span> break;
-case "ОТКАЗ": <span class="label" style='background-color:@Model.order.STATUS.ColorHex; padding: 6px;'>@Model.order.STATUS.NameStatus</span> break;
-case "В РАБОТЕ": <span class="label" style='background-color:@Model.order.STATUS.ColorHex; padding: 6px;'>@Model.order.STATUS.NameStatus</span> break;
-case "ВЫПОЛНЕН": <span class="label" style='background-color:@Model.order.STATUS.ColorHex; padding: 6px;'>@Model.order.STATUS.NameStatus</span> break;
+    case "В ОЖИДАНИИ":<span class=" " style='background-color:@Model.order.STATUS.ColorHex; padding: 6px;'>@Model.order.STATUS.GetNameStatus</span> break;
+case "ПОВТОР": <span class=" " style='background-color:@Model.order.STATUS.ColorHex; padding: 6px;'>@Model.order.STATUS.GetNameStatus</span> break;
+case "ОТКАЗ": <span class="" style='background-color:@Model.order.STATUS.ColorHex; padding: 6px;'>@Model.order.STATUS.GetNameStatus</span> break;
+case "В РАБОТЕ": <span class="" style='background-color:@Model.order.STATUS.ColorHex; padding: 6px;'>@Model.order.STATUS.GetNameStatus</span> break;
+case "ВЫПОЛНЕН": <span class="" style='background-color:@Model.order.STATUS.ColorHex; padding: 6px;'>@Model.order.STATUS.GetNameStatus</span> break;
 default: @Model.order.STATUS.NameStatus; break;
 }
 <hr />

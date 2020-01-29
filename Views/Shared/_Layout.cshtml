@@ -14,7 +14,7 @@
     <header>
         <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
             <div class="container">
-                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">CRM Бытхолод</a>
+                <a class="navbar-brand menuh" asp-area="" asp-controller="Home" asp-action="Index">CRM Бытхолод</a>
                 <button class="navbar-toggler" type="button" data-toggle="collapse" data-target=".navbar-collapse" aria-controls="navbarSupportedContent"
                         aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
@@ -24,18 +24,18 @@
                     <ul class="navbar-nav flex-grow-1">
                         @if (User.Identity.Name == null)
                         {
-                            <li class="nav-item"><b><a class="nav-link text-dark" asp-area="" asp-controller="Account" asp-action="Login">Вход</a></b></li>
+                            <li class="nav-item menuh"><b><a class="nav-link text-dark" asp-area="" asp-controller="Account" asp-action="Login">Вход</a></b></li>
                         }
                         else
                         {
-                            <li class="nav-item"><b><a class="nav-link text-dark" asp-controller="Account" asp-action="Logout">@Context.Request.Cookies["Login"] Выход</a></b></li>
+                            <li class="nav-item menuh"><b><a class="nav-link text-dark" asp-controller="Account" asp-action="Logout">@Context.Request.Cookies["Login"] Выход</a></b></li>
                         }
                     </ul>
                     <ul class="navbar-nav flex-grow-1">
                         @if (User.Identity.Name != null)
                         {
-                            <li class="nav-item"><a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Orders">Заказы</a></li>
-                            <li class="nav-item"><a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Users">Пользователи</a></li>
+                            <li class="nav-item menuh"><a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Orders">Заказы</a></li>
+                            <li class="nav-item menuh"><a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Users">Пользователи</a></li>
                         }
                     </ul>
 

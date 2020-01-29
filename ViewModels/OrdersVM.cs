@@ -45,7 +45,7 @@ namespace CRMBytholod.ViewModels
         public DateTime? DateStart { get; set; }
         public DateTime? DateEnd { get; set; }
         public bool Povtor { get; set; }
-        public User Master { get; set; }
+        public long ID_Master { get; set; }
         public DateTime? DateOne { get; set; }
 
         public FiltrOrders()
@@ -56,6 +56,8 @@ namespace CRMBytholod.ViewModels
             Msisdn = "";
             ID_STATUS = 0;
             Povtor = false;
+            ID_Master = -1;
+            DateOne = null;
         }
 
 

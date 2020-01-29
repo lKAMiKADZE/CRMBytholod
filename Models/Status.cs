@@ -14,6 +14,16 @@ namespace CRMBytholod.Models
         public string NameStatus { get; set; }
         public string ColorHex { get; set; }
 
+
+        public string GetNameStatus
+        {
+            get
+            {
+                string _NameStatus = NameStatus.ToLower();
+                return _NameStatus.Substring(0, 1).ToUpper() + (_NameStatus.Length > 1 ? _NameStatus.Substring(1) : "");
+            }
+        }
+
         public static string GetStatusName(long ID_STATUS)
         {
             switch (ID_STATUS)
