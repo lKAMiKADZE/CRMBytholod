@@ -102,3 +102,14 @@ $(function () {
         $(this).mask($(this).attr('mask'));
     });
 });
+
+
+// отключение ентер
+$(document).ready(function () {
+    $("#form").keydown(function (event) {
+        if (event.keyCode == 13) {
+            event.preventDefault();
+            return false;
+        }
+    })
+});

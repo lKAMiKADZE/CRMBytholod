@@ -11,6 +11,7 @@
     <title>Карточка клиента- CRM Бытхолод</title>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" />
+
     <script type="text/javascript" src="https://cdn.voximplant.com/edge/voximplant.min.js"></script>
 </head>
 <body>
@@ -135,130 +136,168 @@ default: @Model.order.STATUS.NameStatus; break;
     </div>
 
 
+    @*<div class="select">
+        <label for="audioSource">Audio input source: </label><select id="audioSource"></select>
+    </div>
 
+    <div class="select">
+        <label for="audioOutput">Audio output destination: </label><select id="audioOutput"></select>
+    </div>
 
+    <div class="select">
+        <label for="videoSource">Video source: </label><select id="videoSource"></select>
+    </div>*@
 
-    <script type="text/javascript">
-        var initialized = false, // SDK загружено
-            loggedIn = false, // пользователь авторизован
-            connected = false,
-
-            call_active = false, // получено соединение с VoxImplant сервером
-
-            numRadButActive = "",// какой номер выбран
-            strLogin = "xamar@call.holodec.voximplant.com",
-            phoneMaster = document.getElementById('PhoneMaster').defaultValue
-
-
-        const voxImplant = VoxImplant.getInstance();
-
-        // добавляем прослушивателей основных событий
-        // событие загрузки SDK
-        voxImplant.addEventListener(VoxImplant.Events.SDKReady, handleSDKReady);
-        // событие установки соединения с сервером VoxImplant
-        voxImplant.addEventListener(VoxImplant.Events.ConnectionEstablished, handleConnectionEstablished);
-        // событие авторизации пользователя на сервере VoxImplant
-        voxImplant.addEventListener(VoxImplant.Events.AuthResult, handleAuthResult);
-
-        voxImplant.showDebugInfo = true;// DEBUG
-
-        if (!initialized) voxImplant.init();
-        else {
-            // если не установлено соединение с сервером VoxImplant - устанавливаем
-            if (!voxImplant.connected()) voxImplant.connect();
-            else {
-                // если юзер не авторизован - авторизуем, если авторизован - звоним
-                if (!loggedIn) login();
-            }
-        }
-        // SDK загружен, соединяемся с VoxImplant сервером
-        function handleSDKReady() {
-            initialized = true;
-            voxImplant.connect();
-        }
-
-        // соединились с VoxImplant сервером успешно, авторизуем юзера
-        function handleConnectionEstablished() {
-            connected = true;
-            login();
-        }
-
-        // проверяем статус авторизации
-        function handleAuthResult(e) {
-            if (e.result) {
-                // Авторизовались успешно
-                loggedIn = true;
-                //makecall();
-            }
-        }
-
-        // проводим авторизацию
-        function login() {
-            // данные созданного пользователя и приложения
-            //voxImplant.login("user@call2.holodec.voximplant.com", "1qazxsw2");
-
-
-            if (phoneMaster == "79993331856")
-                strLogin = "xamar@call.holodec.voximplant.com";
-
-            if (phoneMaster == "79993334728")
-                strLogin = "xamar@call2.holodec.voximplant.com";
-
-            voxImplant.login(strLogin, "Xi67yoRi");
+    @*<video id="video" playsinline autoplay></video>*@
 
 
 
 
-        }
+<script type="text/javascript">
+       var initialized = false, // SDK загружено
+           loggedIn = false, // пользователь авторизован
+           connected = false,
 
-        function makecall() {
+           call_active = false, // получено соединение с VoxImplant сервером
 
-            var elem = document.getElementById('CallBut');
-
-
-            if (loggedIn) {
-
-                if (call_active == false) {
-                    //console.log('call 79099578732...');
-
-                    check();// проверка какой номер выбран
-
-                    elem.value = 'ЗАВЕРШИТЬ';
-                    elem.style.backgroundColor = "#d51024";
-
-                    var call = voxImplant.call(numRadButActive);
-                    call_active = true;
-                }
-                else {
-
-                    //console.log('call END 79099578732...');
-
-                    elem.value = 'ВЫЗОВ';
-                    elem.style.backgroundColor = "#28a745";
-
-                    location.reload();
-                    call_active = false;
-
-                }
-            }
-
-        }
+           numRadButActive = "",// какой номер выбран
+           strLogin = "xamar@call.holodec.voximplant.com",
+           phoneMaster = document.getElementById('PhoneMaster').defaultValue
 
 
 
-        function check()// check rad but
-        {
-            var inp = document.getElementsByName('radio');
-            for (var i = 0; i < inp.length; i++) {
-                if (inp[i].type == "radio" && inp[i].checked) {
-                    // alert("selected: " + inp[i].value);
-                    numRadButActive = inp[i].value;
-                }
-            }
-        }
+
+    
+    const voxImplant = VoxImplant.getInstance();
+    const audioManager = VoxImplant.Hardware.AudioDeviceManager.get();
+
+    const defaultSettings = audioManager.getDefaultAudioSettings();// получение настроек по умолчанию
+    
+
+    var outDevice = audioManager.getOutputDevices()
+        .then(ev => {
+            availableAudioOutputArray = ev;
+        });
+
+    var outDevice1 = audioManager.getOutputDevices();
 
 
-    </script>
+
+    defaultSettings.outputId = "5dd6a0556787fcc90a22c6eff4ac0a5d7b94f9e4c964322695cb7323c95a01f7";// Headset earpiece
+
+    audioManager.setDefaultAudioSettings(defaultSettings)// установка настроек по умолчанию
+
+    navigator.mediaDevices.enumerateDevices()
+
+
+       // добавляем прослушивателей основных событий
+       // событие загрузки SDK
+       voxImplant.addEventListener(VoxImplant.Events.SDKReady, handleSDKReady);
+       // событие установки соединения с сервером VoxImplant
+       voxImplant.addEventListener(VoxImplant.Events.ConnectionEstablished, handleConnectionEstablished);
+       // событие авторизации пользователя на сервере VoxImplant
+       voxImplant.addEventListener(VoxImplant.Events.AuthResult, handleAuthResult);
+
+   //voxImplant.showDebugInfo = true;// DEBUG
+   voxImplant.micRequired = true;
+
+       if (!initialized) voxImplant.init();
+       else {
+           // если не установлено соединение с сервером VoxImplant - устанавливаем
+           if (!voxImplant.connected()) voxImplant.connect();
+           else {
+               // если юзер не авторизован - авторизуем, если авторизован - звоним
+               if (!loggedIn) login();
+           }
+       }
+       // SDK загружен, соединяемся с VoxImplant сервером
+       function handleSDKReady() {
+           initialized = true;
+           voxImplant.connect();
+       }
+
+       // соединились с VoxImplant сервером успешно, авторизуем юзера
+       function handleConnectionEstablished() {
+           connected = true;
+           login();
+       }
+
+       // проверяем статус авторизации
+       function handleAuthResult(e) {
+           if (e.result) {
+               // Авторизовались успешно
+               loggedIn = true;
+               //makecall();
+           }
+       }
+
+       // проводим авторизацию
+       function login() {
+           // данные созданного пользователя и приложения
+           //voxImplant.login("user@call2.holodec.voximplant.com", "1qazxsw2");
+
+
+           if (phoneMaster == "79993331856")
+               strLogin = "xamar@call.holodec.voximplant.com";
+
+           if (phoneMaster == "79993334728")
+               strLogin = "xamar@call2.holodec.voximplant.com";
+
+           voxImplant.login(strLogin, "Xi67yoRi");
+
+
+
+
+       }
+
+       function makecall() {
+
+           var elem = document.getElementById('CallBut');
+
+
+           if (loggedIn) {
+
+               if (call_active == false) {
+                   //console.log('call 79099578732...');
+
+                   check();// проверка какой номер выбран
+
+                   elem.value = 'ЗАВЕРШИТЬ';
+                   elem.style.backgroundColor = "#d51024";
+
+                   var call = voxImplant.call(numRadButActive);
+                   call_active = true;
+               }
+               else {
+
+                   //console.log('call END 79099578732...');
+
+                   elem.value = 'ВЫЗОВ';
+                   elem.style.backgroundColor = "#28a745";
+
+                   location.reload();
+                   call_active = false;
+
+               }
+           }
+
+       }
+
+
+
+       function check()// check rad but
+       {
+           var inp = document.getElementsByName('radio');
+           for (var i = 0; i < inp.length; i++) {
+               if (inp[i].type == "radio" && inp[i].checked) {
+                   // alert("selected: " + inp[i].value);
+                   numRadButActive = inp[i].value;
+               }
+           }
+       }
+
+
+</script>
 
 
 
@@ -273,6 +312,5 @@ default: @Model.order.STATUS.NameStatus; break;
     </footer>
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-  @*  <script src="~/js/site.js" asp-append-version="true"></script>*@
 </body>
 </html>
