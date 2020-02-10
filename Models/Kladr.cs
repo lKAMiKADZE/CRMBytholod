@@ -32,11 +32,12 @@ namespace CRMBytholod.Models
             #region sql
 
             string sqlText = $@"
-SELECT TOP (5) [ID_Kladr]
-      ,[NameStreet]
+SELECT TOP (5) [NameStreet]
   FROM [Bytholod].[dbo].[Kladr]
-  WHERE NameStreet like '%{shortStreet}%'
-  ORDER BY [NameStreet] ASC
+  WHERE LOWER(NameStreet) like LOWER('%{shortStreet}%')
+
+GROUP BY NameStreet
+ORDER BY [NameStreet] ASC
 
 ";
 
@@ -51,7 +52,7 @@ SELECT TOP (5) [ID_Kladr]
             {               
                 Kladr us = new Kladr
                 {
-                    ID_KLADR = (long)row["ID_KLADR"],
+                    //ID_KLADR = (long)row["ID_KLADR"],
                     NameStreet = (string)row["NameStreet"]
                   
                 };

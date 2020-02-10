@@ -198,6 +198,11 @@ default: @Model.order.STATUS.NameStatus; break;
        // событие авторизации пользователя на сервере VoxImplant
        voxImplant.addEventListener(VoxImplant.Events.AuthResult, handleAuthResult);
 
+    
+    voxImplant.addEventListener(VoxImplant.Events.ConnectionFailed, handleConnectionFailed);
+
+    voxImplant.addEventListener(VoxImplant.Events.ConnectionClosed, handleConnectionClosed);
+
    //voxImplant.showDebugInfo = true;// DEBUG
    voxImplant.micRequired = true;
 
@@ -246,9 +251,24 @@ default: @Model.order.STATUS.NameStatus; break;
            voxImplant.login(strLogin, "Xi67yoRi");
 
 
-
-
        }
+
+    // Событие запускается, если не удается установить соединение с VoxImplant cloud. 
+    function handleConnectionFailed(e) {
+
+        var elem = document.getElementById('CallBut');
+        elem.value = 'ВЫЗОВ';
+        elem.style.backgroundColor = "#28a745";
+    }
+
+    // Событие запускается, если соединение с VoxImplant Cloud было закрыто из-за проблем в сети
+    function handleConnectionClosed() {
+        var elem = document.getElementById('CallBut');
+        elem.value = 'ВЫЗОВ';
+        elem.style.backgroundColor = "#28a745";
+    }
+
+
 
        function makecall() {
 
