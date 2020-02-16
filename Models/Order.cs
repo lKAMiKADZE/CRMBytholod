@@ -927,7 +927,10 @@ WHERE 1=1
                     ETAG = (string)row["ETAG"],
                     PRIMECHANIE = (string)row["PRIMECHANIE"],
                     Povtor= (bool)row["Povtor"],
-                    
+                    Msisdn1 = (string)row["Msisdn1"],
+                    Msisdn2 = (string)row["Msisdn2"],
+                    Msisdn3 = (string)row["Msisdn3"],
+
 
                     USER_MASTER = userMaster,
                     STATUS = status,
