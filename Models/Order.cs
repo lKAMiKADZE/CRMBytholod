@@ -39,7 +39,6 @@ namespace CRMBytholod.Models
         //[HTMLMaskAttribute("mask", "7(999) 999-9999")] //phone format 
         public string Msisdn1 { get; set; }
         public string Msisdn2 { get; set; }
-
         public string Msisdn3 { get; set; }
         public Organization ORGANIZATION { get; set; }
         public User USER_MASTER { get; set; }
@@ -859,6 +858,10 @@ SELECT [ID_ZAKAZ]
 	  ,u.[Name]
       ,[Povtor]
 	  ,[City]
+      ,[Msisdn1]
+      ,[Msisdn2]
+      ,[Msisdn3]
+      ,u.[msisdnMaster]
   FROM [dbo].[Zakaz] o
 JOIN [User] u ON u.ID_USER=o.ID_MASTER
 JOIN [Status] s ON s.ID_STATUS=o.ID_STATUS
@@ -892,7 +895,8 @@ WHERE 1=1
 
                 User userMaster = new User
                 {
-                    Name = (string)row["Name"]
+                    Name = (string)row["Name"],
+                    msisdnMaster= (string)row["msisdnMaster"]
                 };
 
                 Order order = new Order

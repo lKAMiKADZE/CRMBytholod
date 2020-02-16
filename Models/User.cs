@@ -37,6 +37,7 @@ namespace CRMBytholod.Models
 
         public bool Admin { get; set; }
         public bool Deleted { get; set; }
+        public string msisdnMaster { get; set; }
 
 
         ////Свойства
@@ -417,6 +418,7 @@ SELECT [ID_USER]
       ,[PasswMaster]
       ,[DateAdd]
       ,[Deleted]
+      ,msisdnMaster
   FROM [dbo].[User] u
   JOIN [TypeUser] tu ON tu.ID_TYPE_USER=u.ID_TYPE_USER
   WHERE ID_USER=@ID_USER
@@ -455,7 +457,9 @@ SELECT [ID_USER]
                     TYPE_USER = tu,
                     DateAdd = (DateTime)row["DateAdd"],
                     Phone = (string)row["Phone"],
-                    Admin = tmpAdmin
+                    Admin = tmpAdmin,
+                    msisdnMaster= (string)row["msisdnMaster"]
+
                 };
                 return us;
             }
