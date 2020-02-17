@@ -30,7 +30,7 @@
             </div>
             <div class="form-group">
                 <label asp-for="user.Name" class="control-label">Имя</label>
-                <input asp-for="user.Name" class="form-control" autocomplete="off"/>
+                <input asp-for="user.Name" class="form-control" autocomplete="off" />
                 <span asp-validation-for="user.Name" class="text-danger"></span>
             </div>
             <div class="form-group">
@@ -47,12 +47,12 @@
 
             <div class="form-group">
                 <label asp-for="user.Login" class="control-label">Логин</label>
-                <input asp-for="user.Login" class="form-control" autocomplete="off"/>
+                <input asp-for="user.Login" class="form-control" autocomplete="off" />
                 <span asp-validation-for="user.Login" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="user.PasswMaster" class="control-label">Пароль</label>
-                <input asp-for="user.PasswMaster" class="form-control" autocomplete="off"/>
+                <input asp-for="user.PasswMaster" class="form-control" autocomplete="off" />
                 <span asp-validation-for="user.PasswMaster" class="text-danger"></span>
             </div>
             <div class="form-group">
@@ -64,6 +64,11 @@
 
                 </select>
                 <span asp-validation-for="user.Phone" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="user.msisdnMaster" class="control-label">Личный номер мастера в формате с 7</label>
+                <input asp-for="user.msisdnMaster" class="form-control" autocomplete="off" />
+                <span asp-validation-for="user.msisdnMaster" class="text-danger"></span>
             </div>
 
 

@@ -343,7 +343,8 @@ SELECT ID_USER,
 	Login,
 	Phone,
 	PasswMaster, -- Пароль мастера для вывода админу
-	DateAdd
+	DateAdd,
+    msisdnMaster
  FROM [User] u
  JOIN [TypeUser] tu ON u.ID_TYPE_USER=tu.ID_TYPE_USER
 WHERE 1=1
@@ -385,7 +386,9 @@ END
                     TYPE_USER = tu,
                     DateAdd = (DateTime)row["DateAdd"],
                     Phone = (string)row["Phone"],
-                    Admin = tmpAdmin
+                    Admin = tmpAdmin,
+                    msisdnMaster= (string)row["msisdnMaster"]
+
                 };
 
                 users.Add(us);
@@ -529,6 +532,7 @@ SELECT [ID_USER]
                 new SqlParameter(@"Login",SqlDbType.NVarChar) { Value =Login ?? "" },
                 new SqlParameter(@"Phone",SqlDbType.NVarChar) { Value =Phone  ?? ""},
                 new SqlParameter(@"PasswMaster",SqlDbType.NVarChar) { Value =PasswMaster ?? "" },
+                new SqlParameter(@"msisdnMaster",SqlDbType.NVarChar) { Value =ConvertMsisdn(msisdnMaster) ?? "" }                
             };
 
             #region sql
@@ -541,6 +545,7 @@ UPDATE [dbo].[User]
       ,[Login] =		@Login	-- <Login, nvarchar(20),>
       ,[Phone] =		@Phone--<Phone, nvarchar(15),>
       ,[PasswMaster] =	@PasswMaster	-- <PasswMaster, nvarchar(50),>
+      ,[msisdnMaster]= @msisdnMaster
       
  WHERE ID_USER=@ID_USER
 
@@ -601,6 +606,8 @@ UPDATE [dbo].[User]
                 new SqlParameter(@"Login",SqlDbType.NVarChar) { Value =Login },
                 new SqlParameter(@"Phone",SqlDbType.NVarChar) { Value =Phone ?? "" },
                 new SqlParameter(@"PasswMaster",SqlDbType.NVarChar) { Value =PasswMaster },
+                new SqlParameter(@"msisdnMaster",SqlDbType.NVarChar) { Value =ConvertMsisdn(msisdnMaster) }
+                
             };
 
             #region sql
@@ -615,7 +622,9 @@ INSERT INTO [dbo].[User]
            ,[Sessionid]
            ,[PasswMaster]
            ,[DateAdd]
-           ,[Deleted])
+           ,[Deleted]
+           ,[msisdnMaster]
+)
      VALUES
            (
 		    @Name  --<Name, nvarchar(50),>
@@ -627,6 +636,7 @@ INSERT INTO [dbo].[User]
            ,@PasswMaster  --<PasswMaster, nvarchar(50),>
            ,CURRENT_TIMESTAMP  --<DateAdd, datetime,>
            ,0  --<Deleted, bit,>
+           ,@msisdnMaster
 		   )
 
 
@@ -644,7 +654,12 @@ INSERT INTO [dbo].[User]
         }
 
 
+        private string ConvertMsisdn(string msisdn)
+        {
 
+            msisdn = msisdn.Replace("+", "").Replace(" ", "").Replace("-", "").Replace("(", "").Replace(")", "");
+            return msisdn;
+        }
 
         ////////////////
         // Методы SQL

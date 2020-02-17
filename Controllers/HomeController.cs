@@ -151,6 +151,8 @@ namespace CRMBytholod.Controllers
 
         public IActionResult CallClient(long ID_ZAKAZ)
         {
+            Uri location = new Uri($"{Request.Scheme}://{Request.Host}");
+            return Redirect(location.AbsoluteUri);
 
             CallClientOrderVM VM = new CallClientOrderVM(ID_ZAKAZ);
             return View(VM);

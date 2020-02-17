@@ -62,7 +62,11 @@
                 </select>
                 <span asp-validation-for="user.Phone" class="text-danger"></span>
             </div>
-
+            <div class="form-group">
+                <label asp-for="user.msisdnMaster" class="control-label">Личный номер мастера в формате с 7</label>
+                <input asp-for="user.msisdnMaster" class="form-control" autocomplete="off" />
+                <span asp-validation-for="user.msisdnMaster" class="text-danger"></span>
+            </div>
 
             <div class="form-group">
                 <input type="submit" value="Создать" class="btn btn-primary" />

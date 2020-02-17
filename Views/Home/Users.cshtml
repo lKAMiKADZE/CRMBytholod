@@ -30,6 +30,9 @@
                 Телефон звонка для мастера
             </th>
             <th>
+                Личный номер мастера
+            </th>
+            <th>
                 Админ
             </th>
             <th>
@@ -41,33 +44,36 @@
     <tbody>
         @foreach (var item in Model.Users)
         {
-         <tr>
-             <td>
-                 @Html.DisplayFor(modelItem => item.Name)
-             </td>
-             <td>
-                 @Html.DisplayFor(modelItem => item.PasswMaster)
-             </td>
-             <td>
-                 @Html.DisplayFor(modelItem => item.Login)
-             </td>
-             <td>
-                 @Html.DisplayFor(modelItem => item.TYPE_USER.NameTU)
-             </td>
-             <td>
-                 @Html.DisplayFor(modelItem => item.Phone)
-             </td>
-             <td>
-                 @Html.DisplayFor(modelItem => item.GetAdmin)
-             </td>
-             <td>
-                 @Html.DisplayFor(modelItem => item.DateAdd)
-             </td>
-             <td>
-                 @Html.ActionLink("Редактировать", "EditUser", new { ID_USER = item.ID_USER }) |
-                 @Html.ActionLink("Удалить", "DeleteUser", new { ID_USER = item.ID_USER })
-             </td>
-         </tr>
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Name)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.PasswMaster)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Login)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.TYPE_USER.NameTU)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Phone)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.msisdnMaster)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.GetAdmin)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.DateAdd)
+            </td>
+            <td>
+                @Html.ActionLink("Редактировать", "EditUser", new { ID_USER = item.ID_USER }) |
+                @Html.ActionLink("Удалить", "DeleteUser", new { ID_USER = item.ID_USER })
+            </td>
+        </tr>
         }
     </tbody>
 </table>
