@@ -862,6 +862,7 @@ SELECT [ID_ZAKAZ]
       ,[Msisdn2]
       ,[Msisdn3]
       ,u.[msisdnMaster]
+      ,u.[Phone]
   FROM [dbo].[Zakaz] o
 JOIN [User] u ON u.ID_USER=o.ID_MASTER
 JOIN [Status] s ON s.ID_STATUS=o.ID_STATUS
@@ -896,7 +897,9 @@ WHERE 1=1
                 User userMaster = new User
                 {
                     Name = (string)row["Name"],
-                    msisdnMaster= (string)row["msisdnMaster"]
+                    msisdnMaster= (string)row["msisdnMaster"],
+                    Phone= (string)row["Phone"]
+
                 };
 
                 Order order = new Order
