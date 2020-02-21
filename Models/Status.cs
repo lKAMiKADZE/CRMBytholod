@@ -19,6 +19,9 @@ namespace CRMBytholod.Models
         {
             get
             {
+                if (String.IsNullOrEmpty(NameStatus))
+                    return "";
+
                 string _NameStatus = NameStatus.ToLower();
                 return _NameStatus.Substring(0, 1).ToUpper() + (_NameStatus.Length > 1 ? _NameStatus.Substring(1) : "");
             }
@@ -44,6 +47,14 @@ namespace CRMBytholod.Models
 
 
         }
+
+
+        public Status()
+        {
+            NameStatus = "";
+            ColorHex = "";
+        }
+
 
 
         ////////////////

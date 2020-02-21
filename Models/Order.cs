@@ -963,7 +963,20 @@ WHERE 1=1
 
             string sqlText = $@"
 
+-- установка времени отправки уведомления мастеру
+--UPDATE [dbo].[Zakaz] SET DateSendMaster =CURRENT_TIMESTAMP
+--WHERE DateSendMaster is null
+--	AND ID_MASTER = (
+--	SELECT ID_USER FROM [User] 
+--	WHERE 1=1
+--		AND Sessionid=	@Sessionid	--'2847C1CF-9DAE-4FD0-826F-C5A8BFD507C8'--@Sessionid	
+--	
+--	)
+--	AND ID_STATUS in (1,2)
+--	AND DateSendMaster is null
 	
+
+
 -- Выводим все новые заказы мастера
 
 SELECT [ID_ZAKAZ]
@@ -975,24 +988,13 @@ SELECT [ID_ZAKAZ]
 	  ,[City]
 				
 FROM [dbo].[Zakaz] o
-JOIN [User] u ON u.ID_USER=o.ID_MASTER
-JOIN [Status] s ON s.ID_STATUS=o.ID_STATUS
+JOIN [dbo].[User] u ON u.ID_USER=o.ID_MASTER
+JOIN [dbo].[Status] s ON s.ID_STATUS=o.ID_STATUS
 WHERE 1=1
 	AND u.Sessionid=@Sessionid	--'CB80665A-93E0-4E91-A982-36063D546CE6'--@Sessionid	
 	AND s.ID_STATUS in (1,2)
 	AND o.DateSendMaster is null
 
--- установка времени отправки уведомления мастеру
-UPDATE [dbo].[Zakaz] SET DateSendMaster =CURRENT_TIMESTAMP
-WHERE DateSendMaster is null
-	AND ID_MASTER = (
-	SELECT ID_USER FROM [User] 
-	WHERE 1=1
-		AND Sessionid=	@Sessionid	--'2847C1CF-9DAE-4FD0-826F-C5A8BFD507C8'--@Sessionid	
-	
-	)
-	AND ID_STATUS in (1,2)
-	AND DateSendMaster is null
 
 
 ";
@@ -1006,6 +1008,7 @@ WHERE DateSendMaster is null
 
             foreach (DataRow row in dt.Rows)
             {
+
                 Status status = new Status();
 
                 Organization org = new Organization();
@@ -1030,6 +1033,24 @@ WHERE DateSendMaster is null
                 Orders.Add(order);
             }
 
+            if(Orders.Count>0)
+            {
+                sqlText = $@"
+-- установка времени отправки уведомления мастеру
+UPDATE [dbo].[Zakaz] SET DateSendMaster =CURRENT_TIMESTAMP
+WHERE DateSendMaster is null
+	AND ID_MASTER = (
+	SELECT ID_USER FROM [User] 
+	WHERE 1=1
+		AND Sessionid=	@Sessionid	--'2847C1CF-9DAE-4FD0-826F-C5A8BFD507C8'--@Sessionid	
+	
+	)
+	AND ID_STATUS in (1,2)
+	AND DateSendMaster is null
+";
+
+                ExecuteSqlStatic(sqlText, parameters);
+            }
 
             return Orders;
         }
@@ -2101,15 +2122,15 @@ WHERE ID_ZAKAZ=@ID_ZAKAZ
                         command.Parameters.AddRange(parameters);
                     }
 
-                    //try
-                    //{
+                    try
+                    {
                         SqlDataReader reader = command.ExecuteReader();
                         dt.Load(reader);
-                    //}
-                    //catch (Exception ex)
-                    //{
+                    }
+                    catch (Exception ex)
+                    {
 
-                    //}
+                    }
 
                     command.Parameters.Clear();
 
