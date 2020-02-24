@@ -823,6 +823,18 @@ UPDATE [dbo].[Zakaz] SET DateOpenMaster = CURRENT_TIMESTAMP
 WHERE DateOpenMaster is null
 	AND ID_ZAKAZ=@ID_ZAKAZ
 
+
+-- изменение статуса у заявки  (в работе)
+UPDATE [dbo].[Zakaz] SET ID_STATUS= 4  --4 -- в работе
+WHERE ID_ZAKAZ =(
+SELECT ID_ZAKAZ  FROM [dbo].[Zakaz] o
+JOIN [User] u ON u.ID_USER=o.ID_MASTER
+WHERE 1=1    
+	AND u.Sessionid=@Sessionid	
+	AND o.ID_ZAKAZ=@ID_ZAKAZ 
+    AND ID_STATUS=1
+	)
+
 -- получение заявки
 SELECT [ID_ZAKAZ]
       ,[STREET]
@@ -1079,7 +1091,7 @@ declare @STATUS nvarchar(50),
 
 
 -- изменение статуса у заявки
-UPDATE [dbo].[Zakaz] SET ID_STATUS=@ID_STATUS
+UPDATE [dbo].[Zakaz] SET ID_STATUS=@ID_STATUS --4 -- в работе
 WHERE ID_ZAKAZ =(
 SELECT ID_ZAKAZ  FROM [dbo].[Zakaz] o
 JOIN [User] u ON u.ID_USER=o.ID_MASTER
