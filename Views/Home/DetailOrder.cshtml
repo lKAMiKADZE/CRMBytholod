@@ -25,15 +25,17 @@
     <br />
 }
 
-@switch (Model.order.STATUS.NameStatus)
-{
-    case "В ОЖИДАНИИ":<span class="" style='background-color:@Model.order.STATUS.ColorHex; padding: 6px;'>@Model.order.STATUS.GetNameStatus</span> break;
-case "ПОВТОР": <span class="" style='background-color:@Model.order.STATUS.ColorHex; padding: 6px;'>@Model.order.STATUS.GetNameStatus</span> break;
-case "ОТКАЗ": <span class="" style='background-color:@Model.order.STATUS.ColorHex; padding: 6px;'>@Model.order.STATUS.GetNameStatus</span> break;
-case "В РАБОТЕ": <span class="" style='background-color:@Model.order.STATUS.ColorHex; padding: 6px;'>@Model.order.STATUS.GetNameStatus</span> break;
-case "ВЫПОЛНЕН": <span class="" style='background-color:@Model.order.STATUS.ColorHex; padding: 6px;'>@Model.order.STATUS.GetNameStatus</span> break;
-default: @Model.order.STATUS.NameStatus; break;
-}
+@*@switch (Model.order.STATUS.NameStatus)
+    {
+        case "В ОЖИДАНИИ":<span class="" style='background-color:@Model.order.STATUS.ColorHex; padding: 6px;'>@Model.order.STATUS.GetNameStatus</span> break;
+    case "ПОВТОР": <span class="" style='background-color:@Model.order.STATUS.ColorHex; padding: 6px;'>@Model.order.STATUS.GetNameStatus</span> break;
+    case "ОТКАЗ": <span class="" style='background-color:@Model.order.STATUS.ColorHex; padding: 6px;'>@Model.order.STATUS.GetNameStatus</span> break;
+    case "В РАБОТЕ": <span class="" style='background-color:@Model.order.STATUS.ColorHex; padding: 6px;'>@Model.order.STATUS.GetNameStatus</span> break;
+    case "ВЫПОЛНЕН": <span class="" style='background-color:@Model.order.STATUS.ColorHex; padding: 6px;'>@Model.order.STATUS.GetNameStatus</span> break;
+    default: @Model.order.STATUS.NameStatus; break;
+    }*@
+
+<span class="" style='background-color:@Model.order.STATUS.ColorHex; padding: 6px;'>@Model.order.STATUS.GetNameStatus</span>
 
 @* Вывод инфо о заявке (NEW) *@
 <hr />
@@ -412,7 +414,7 @@ default: @Model.order.STATUS.NameStatus; break;
                         @Html.DisplayFor(modelItem => item.USER_MASTER.Name)
                     </td>
                     <td>
-                        @switch (item.STATUS.NameStatus)
+                        @*@switch (item.STATUS.NameStatus)
                         {
                             case "В ОЖИДАНИИ":<span class="label" style='background-color:@item.STATUS.ColorHex; padding: 6px;'>@item.STATUS.NameStatus</span> break;
                         case "ПОВТОР": <span class="label" style='background-color:@item.STATUS.ColorHex; padding: 6px;'>@item.STATUS.NameStatus</span> break;
@@ -420,7 +422,8 @@ default: @Model.order.STATUS.NameStatus; break;
                 case "В РАБОТЕ": <span class="label" style='background-color:@item.STATUS.ColorHex; padding: 6px;'>@item.STATUS.NameStatus</span> break;
             case "ВЫПОЛНЕН": <span class="label" style='background-color:@item.STATUS.ColorHex; padding: 6px;'>@item.STATUS.NameStatus</span> break;
         default: @item.STATUS.NameStatus; break;
-}
+                }*@
+                        <span class="label" style='background-color:@item.STATUS.ColorHex; padding: 6px;'>@item.STATUS.NameStatus</span>
 
                     </td>
                     <td>

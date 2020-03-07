@@ -234,7 +234,7 @@
                     @Html.DisplayFor(modelItem => item.USER_MASTER.Name)
                 </td>
                 <td>
-                    @switch (item.STATUS.NameStatus)
+                    @*@switch (item.STATUS.NameStatus)
                     {
                         case "В ОЖИДАНИИ":<span class="   " style='background-color:@item.STATUS.ColorHex; padding: 6px;'>@item.STATUS.GetNameStatus</span> break;
                         case "ПОВТОР": <span class=" " style='background-color:@item.STATUS.ColorHex; padding: 6px;'>@item.STATUS.GetNameStatus</span> break;
@@ -242,7 +242,8 @@
                         case "В РАБОТЕ": <span class=" " style='background-color:@item.STATUS.ColorHex; padding: 6px;'>@item.STATUS.GetNameStatus</span> break;
                         case "ВЫПОЛНЕН": <span class=" " style='background-color:@item.STATUS.ColorHex; padding: 6px;'>@item.STATUS.GetNameStatus</span> break;
                         default: @item.STATUS.NameStatus; break;
-}
+                     }*@
+                    <span class="   " style='background-color:@item.STATUS.ColorHex; padding: 6px;'>@item.STATUS.GetNameStatus</span>
 
                 </td>
                 <td>

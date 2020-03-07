@@ -656,6 +656,8 @@ INSERT INTO [dbo].[User]
 
         private string ConvertMsisdn(string msisdn)
         {
+            if (String.IsNullOrEmpty(msisdn))
+                return "";
 
             msisdn = msisdn.Replace("+", "").Replace(" ", "").Replace("-", "").Replace("(", "").Replace(")", "");
             return msisdn;
