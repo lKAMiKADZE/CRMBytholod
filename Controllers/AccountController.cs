@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cryptography.KeyDerivation;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CRMBytholod.Controllers
@@ -81,26 +82,40 @@ namespace CRMBytholod.Controllers
         private async Task Authenticate(string Login, string id_user)
         {
             // создаем один claim
-            var claims = new List<Claim>
+            List<Claim> claims = new List<Claim>
             {
                 new Claim(ClaimsIdentity.DefaultNameClaimType, id_user)
             };
             // создаем объект ClaimsIdentity
             ClaimsIdentity id = new ClaimsIdentity(claims, "ApplicationCookie", ClaimsIdentity.DefaultNameClaimType, ClaimsIdentity.DefaultRoleClaimType);
+
+            // установка времени действия кук 
+            AuthenticationProperties AuthProp = new AuthenticationProperties();
+
+            DateTime dexpire = DateTime.Now.AddYears(1);
+            AuthProp.ExpiresUtc = DateTimeOffset.UtcNow.AddYears(1);
+            AuthProp.IsPersistent = true;
+
+
+
+
+
             // установка аутентификационных куки
-            await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(id));
+            await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(id), AuthProp);
 
+            CookieOptions optCookie = new CookieOptions();
 
-            
-
+            optCookie.Expires = dexpire;
 
             if (HttpContext.Request.Cookies.ContainsKey("Login"))
             {
                 HttpContext.Response.Cookies.Delete("Login");
-                HttpContext.Response.Cookies.Append("Login", Login);
+                HttpContext.Response.Cookies.Append("Login", Login,optCookie);
             }
             else
-                HttpContext.Response.Cookies.Append("Login", Login);
+                HttpContext.Response.Cookies.Append("Login", Login, optCookie);
+
+            
 
         }
 

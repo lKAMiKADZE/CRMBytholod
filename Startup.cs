@@ -41,6 +41,8 @@ namespace CRMBytholod
                 .AddCookie(options =>
                 {
                     options.LoginPath = new Microsoft.AspNetCore.Http.PathString("/Account/Login");
+                    options.ExpireTimeSpan = TimeSpan.FromDays(365);
+                    //options.Cookie.Expiration= TimeSpan.FromDays(365); 
                 });
 
             // для включение проверки по маске
@@ -50,6 +52,7 @@ namespace CRMBytholod
             //});
 
             services.AddMvc().SetCompatibilityVersion(Microsoft.AspNetCore.Mvc.CompatibilityVersion.Version_3_0);
+
 
 
         }
@@ -71,6 +74,7 @@ namespace CRMBytholod
             //////////
 
 
+
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
@@ -87,7 +91,8 @@ namespace CRMBytholod
             app.UseRouting();
             app.UseStaticFiles();
             app.UseFileServer();
-
+            
+                
 
             app.UseAuthorization();
             app.UseAuthentication();// авторизация
@@ -104,6 +109,8 @@ namespace CRMBytholod
             {
                 endpoints.MapControllers();
             });
+
+
 
         }
     }
