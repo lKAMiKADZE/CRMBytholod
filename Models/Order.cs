@@ -52,6 +52,7 @@ namespace CRMBytholod.Models
         public int MoneyFirm { get; set; }
         public int MoneyDetal { get; set; }
         public int MoneyMaster { get; set; }
+        public int MoneyDiagnostik { get; set; }        
         public string DescripClose { get; set; }
         public string NameClient { get; set; }
         public bool Povtor { get; set; }
@@ -174,7 +175,15 @@ namespace CRMBytholod.Models
                 return "НЕТ";
             }
         }
-        
+
+        public string GetMoneyDiagnostik
+        {
+            get
+            {
+                return MoneyDiagnostik + " Руб.";
+            }
+        }
+
         public string GetMsisdn1Mask
         {
             get
@@ -520,7 +529,7 @@ ORDER BY DateClose DESC, ID_ZAKAZ DESC
         /// Metod from Master mobile
         /// </summary>
         public static List<Order> GetOldOrdersFiltr(string Sessionid, string Adres, DateTime DateStart, DateTime DateEnd,
-            bool filtr_SUCCES, bool filtr_DENY, bool filtr_POVTOR, bool filtr_DATE, bool filtr_ADRES)
+            bool filtr_SUCCES, bool filtr_DENY, bool filtr_POVTOR, bool filtr_DATE, bool filtr_ADRES, bool filtr_DIAGNOSTIK)
         {
             List<Order> Orders = new List<Order>();
 
@@ -568,19 +577,22 @@ ORDER BY DateClose DESC, ID_ZAKAZ DESC
 
             // будет активно в поиске либо оба статуса либо один из них,
             //если оба неактивны, то не выводим данные статусы
-            if (filtr_SUCCES || filtr_DENY)
-            {
-                if (filtr_SUCCES && filtr_DENY)
-                    Where_Status = "AND s.ID_STATUS in (3,5)";
-                else
-                    if (filtr_SUCCES)
-                    Where_Status = "AND s.ID_STATUS in (5)";
-                else
-                    if (filtr_DENY)
-                    Where_Status = "AND s.ID_STATUS in (3)";                  
-            }
-            //else
-               // Where_Status = "AND s.ID_STATUS NOT IN (3,5)";
+            //if (filtr_SUCCES || filtr_DENY)
+            //{
+            //    if (filtr_SUCCES && filtr_DENY)
+            //        Where_Status = "AND s.ID_STATUS in (3,5)";
+            //    else
+            //        if (filtr_SUCCES)
+            //        Where_Status = "AND s.ID_STATUS in (5)";
+            //    else
+            //        if (filtr_DENY)
+            //        Where_Status = "AND s.ID_STATUS in (3)";                  
+            //}
+
+            Where_Status = GetAll_ID_STATUSstring(filtr_SUCCES, filtr_DENY, filtr_DIAGNOSTIK);
+
+            if (!String.IsNullOrEmpty(Where_Status))
+                Where_Status = $"AND s.ID_STATUS in ( {Where_Status} )";
 
 
             string sqlText = $@"
@@ -875,6 +887,7 @@ SELECT [ID_ZAKAZ]
       ,[Msisdn3]
       ,u.[msisdnMaster]
       ,u.[Phone]
+      ,[MoneyDiagnostik]
   FROM [dbo].[Zakaz] o
 JOIN [User] u ON u.ID_USER=o.ID_MASTER
 JOIN [Status] s ON s.ID_STATUS=o.ID_STATUS
@@ -945,6 +958,9 @@ WHERE 1=1
                     Msisdn1 = (string)row["Msisdn1"],
                     Msisdn2 = (string)row["Msisdn2"],
                     Msisdn3 = (string)row["Msisdn3"],
+
+                    MoneyDiagnostik = (int)row["MoneyDiagnostik"],
+                    
 
 
                     USER_MASTER = userMaster,
@@ -1257,8 +1273,70 @@ INSERT INTO [dbo].[LogStatusOrder]
             // получаем данные из запроса
             ExecuteSqlStatic(sqlText, parameters);
         }
+        /// <summary>
+        /// Metod from Master mobile
+        /// </summary>
+        public static void SetStatus_Diagnostik(string Sessionid, long ID_ZAKAZ, string DescripClose, int MoneyDiagnostik)
+        {
+            SqlParameter[] parameters = new SqlParameter[]
+            {
+                new SqlParameter(@"Sessionid",SqlDbType.NVarChar) { Value =Sessionid },
+                new SqlParameter(@"ID_ZAKAZ",SqlDbType.Int) { Value =ID_ZAKAZ },
+                new SqlParameter(@"ID_STATUS",SqlDbType.Int) { Value = 7 },// диагностика
+                new SqlParameter(@"DescripClose",SqlDbType.NVarChar) { Value =DescripClose },
+                new SqlParameter(@"MoneyDiagnostik",SqlDbType.Int) { Value = MoneyDiagnostik }
+            };
 
-        
+            #region sql
+
+            string sqlText = $@"
+
+declare @STATUS nvarchar(50),
+		@USER bigint;
+
+
+
+-- изменение статуса у заявки
+UPDATE [dbo].[Zakaz] SET ID_STATUS=@ID_STATUS, DescripClose=@DescripClose, DateClose=CURRENT_TIMESTAMP, MoneyDiagnostik=@MoneyDiagnostik
+WHERE ID_ZAKAZ =(
+SELECT ID_ZAKAZ  FROM [dbo].[Zakaz] o
+JOIN [User] u ON u.ID_USER=o.ID_MASTER
+WHERE 1=1
+	AND u.Sessionid=@Sessionid	--'CB80665A-93E0-4E91-A982-36063D546CE6'--@Sessionid	--
+	AND o.ID_ZAKAZ=@ID_ZAKAZ --2--@ID_ZAKAZ --
+	)
+
+
+-- получаем имя мастера и название статуса
+SET @USER=(
+SELECT ID_USER FROM [dbo].[User] WHERE Sessionid=@Sessionid
+)
+
+SET @STATUS = (
+SELECT NameStatus FROM [dbo].[Status] WHERE ID_STATUS=@ID_STATUS
+)
+
+-- Логирование изменение статуса
+INSERT INTO [dbo].[LogStatusOrder]
+           ([ID_ZAKAZ]
+           ,[STATUS]
+           ,[ID_USER]
+           ,[DateChange])
+     VALUES
+           (@ID_ZAKAZ
+           ,@STATUS
+           ,@USER
+           ,CURRENT_TIMESTAMP)
+
+";
+
+            #endregion
+
+            // получаем данные из запроса
+            ExecuteSqlStatic(sqlText, parameters);
+        }
+
+
 
         /// <summary>
         /// Metod from site
@@ -1352,6 +1430,7 @@ SELECT [ID_ZAKAZ]
 	  ,uadd.[Name] AS NameUserAdd
 	  ,o.[City]
 	  ,o.[Promocode]
+      ,[MoneyDiagnostik]
   FROM [dbo].[Zakaz] o
 JOIN [User] u ON u.ID_USER=o.ID_MASTER -- ADD User MASTER
 JOIN [User] uadd ON uadd.ID_USER=o.ID_USER_ADD -- ADD User DISP or ADMIN
@@ -1428,6 +1507,7 @@ WHERE 1=1
                     Povtor = (bool)row["Povtor"],
                     Promocode = (string)row["Promocode"],
                     City = (string)row["City"],
+                    MoneyDiagnostik = (int)row["MoneyDiagnostik"],
 
                     USER_MASTER = userMaster,
                     USER_ADD= userAdd,
@@ -1798,7 +1878,6 @@ SELECT
                 new SqlParameter(@"City",SqlDbType.NVarChar) { Value =City ?? ""}
             };
 
-
             #region sql
 
             string sqlText = @$"
@@ -2039,6 +2118,34 @@ WHERE ID_ZAKAZ=@ID_ZAKAZ
         }
 
 
+        private static string GetAll_ID_STATUSstring(bool filtr_SUCCES, bool filtr_DENY, bool filtr_DIAGNOSTIK)
+        {
+            // bool filtr_SUCCES, // 5
+            // bool filtr_DENY, 3
+            // bool filtr_DIAGNOSTIK 7
+            string status = "";
+            string resStatus = "";
+
+            if (filtr_SUCCES) status += "5 ";
+            if (filtr_DENY) status += "3 ";
+            if (filtr_DIAGNOSTIK) status += "7";
+
+
+
+            var arrStr = status.Split(" ", StringSplitOptions.RemoveEmptyEntries);
+
+
+            for (int i = 0; i < arrStr.Length; i++)
+            {
+                if (i == arrStr.Length - 1)
+                    resStatus += arrStr[i];
+                else
+                    resStatus += arrStr[i] + ",";
+            }
+
+
+            return resStatus;
+        }
 
 
         ////////////////

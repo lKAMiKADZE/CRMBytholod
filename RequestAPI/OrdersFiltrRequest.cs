@@ -15,6 +15,8 @@ namespace CRMBytholod.RequestAPI
         public bool filtr_POVTOR { get; set; }
         public bool filtr_DATE { get; set; }
         public bool filtr_ADRES { get; set; }
+        public bool filtr_DIAGNOSTIK { get; set; }
+        
 
 
 

@@ -22,7 +22,7 @@ namespace CRMBytholod.ResponseAPI
             switch (req.Action)
             {
                 case "OLD": Orders = Order.GetOldOrdersFiltr(req.Sessionid,req.Adress,req.DateStart,req.DateEnd,
-                    req.filtr_SUCCES, req.filtr_DENY, req.filtr_POVTOR, req.filtr_DATE, req.filtr_ADRES); break;
+                    req.filtr_SUCCES, req.filtr_DENY, req.filtr_POVTOR, req.filtr_DATE, req.filtr_ADRES, false); break;
                 case "NEW": Orders = Order.GetNewOrders(req.Sessionid); break;
 
                 default : Orders = new List<Order>(); break;

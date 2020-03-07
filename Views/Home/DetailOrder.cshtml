@@ -25,15 +25,7 @@
     <br />
 }
 
-@*@switch (Model.order.STATUS.NameStatus)
-    {
-        case "В ОЖИДАНИИ":<span class="" style='background-color:@Model.order.STATUS.ColorHex; padding: 6px;'>@Model.order.STATUS.GetNameStatus</span> break;
-    case "ПОВТОР": <span class="" style='background-color:@Model.order.STATUS.ColorHex; padding: 6px;'>@Model.order.STATUS.GetNameStatus</span> break;
-    case "ОТКАЗ": <span class="" style='background-color:@Model.order.STATUS.ColorHex; padding: 6px;'>@Model.order.STATUS.GetNameStatus</span> break;
-    case "В РАБОТЕ": <span class="" style='background-color:@Model.order.STATUS.ColorHex; padding: 6px;'>@Model.order.STATUS.GetNameStatus</span> break;
-    case "ВЫПОЛНЕН": <span class="" style='background-color:@Model.order.STATUS.ColorHex; padding: 6px;'>@Model.order.STATUS.GetNameStatus</span> break;
-    default: @Model.order.STATUS.NameStatus; break;
-    }*@
+
 
 <span class="" style='background-color:@Model.order.STATUS.ColorHex; padding: 6px;'>@Model.order.STATUS.GetNameStatus</span>
 
@@ -238,7 +230,7 @@
         </div>
         <div class="col-md-3">
             <div class="form-group">
-                <label class="control-label font-weight-bold">Время отправки Мастеру</label>
+                <label class="control-label font-weight-bold">Время получения Мастером</label>
                 <input asp-for="order.GetDateSendMaster" class="form-control" readonly />
             </div>
         </div>
@@ -286,9 +278,20 @@
     </div>
 
     <div class="row">
+        <div class="col-md-3">
+            <div class="form-group">
+                <label class="control-label font-weight-bold">Диагностика</label>
+                <input asp-for="order.GetMoneyDiagnostik" class="form-control" readonly />
+            </div>
+
+        </div>
+    </div>
+
+
+    <div class="row">
         <div class="col-md-5">
             <div class="form-group">
-                <label class="control-label font-weight-bold">Описание закрытия (в случае отказа)</label>
+                <label class="control-label font-weight-bold">Описание закрытия (в случае отказа или диагностики)</label>
                 <input asp-for="order.DescripClose" class="form-control" readonly />
             </div>
         </div>
