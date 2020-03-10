@@ -1276,7 +1276,7 @@ INSERT INTO [dbo].[LogStatusOrder]
         /// <summary>
         /// Metod from Master mobile
         /// </summary>
-        public static void SetStatus_Diagnostik(string Sessionid, long ID_ZAKAZ, string DescripClose, int MoneyDiagnostik)
+        public static void SetStatus_Diagnostik(string Sessionid, long ID_ZAKAZ, string DescripClose, int MoneyDiagnostik, int MoneyFirm)
         {
             SqlParameter[] parameters = new SqlParameter[]
             {
@@ -1284,7 +1284,8 @@ INSERT INTO [dbo].[LogStatusOrder]
                 new SqlParameter(@"ID_ZAKAZ",SqlDbType.Int) { Value =ID_ZAKAZ },
                 new SqlParameter(@"ID_STATUS",SqlDbType.Int) { Value = 7 },// диагностика
                 new SqlParameter(@"DescripClose",SqlDbType.NVarChar) { Value =DescripClose },
-                new SqlParameter(@"MoneyDiagnostik",SqlDbType.Int) { Value = MoneyDiagnostik }
+                new SqlParameter(@"MoneyDiagnostik",SqlDbType.Int) { Value = MoneyDiagnostik },
+                new SqlParameter(@"MoneyFirm",SqlDbType.Int) { Value =MoneyFirm }
             };
 
             #region sql
@@ -1297,7 +1298,7 @@ declare @STATUS nvarchar(50),
 
 
 -- изменение статуса у заявки
-UPDATE [dbo].[Zakaz] SET ID_STATUS=@ID_STATUS, DescripClose=@DescripClose, DateClose=CURRENT_TIMESTAMP, MoneyDiagnostik=@MoneyDiagnostik
+UPDATE [dbo].[Zakaz] SET ID_STATUS=@ID_STATUS, DescripClose=@DescripClose, DateClose=CURRENT_TIMESTAMP, MoneyDiagnostik=@MoneyDiagnostik, MoneyFirm=@MoneyFirm
 WHERE ID_ZAKAZ =(
 SELECT ID_ZAKAZ  FROM [dbo].[Zakaz] o
 JOIN [User] u ON u.ID_USER=o.ID_MASTER
