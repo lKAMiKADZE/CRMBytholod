@@ -1337,6 +1337,51 @@ INSERT INTO [dbo].[LogStatusOrder]
             ExecuteSqlStatic(sqlText, parameters);
         }
 
+        /// <summary>
+        /// Metod from Master mobile
+        /// Мастер редактирует суммы у заказа
+        /// </summary>
+        public static void Update_MoneyMaster(string Sessionid, long ID_ZAKAZ, int MoneyAll, int MoneyDetal, int MoneyFirm, int MoneyDiagnostik)
+        {
+            SqlParameter[] parameters = new SqlParameter[]
+            {
+                new SqlParameter(@"Sessionid",SqlDbType.NVarChar) { Value =Sessionid },
+                new SqlParameter(@"ID_ZAKAZ",SqlDbType.BigInt) { Value =ID_ZAKAZ },
+                new SqlParameter(@"MoneyAll",SqlDbType.Int) { Value =MoneyAll },
+                new SqlParameter(@"MoneyDetal",SqlDbType.Int) { Value =MoneyDetal },
+                new SqlParameter(@"MoneyFirm",SqlDbType.Int) { Value =MoneyFirm },
+                new SqlParameter(@"MoneyDiagnostik",SqlDbType.Int) { Value =MoneyDiagnostik }
+            };
+
+            // логирование изменение статуса а после уже изменение в заказе
+            LogMoney.Insert(MoneyAll, MoneyFirm, MoneyDetal, MoneyDiagnostik, ID_ZAKAZ);
+
+            
+            #region sql
+
+            string sqlText = $@"
+
+-- обновление сумм 
+UPDATE [Zakaz] set MoneyAll=@MoneyAll, MoneyDetal=@MoneyDetal, MoneyFirm=@MoneyFirm, MoneyDiagnostik=@MoneyDiagnostik
+WHERE ID_ZAKAZ = 
+(
+	SELECT z.ID_ZAKAZ FROM [Zakaz] z
+	JOIN [User] u ON u.ID_USER=z.ID_MASTER
+	WHERE 1=1
+		AND u.Sessionid=@Sessionid	
+		AND u.Deleted=0
+		AND z.ID_ZAKAZ=@ID_ZAKAZ
+)
+
+
+
+";
+
+            #endregion
+
+            // получаем данные из запроса
+            ExecuteSqlStatic(sqlText, parameters);
+        }
 
 
         /// <summary>

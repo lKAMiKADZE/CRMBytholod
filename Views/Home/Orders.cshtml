@@ -2,7 +2,7 @@
 
 @{
     ViewData["Title"] = "Заявки";
-    Layout = "_LayoutFindText";
+    Layout = "_LayoutFindTextOrder";
 }
 
 <h1>Заказы</h1>
@@ -186,7 +186,7 @@
             <th>
                 Дата
             </th>
-            <th >
+            <th>
                 Адрес
             </th>
             <th>
@@ -212,45 +212,45 @@
     <tbody>
         @foreach (var item in Model.Orders)
         {
-            <tr>
-                <td>
-                    <a asp-action="DetailOrder" asp-route-id_zakaz="@item.ID_ZAKAZ"><b>@item.ID_ZAKAZ</b></a>
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.GetDATA)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.GetAdresFull)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Msisdn1)
-                </td>
-                <td>
-                    <a asp-action="DetailOrder" asp-route-id_zakaz="@item.ID_ZAKAZ"><b>@item.HOLODILNIK_DEFECT</b></a>
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.VREMJA)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.USER_MASTER.Name)
-                </td>
-                <td>
-                    @*@switch (item.STATUS.NameStatus)
-                    {
-                        case "В ОЖИДАНИИ":<span class="   " style='background-color:@item.STATUS.ColorHex; padding: 6px;'>@item.STATUS.GetNameStatus</span> break;
-                        case "ПОВТОР": <span class=" " style='background-color:@item.STATUS.ColorHex; padding: 6px;'>@item.STATUS.GetNameStatus</span> break;
-                        case "ОТКАЗ": <span class="  " style='background-color:@item.STATUS.ColorHex; padding: 6px;'>@item.STATUS.GetNameStatus</span> break;
-                        case "В РАБОТЕ": <span class=" " style='background-color:@item.STATUS.ColorHex; padding: 6px;'>@item.STATUS.GetNameStatus</span> break;
-                        case "ВЫПОЛНЕН": <span class=" " style='background-color:@item.STATUS.ColorHex; padding: 6px;'>@item.STATUS.GetNameStatus</span> break;
-                        default: @item.STATUS.NameStatus; break;
-                     }*@
-                    <span class="   " style='background-color:@item.STATUS.ColorHex; padding: 6px;'>@item.STATUS.GetNameStatus</span>
+        <tr>
+            <td>
+                <a asp-action="DetailOrder" asp-route-id_zakaz="@item.ID_ZAKAZ"><b>@item.ID_ZAKAZ</b></a>
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.GetDATA)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.GetAdresFull)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Msisdn1)
+            </td>
+            <td>
+                <a asp-action="DetailOrder" asp-route-id_zakaz="@item.ID_ZAKAZ"><b>@item.HOLODILNIK_DEFECT</b></a>
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.VREMJA)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.USER_MASTER.Name)
+            </td>
+            <td>
+                @*@switch (item.STATUS.NameStatus)
+            {
+                case "В ОЖИДАНИИ":<span class="   " style='background-color:@item.STATUS.ColorHex; padding: 6px;'>@item.STATUS.GetNameStatus</span> break;
+                case "ПОВТОР": <span class=" " style='background-color:@item.STATUS.ColorHex; padding: 6px;'>@item.STATUS.GetNameStatus</span> break;
+                case "ОТКАЗ": <span class="  " style='background-color:@item.STATUS.ColorHex; padding: 6px;'>@item.STATUS.GetNameStatus</span> break;
+                case "В РАБОТЕ": <span class=" " style='background-color:@item.STATUS.ColorHex; padding: 6px;'>@item.STATUS.GetNameStatus</span> break;
+                case "ВЫПОЛНЕН": <span class=" " style='background-color:@item.STATUS.ColorHex; padding: 6px;'>@item.STATUS.GetNameStatus</span> break;
+                default: @item.STATUS.NameStatus; break;
+             }*@
+                <span class="   " style='background-color:@item.STATUS.ColorHex; padding: 6px;'>@item.STATUS.GetNameStatus</span>
 
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Promocode)
-                </td>
-            </tr>
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Promocode)
+            </td>
+        </tr>
         }
     </tbody>
 </table>
