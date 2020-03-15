@@ -1172,7 +1172,16 @@ declare @STATUS nvarchar(50),
 
 
 -- изменение статуса у заявки
-UPDATE [dbo].[Zakaz] SET ID_STATUS=@ID_STATUS, MoneyAll=@MoneyAll, MoneyDetal=@MoneyDetal, MoneyFirm=@MoneyFirm, DateClose=CURRENT_TIMESTAMP, MoneyMaster=(@MoneyAll-@MoneyDetal-@MoneyFirm)
+UPDATE [dbo].[Zakaz] SET 
+ID_STATUS=@ID_STATUS
+, MoneyAll=@MoneyAll
+, MoneyDetal=@MoneyDetal
+, MoneyFirm=@MoneyFirm
+, DateClose=CURRENT_TIMESTAMP
+, MoneyMaster=(@MoneyAll-@MoneyDetal-@MoneyFirm)
+   ,MoneyDiagnostik=0
+   
+
 WHERE ID_ZAKAZ =(
 SELECT ID_ZAKAZ  FROM [dbo].[Zakaz] o
 JOIN [User] u ON u.ID_USER=o.ID_MASTER
@@ -1235,7 +1244,16 @@ declare @STATUS nvarchar(50),
 
 
 -- изменение статуса у заявки
-UPDATE [dbo].[Zakaz] SET ID_STATUS=@ID_STATUS, DescripClose=@DescripClose, DateClose=CURRENT_TIMESTAMP
+UPDATE [dbo].[Zakaz] SET 
+ID_STATUS=@ID_STATUS
+, DescripClose=@DescripClose
+, DateClose=CURRENT_TIMESTAMP
+   ,MoneyAll=0
+   ,MoneyDetal=0
+   ,MoneyFirm=0
+   ,MoneyDiagnostik=0
+   ,MoneyMaster=0
+
 WHERE ID_ZAKAZ =(
 SELECT ID_ZAKAZ  FROM [dbo].[Zakaz] o
 JOIN [User] u ON u.ID_USER=o.ID_MASTER
@@ -1298,7 +1316,13 @@ declare @STATUS nvarchar(50),
 
 
 -- изменение статуса у заявки
-UPDATE [dbo].[Zakaz] SET ID_STATUS=@ID_STATUS, DescripClose=@DescripClose, DateClose=CURRENT_TIMESTAMP, MoneyDiagnostik=@MoneyDiagnostik, MoneyFirm=@MoneyFirm
+UPDATE [dbo].[Zakaz] SET 
+    ID_STATUS=@ID_STATUS
+   ,DescripClose=@DescripClose
+   ,DateClose=CURRENT_TIMESTAMP
+   ,MoneyDiagnostik=@MoneyDiagnostik
+   ,MoneyFirm=@MoneyFirm
+   ,MoneyMaster= @MoneyDiagnostik - @MoneyFirm
 WHERE ID_ZAKAZ =(
 SELECT ID_ZAKAZ  FROM [dbo].[Zakaz] o
 JOIN [User] u ON u.ID_USER=o.ID_MASTER
@@ -1362,7 +1386,12 @@ INSERT INTO [dbo].[LogStatusOrder]
             string sqlText = $@"
 
 -- обновление сумм 
-UPDATE [Zakaz] set MoneyAll=@MoneyAll, MoneyDetal=@MoneyDetal, MoneyFirm=@MoneyFirm, MoneyDiagnostik=@MoneyDiagnostik
+UPDATE [Zakaz] set 
+    MoneyAll=@MoneyAll
+   ,MoneyDetal=@MoneyDetal
+   ,MoneyFirm=@MoneyFirm
+   ,MoneyDiagnostik=@MoneyDiagnostik
+   ,MoneyMaster= ABS( @MoneyAll-@MoneyDiagnostik) - @MoneyDetal-@MoneyFirm
 WHERE ID_ZAKAZ = 
 (
 	SELECT z.ID_ZAKAZ FROM [Zakaz] z
