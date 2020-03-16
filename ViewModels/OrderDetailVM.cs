@@ -11,6 +11,8 @@ namespace CRMBytholod.ViewModels
         public Order order { get; set; }
         public List<Order> PrevOrders { get; set; }
         public List<LogStatusOrder> logStatusOrder { get; set; }
+        public List<LogMoney> logMoneyOrder { get; set; }
+        
 
 
         public OrderDetailVM(long ID_ZAKAZ)
@@ -18,6 +20,7 @@ namespace CRMBytholod.ViewModels
             order = Order.GetOrderSite(ID_ZAKAZ);
             PrevOrders = Order.GetOrdersPrev(ID_ZAKAZ);
             logStatusOrder = LogStatusOrder.GetHistoryStatusOrder(ID_ZAKAZ);
+            logMoneyOrder = LogMoney.GetLogMoneys(ID_ZAKAZ);
         }
 
     }

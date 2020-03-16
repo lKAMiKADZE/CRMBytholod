@@ -353,6 +353,96 @@
 
 
 
+@* Вывод истории изменения сумм  *@
+@if (Model.logMoneyOrder.Count > 0)
+{
+    <br />
+    <h3>История изменения сумм</h3>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>
+                    Получено
+                </th>
+                <th>
+                    Детали
+                </th>
+                <th>
+                    В фирму
+                </th>
+                <th>
+                    Диагностика
+                </th>
+                <th>
+                    Время
+                </th>
+                
+            </tr>
+        </thead>
+        <tbody>
+           @foreach (var item in Model.logMoneyOrder)
+            {
+            <tr>
+                <td align="center">
+                    @if (item.new_All == item.old_All)
+                    {
+                        <p class="btn-secondary">@item.new_All</p>
+                        <p class="btn-secondary ">@item.old_All</p>
+                    }
+                    else
+                    {
+                        <p class="btn-success">@item.new_All</p>
+                        <p class="btn-danger ">@item.old_All</p>
+                    }
+                </td>
+                <td align="center">
+                    @if (item.new_Detal == item.old_Detal)
+                    {
+                        <p class="btn-secondary">@item.new_Detal</p>
+                        <p class="btn-secondary ">@item.old_Detal</p>
+                    }
+                    else
+                    {
+                        <p class="btn-success">@item.new_Detal</p>
+                        <p class="btn-danger ">@item.old_Detal</p>
+                    }
+                </td>
+                <td align="center">
+                    @if (item.new_Firma == item.old_Firma)
+                    {
+                        <p class="btn-secondary">@item.new_Firma</p>
+                        <p class="btn-secondary ">@item.old_Firma</p>
+                    }
+                    else
+                    {
+                        <p class="btn-success">@item.new_Firma</p>
+                        <p class="btn-danger ">@item.old_Firma</p>
+                    }
+                </td>
+                <td align="center">
+                    @if (item.new_Diagnostik == item.old_Diagnostik)
+                    {
+                        <p class="btn-secondary">@item.new_Diagnostik</p>
+                        <p class="btn-secondary ">@item.old_Diagnostik</p>
+                    }
+                    else
+                    {
+                        <p class="btn-success">@item.new_Diagnostik</p>
+                        <p class="btn-danger ">@item.old_Diagnostik</p>
+                    }
+                </td>
+                <td>
+                    <p>@item.Date_add</p>
+                </td>
+            </tr>
+            }
+        </tbody>
+    </table>
+}
+
+
+
+
 
 @* Вывод предыдущих заявок, если они есть *@
 @if (Model.PrevOrders.Count > 0)
@@ -417,15 +507,6 @@
                         @Html.DisplayFor(modelItem => item.USER_MASTER.Name)
                     </td>
                     <td>
-                        @*@switch (item.STATUS.NameStatus)
-                        {
-                            case "В ОЖИДАНИИ":<span class="label" style='background-color:@item.STATUS.ColorHex; padding: 6px;'>@item.STATUS.NameStatus</span> break;
-                        case "ПОВТОР": <span class="label" style='background-color:@item.STATUS.ColorHex; padding: 6px;'>@item.STATUS.NameStatus</span> break;
-                    case "ОТКАЗ": <span class="label" style='background-color:@item.STATUS.ColorHex; padding: 6px;'>@item.STATUS.NameStatus</span> break;
-                case "В РАБОТЕ": <span class="label" style='background-color:@item.STATUS.ColorHex; padding: 6px;'>@item.STATUS.NameStatus</span> break;
-            case "ВЫПОЛНЕН": <span class="label" style='background-color:@item.STATUS.ColorHex; padding: 6px;'>@item.STATUS.NameStatus</span> break;
-        default: @item.STATUS.NameStatus; break;
-                }*@
                         <span class="label" style='background-color:@item.STATUS.ColorHex; padding: 6px;'>@item.STATUS.NameStatus</span>
 
                     </td>

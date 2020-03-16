@@ -92,6 +92,76 @@ INSERT INTO [LogMoney] (
         }
 
 
+
+        public static List<LogMoney> GetLogMoneys(long ID_ZAKAZ)
+        {
+            List<LogMoney> Logs = new List<LogMoney>();
+
+
+            SqlParameter[] parameters = new SqlParameter[]
+            {
+                new SqlParameter(@"ID_ZAKAZ",SqlDbType.BigInt) { Value =ID_ZAKAZ }
+            };
+
+            #region sql
+
+            string sqlText = $@"
+SELECT 
+l.ID_LOG_MONEY
+,l.Date_add
+,l.ID_ZAKAZ
+,l.new_All
+,l.old_All
+,l.new_Detal
+,l.old_Detal
+,l.new_Diagnostik
+,l.old_Diagnostik
+,l.new_Firma
+,l.old_Firma
+
+ FROM [logmoney] l
+WHERE ID_ZAKAZ= @ID_ZAKAZ
+
+ORDER BY Date_add DESC
+
+
+";
+
+            #endregion
+
+            DataTable dt = new DataTable();// при наличии данных
+            // получаем данные из запроса
+            dt = ExecuteSqlGetDataTableStatic(sqlText, parameters);
+
+
+            foreach (DataRow row in dt.Rows)
+            {
+                LogMoney log = new LogMoney
+                {
+                    Date_add = (DateTime)row["Date_add"],
+                    ID_LOG_MONEY = (long)row["ID_LOG_MONEY"],
+                    ID_ZAKAZ = (long)row["ID_ZAKAZ"],
+                    new_All = (int)row["new_All"],
+                    new_Detal = (int)row["new_Detal"],
+                    new_Diagnostik = (int)row["new_Diagnostik"],
+                    new_Firma = (int)row["new_Firma"],
+                    old_All = (int)row["old_All"],
+                    old_Detal = (int)row["old_Detal"],
+                    old_Diagnostik = (int)row["old_Diagnostik"],
+                    old_Firma = (int)row["old_Firma"]
+                };
+
+
+                Logs.Add(log);
+            }
+
+           
+
+            return Logs;
+        }
+
+
+
         ////////////////
         // Методы SQL
         ////////////////
