@@ -17,6 +17,8 @@ namespace CRMBytholod.ViewModels
         public FiltrOrders filtrOrders { get; set; }
         public List<User> MASTERs { get; set; }
 
+        public int CountAllOrders { get; set; }
+
 
         public OrdersVM( string id_user, int _page, int _step, FiltrOrders filtr )
         {
@@ -31,6 +33,7 @@ namespace CRMBytholod.ViewModels
 
             Orders = Order.GetOrdersSite(Page, Step, filtrOrders);
             MASTERs = User.GetAllMasters();
+            CountAllOrders = Order.GetCountOrders(filtrOrders);
 
         }
 
@@ -47,6 +50,7 @@ namespace CRMBytholod.ViewModels
         public bool Povtor { get; set; }
         public long ID_Master { get; set; }
         public DateTime? DateOne { get; set; }
+        public string City { get; set; }
 
         public FiltrOrders()
         {
@@ -58,6 +62,7 @@ namespace CRMBytholod.ViewModels
             Povtor = false;
             ID_Master = -1;
             DateOne = null;
+            City = "";
         }
 
 

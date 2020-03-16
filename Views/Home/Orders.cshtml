@@ -26,13 +26,18 @@
         <div class="row">
             <div class="col-md-4">
                 <div class="form-group">
+                    <label asp-for="filtrOrders.City" class="control-label">Населённый пункт</label>
+                    <input asp-for="filtrOrders.City" class="form-control" autocomplete="off" />
+                </div>
+
+                <div class="form-group">
                     <label asp-for="filtrOrders.Adres" class="control-label">Улица</label>
-                    <input asp-for="filtrOrders.Adres" class="form-control" autocomplete="off"/>
+                    <input asp-for="filtrOrders.Adres" class="form-control" autocomplete="off" />
 
                     <input type="hidden" id="hfCustomer" name="CustomerId" />
                 </div>
 
-                
+
                 <div class="form-group">
                     <label>Статус заказа</label>
                     <select asp-for="filtrOrders.ID_STATUS" class="form-control">
@@ -99,28 +104,34 @@
 
     <hr />
 
+    <p>Всего заказов: @Model.CountAllOrders</p>
+    <br />
     <div class="row">
         <div class="col-md-5">
             <nav aria-label="Page navigation example">
                 <ul class="pagination">
                     <li class="page-item">
-                        <a class="page-link" href='@Url.Action("Orders", "Home", new { page=1, step=Model.Step,
+                        <a class="page-link" href='@Url.Action("Orders", "Home", new { page=1, 
+                                                                    step=Model.Step,
                                                                     adres=Model.filtrOrders.Adres, dateStart=Model.filtrOrders.DateStart,
                                                                     dateEnd=Model.filtrOrders.DateEnd, povtor=Model.filtrOrders.Povtor,
                                                                     id_status=Model.filtrOrders.ID_STATUS,
                                                                     ID_Master=Model.filtrOrders.ID_Master,
-                                                                    DateOne=Model.filtrOrders.DateOne
+                                                                    DateOne=Model.filtrOrders.DateOne,
+                                                                    City=Model.filtrOrders.City
                                                                     }, null)'>В Начало</a>
                     </li>
                     @if (Model.Page > 1)
                     {
                         <li>
-                            <a class="page-link" href='@Url.Action("Orders", "Home", new { page=Model.Page-1, step=Model.Step,
+                            <a class="page-link" href='@Url.Action("Orders", "Home", new { page=Model.Page-1,
+                                                                    step=Model.Step,
                                                                     adres=Model.filtrOrders.Adres, dateStart=Model.filtrOrders.DateStart,
                                                                     dateEnd=Model.filtrOrders.DateEnd, povtor=Model.filtrOrders.Povtor,
                                                                     id_status=Model.filtrOrders.ID_STATUS,
                                                                     ID_Master=Model.filtrOrders.ID_Master,
-                                                                    DateOne=Model.filtrOrders.DateOne
+                                                                    DateOne=Model.filtrOrders.DateOne,
+                                                                    City=Model.filtrOrders.City
                                                                     }, null)'>Назад</a>
                         </li>
                     }
@@ -129,12 +140,14 @@
                     </li>
 
                     <li class="page-item">
-                        <a class="page-link" href='@Url.Action("Orders", "Home", new { page=Model.Page+1, step=Model.Step,
+                        <a class="page-link" href='@Url.Action("Orders", "Home", new { page=Model.Page+1,
+                                                                    step=Model.Step,
                                                                     adres=Model.filtrOrders.Adres, dateStart=Model.filtrOrders.DateStart,
                                                                     dateEnd=Model.filtrOrders.DateEnd, povtor=Model.filtrOrders.Povtor,
-                                                                    id_status=Model.filtrOrders.ID_STATUS,  
+                                                                    id_status=Model.filtrOrders.ID_STATUS,
                                                                     ID_Master=Model.filtrOrders.ID_Master,
-                                                                    DateOne=Model.filtrOrders.DateOne
+                                                                    DateOne=Model.filtrOrders.DateOne,
+                                                                    City=Model.filtrOrders.City
                                                                     }, null)'>Вперед</a>
                     </li>
 
@@ -150,19 +163,25 @@
                         if (Model.Step == Model.Steps[i])//текущий выбранный параметр выделяется жирным
                         {
                             <li class="page-item">
-                                <a class="page-link" href='@Url.Action("Orders", "Home", new { page = Model.Page, step = Model.Steps[i],
+                                <a class="page-link" href='@Url.Action("Orders", "Home", new { page = Model.Page,
+                                                                    step = Model.Steps[i],
                                                                     adres=Model.filtrOrders.Adres, dateStart=Model.filtrOrders.DateStart,
                                                                     dateEnd=Model.filtrOrders.DateEnd, povtor=Model.filtrOrders.Povtor,
-                                                                    id_status=Model.filtrOrders.ID_STATUS    }, null)'><b>@Model.Steps[i]</b></a>
+                                                                    id_status=Model.filtrOrders.ID_STATUS ,
+                                                                    City=Model.filtrOrders.City   
+                                                                    }, null)'><b>@Model.Steps[i]</b></a>
                             </li>
                         }
                         else
                         {
                             <li class="page-item">
-                                <a class="page-link" href='@Url.Action("Orders", "Home", new {  page = Model.Page, step = Model.Steps[i],
-                                adres=Model.filtrOrders.Adres, dateStart=Model.filtrOrders.DateStart,
-                                dateEnd=Model.filtrOrders.DateEnd, povtor=Model.filtrOrders.Povtor,
-                                id_status=Model.filtrOrders.ID_STATUS   }, null)'>@Model.Steps[i]</a>
+                                <a class="page-link" href='@Url.Action("Orders", "Home", new {  page = Model.Page, 
+                                                                    step = Model.Steps[i],
+                                                                    adres=Model.filtrOrders.Adres, dateStart=Model.filtrOrders.DateStart,
+                                                                    dateEnd=Model.filtrOrders.DateEnd, povtor=Model.filtrOrders.Povtor,
+                                                                    id_status=Model.filtrOrders.ID_STATUS,
+                                                                    City=Model.filtrOrders.City
+                                                                    }, null)'>@Model.Steps[i]</a>
                             </li>
                         }
                     }
@@ -261,7 +280,7 @@
                 @Html.DisplayFor(modelItem => item.City)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.GetAdresFull)
+                @Html.DisplayFor(modelItem => item.GetAdresNotCity)
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.Msisdn1)
@@ -289,18 +308,19 @@
             </td>
             <td>
                 <!--добавить одну галку две, две синие-->
-                @switch (item.GetStatusSend)
-                {
-                    case 1:
-                        Html.DisplayText("1");
-                        break;
-                    case 2:
-                        Html.Value("2");
-                        break;
-                    case 3:
-                        Html.DisplayText("3");
-                        break;
-                }
+                @if (item.GetStatusSend==1)
+                 {
+                    <image src="/onegal.png" width="30"/>
+                 }
+                 else
+                 if (item.GetStatusSend==2)
+                 {
+                    <image src="/twogal.png" width="30"/>
+                 }else
+                 if (item.GetStatusSend==3)
+                 {
+                    <image src="/twogalblue.png"  width="30"/>
+                 }
 
 
             </td>

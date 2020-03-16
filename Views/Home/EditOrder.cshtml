@@ -4,67 +4,7 @@
     ViewData["Title"] = "Изменение заказа";
     Layout = "_LayoutFindText";
 }
-<script type="text/javascript">
 
-
-
-    // добавление слова при вводе улицы
-   // $(function () {
-   //     $("#order_STREET").typeahead({
-   //         hint: true,
-   //         highlight: true,
-   //         minLength: 1,
-   //         source: function (request, response) {
-   //             $.ajax({
-   //                 url: '/Home/AutoComplete?prefix=' + request,
-   //                 //data: "{ 'prefix': '" + request + "'}",
-   //                 dataType: "json",
-   //                 type: "GET",
-   //                 contentType: "application/json; charset=utf-8",
-   //                 success: function (data) {
-   //                     items = [];
-   //                     map = {};
-   //                     $.each(data, function (i, item) {
-   //                         var id = item.iD_KLADR;
-   //                         var name = item.nameStreet;
-   //                         map[name] = { id: id, name: name };
-   //                         items.push(name);
-   //                     });
-   //                     response(items);
-   //                     $(".dropdown-menu").css("height", "auto");
-   //                 },
-   //                 error: function (response) {
-   //                     alert(response.responseText);
-   //                 },
-   //                 failure: function (response) {
-   //                     alert(response.responseText);
-   //                 }
-   //             });
-   //         },
-   //         updater: function (item) {
-   //             $('#hfCustomer').val(map[item].id);
-   //             return item;
-   //         }
-   //     });
-
-
-
-
-
-   // });
-
-   // // отключение кнопки enter
-    //$(document).ready(function () {
-    //    $("#form").keydown(function (event) {
-    //        if (event.keyCode == 13) {
-    //            event.preventDefault();
-    //            return false;
-    //        }
-    //    })
-    //});
-
-
-</script>
 <h1>Изменение заказа</h1>
 
 <h4>Статус</h4>
@@ -271,7 +211,7 @@ default: @Model.order.STATUS.NameStatus; break;
                     <label class="form-check-label">
                         Повторка
                         <br />
-                        <input class="form-check-input" asp-for="order.Povtor" />
+                        <input class="form-check-input chekboxLarge" asp-for="order.Povtor" />
                     </label>
                 </div>
             </div>

@@ -86,6 +86,17 @@ namespace CRMBytholod.Models
             }
         }
 
+        public string GetAdresNotCity
+        {
+            get
+            {
+                if (String.IsNullOrEmpty(KORPUS))// если корпус или нет
+                    return $"{STREET}, дом {HOUSE} кв. {KVARTIRA}".Trim();
+                else
+                    return $"{STREET}, дом {HOUSE} корп. {KORPUS} кв. {KVARTIRA}".Trim();
+            }
+        }
+
         public string GetAdres2
         {
             get
@@ -1635,9 +1646,10 @@ WHERE 1=1
             string WHERE_povtor = "";
             string WHERE_idStatus = "";
             string WHERE_msisdn = "";
-            string WHERE_Default_DATA = "AND DATA>=cast(getdate() as date)";
+            string WHERE_Default_DATA = "";//"AND DATA>=cast(getdate() as date)";
             string WHERE_dateOne = "";
             string WHERE_master = "";
+            string WHERE_City = "";
 
             //string ORDERBY = "z.[DATA] ASC";
 
@@ -1684,6 +1696,12 @@ WHERE 1=1
             {
                 WHERE_master = $"AND z.ID_MASTER={filtrOrders.ID_Master}";
             }
+
+            if (!String.IsNullOrEmpty(filtrOrders.City))
+            {
+                WHERE_City= $" AND lower(City) like '%{filtrOrders.City.ToLower()}%'";
+            }
+
 
             #region sql
 
@@ -1738,6 +1756,7 @@ WITH OrdersPage AS
 
         {WHERE_dateOne}
         {WHERE_master}
+        {WHERE_City}
         
 ) 
 
@@ -1859,6 +1878,122 @@ ORDER BY RowNumber ASC
 
 
             return orders;
+        }
+        /// <summary>
+        /// Metod from site
+        /// </summary>
+        public static int GetCountOrders(FiltrOrders filtrOrders)
+        {
+            List<Order> orders = new List<Order>();
+            // обработка дат проверка на налл
+
+            DateTime _start, _end, _dateOne;
+
+            _start = _end = _dateOne = DateTime.Now;
+
+            string WHERE_adres = "";
+            string WHERE_betweenDate = "";
+            string WHERE_povtor = "";
+            string WHERE_idStatus = "";
+            string WHERE_msisdn = "";
+            string WHERE_Default_DATA = "";//"AND DATA>=cast(getdate() as date)";
+            string WHERE_dateOne = "";
+            string WHERE_master = "";
+            string WHERE_City = "";
+
+            //string ORDERBY = "z.[DATA] ASC";
+
+            if (filtrOrders.DateStart.HasValue && filtrOrders.DateEnd.HasValue)
+            {
+                _start = filtrOrders.DateStart.Value;
+                _end = filtrOrders.DateEnd.Value;
+
+                //ORDERBY = "z.[DATA] DESC";
+                WHERE_Default_DATA = "";
+            }
+
+            if (filtrOrders.DateOne.HasValue)
+            {
+                _dateOne = filtrOrders.DateOne.Value;
+                WHERE_dateOne = $"AND z.DATA=cast(@DateOne as date)";
+                WHERE_Default_DATA = "";
+            }
+
+
+            SqlParameter[] parameters = new SqlParameter[]
+            {
+                new SqlParameter(@"DateStart",SqlDbType.DateTime) { Value =_start },
+                new SqlParameter(@"DateEnd",SqlDbType.DateTime) { Value =_end.AddSeconds(1) },
+                new SqlParameter(@"DateOne",SqlDbType.DateTime) { Value =_dateOne }
+            };
+
+            if (!String.IsNullOrEmpty(filtrOrders.Adres))
+                WHERE_adres = $" AND lower(STREET) like '%{filtrOrders.Adres.ToLower()}%'";
+
+            if (filtrOrders.DateStart.HasValue && filtrOrders.DateEnd.HasValue)
+                WHERE_betweenDate = $"AND z.DATA between  @DateStart AND @DateEnd";
+
+            if (filtrOrders.Povtor)
+                WHERE_povtor = "AND povtor=1";
+
+            if (filtrOrders.ID_STATUS != 0)
+                WHERE_idStatus = $"AND z.ID_STATUS = {filtrOrders.ID_STATUS}";
+
+            if (!String.IsNullOrEmpty(filtrOrders.Msisdn))
+                WHERE_msisdn = $" AND lower(msisdn1) like '%{filtrOrders.Msisdn.ToLower()}%'";
+
+            if (filtrOrders.ID_Master >= 0)
+            {
+                WHERE_master = $"AND z.ID_MASTER={filtrOrders.ID_Master}";
+            }
+
+            if (!String.IsNullOrEmpty(filtrOrders.City))
+            {
+                WHERE_City = $" AND lower(City) like '%{filtrOrders.City.ToLower()}%'";
+            }
+
+
+            #region sql
+
+            string sqlText = @$"
+
+    SELECT 
+    count(1) AS cntOrders	
+
+    FROM [dbo].[Zakaz] z
+	JOIN [Status] s ON s.ID_STATUS=z.ID_STATUS
+	JOIN [User] u ON u.ID_USER=z.ID_MASTER
+	JOIN [Organization] o ON o.ID_ORGANIZATION=z.ID_ORGANIZATION
+	WHERE 1=1
+        {WHERE_Default_DATA}
+
+		{WHERE_adres}
+        {WHERE_betweenDate}
+        {WHERE_povtor}
+        {WHERE_idStatus}
+        {WHERE_msisdn}
+
+        {WHERE_dateOne}
+        {WHERE_master}
+        {WHERE_City}
+        
+
+";
+
+            #endregion
+
+            DataTable dt = new DataTable();// при наличии данных
+            // получаем данные из запроса
+            dt = ExecuteSqlGetDataTableStatic(sqlText, parameters);
+
+
+            foreach (DataRow row in dt.Rows)
+            {
+                return (int)row["cntOrders"];
+            }
+
+
+            return 0;
         }
         /// <summary>
         /// Metod from site
