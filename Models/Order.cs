@@ -65,6 +65,13 @@ namespace CRMBytholod.Models
 
         public string DayWeek_Date { get; set; }// хранится название дня недели и дата
 
+        /// <summary>
+        /// 1- создано 2- отправлено 3- просмотрено
+        /// </summary>
+        public int StatusSend { get; set; }
+        public int NumRow { get; set; }// нумерация строк
+
+
         /////////////////////////////////
         //Свойства
 
@@ -277,6 +284,21 @@ namespace CRMBytholod.Models
         }
 
 
+        public int GetStatusSend
+        {
+            get
+            {
+                int returnStatus = 1;
+
+                if (DateSendMaster.HasValue)
+                    returnStatus = 2;
+
+                if (DateOpenMaster.HasValue)
+                    returnStatus = 3;
+
+                return returnStatus;
+            }
+        }
 
 
 
@@ -372,9 +394,6 @@ ORDER BY [DATA] DESC, ID_ZAKAZ DESC
                     NameStatus = (string)row["NameStatus"],
                     ColorHex = (string)row["ColorHex"]
                 };
-
-
-
 
                 Order order = new Order
                 {
@@ -1416,7 +1435,7 @@ WHERE ID_ZAKAZ =
         /// <summary>
         /// Metod from site
         /// </summary>     
-        public static void ChangeStatusDispetcher(long ID_USER, long ID_ZAKAZ, string Status)
+        private static void ChangeStatusDispetcher(long ID_USER, long ID_ZAKAZ, string Status)
         {
             SqlParameter[] parameters = new SqlParameter[]
             {                
@@ -1606,16 +1625,11 @@ WHERE 1=1
         {
             List<Order> orders = new List<Order>();
             // обработка дат проверка на налл
-
-
-
+            
             DateTime _start, _end, _dateOne;
 
             _start = _end = _dateOne = DateTime.Now;
-
-
             
-
             string WHERE_adres = "";
             string WHERE_betweenDate = "";
             string WHERE_povtor = "";
@@ -1625,14 +1639,14 @@ WHERE 1=1
             string WHERE_dateOne = "";
             string WHERE_master = "";
 
-            string ORDERBY = "z.[DATA] ASC";
+            //string ORDERBY = "z.[DATA] ASC";
 
             if (filtrOrders.DateStart.HasValue && filtrOrders.DateEnd.HasValue)
             {
                 _start = filtrOrders.DateStart.Value;
                 _end = filtrOrders.DateEnd.Value;
 
-                ORDERBY = "z.[DATA] DESC";
+                //ORDERBY = "z.[DATA] DESC";
                 WHERE_Default_DATA = "";
             }
 
@@ -1641,7 +1655,6 @@ WHERE 1=1
                 _dateOne = filtrOrders.DateOne.Value;
                 WHERE_dateOne = $"AND z.DATA=cast(@DateOne as date)";
                 WHERE_Default_DATA = "";
-
             }
 
 
@@ -1651,8 +1664,6 @@ WHERE 1=1
                 new SqlParameter(@"DateEnd",SqlDbType.DateTime) { Value =_end.AddSeconds(1) },
                 new SqlParameter(@"DateOne",SqlDbType.DateTime) { Value =_dateOne }
             };
-
-
 
             if (!String.IsNullOrEmpty(filtrOrders.Adres))
                 WHERE_adres = $" AND lower(STREET) like '%{filtrOrders.Adres.ToLower()}%'";
@@ -1674,13 +1685,14 @@ WHERE 1=1
                 WHERE_master = $"AND z.ID_MASTER={filtrOrders.ID_Master}";
             }
 
-
             #region sql
 
             string sqlText = @$"
 WITH OrdersPage AS
 (
     SELECT 
+
+
 	ID_ZAKAZ
 	,HOLODILNIK_DEFECT
 	,u.Name	
@@ -1698,8 +1710,19 @@ WITH OrdersPage AS
 	,o.NameOrg
     ,Promocode
     ,City
+	,z.DateSendMaster
+	,z.DateOpenMaster
+	,z.Povtor
+	,z.PRIMECHANIE
+	,z.MoneyFirm
+
+
+    ,(SELECT  count(1) FROM [Zakaz] z1
+	WHERE cast(z1.[DATA] As Date)=cast(z.[DATA] As Date)
+	GROUP BY cast(z1.[DATA] As Date)
+	) AS cntZakazDay
 	
-    ,ROW_NUMBER() OVER (ORDER BY {ORDERBY} ) AS 'RowNumber'
+    ,ROW_NUMBER() OVER (ORDER BY z.[DATA] DESC ) AS 'RowNumber' --ORDERBY
     FROM [dbo].[Zakaz] z
 	JOIN [Status] s ON s.ID_STATUS=z.ID_STATUS
 	JOIN [User] u ON u.ID_USER=z.ID_MASTER
@@ -1736,6 +1759,12 @@ SELECT
 	,NameOrg
     ,Promocode
     ,City
+	,DateSendMaster
+	,DateOpenMaster
+	,Povtor
+	,PRIMECHANIE
+	,MoneyFirm
+    ,cntZakazDay
 
 	,RowNumber
 FROM OrdersPage 
@@ -1750,9 +1779,13 @@ ORDER BY RowNumber ASC
             // получаем данные из запроса
             dt = ExecuteSqlGetDataTableStatic(sqlText, parameters);
 
+            int numrow = 0;// нумерация строк
+            string prevRUdate = ""; // для запоминания предыдущей даты
 
             foreach (DataRow row in dt.Rows)
             {
+                numrow++;
+
                 Status status = new Status
                 {
                     NameStatus = (string)row["NameStatus"],
@@ -1785,7 +1818,12 @@ ORDER BY RowNumber ASC
                     NameClient = (string)row["NameClient"],
                     Promocode = (string)row["Promocode"],
                     City = (string)row["City"],
-                    
+                    DateSendMaster = row["DateSendMaster"] != DBNull.Value ? (DateTime?)row["DateSendMaster"] : null,
+                    DateOpenMaster = row["DateOpenMaster"] != DBNull.Value ? (DateTime?)row["DateOpenMaster"] : null,
+                    Povtor = (bool)row["Povtor"],
+                    PRIMECHANIE = (string)row["PRIMECHANIE"],
+                    MoneyFirm = (int)row["MoneyFirm"],
+                    NumRow= numrow,
 
 
 
@@ -1793,6 +1831,28 @@ ORDER BY RowNumber ASC
                     STATUS = status,
                     ORGANIZATION = o
                 };
+
+                // получение дня недели и даты, но заполняется только уникальная дата, т.е. новый день недели, должен быть у самой первой записи
+                string RUdate = row["DATA"] != DBNull.Value ? ((DateTime)row["DATA"]).ToString("dddd dd/MM/yyyy", CultureInfo.GetCultureInfo("ru-ru")) : "";
+                RUdate = RUdate.Substring(0, 1).ToUpper() + (RUdate.Length > 1 ? RUdate.Substring(1) : "");// первая буква заглавная
+
+                //выполняется в 1 цикле
+                if (String.IsNullOrEmpty(prevRUdate))
+                {
+                    prevRUdate = RUdate;// запоминаем дата для сравнения в след цикле
+                    order.DayWeek_Date = RUdate + " Заказов: "+(int)row["cntZakazDay"];
+                }
+
+                if (!prevRUdate.Equals(RUdate))
+                {
+                    numrow = 1;
+                    order.NumRow = 1;// обнуление кол-во строк в заказе за день, т.к. ранее число присвоилось а попав сюда, у нас начинается следующая дата, и поэтому нумерация начинается с 1
+
+                    order.DayWeek_Date = RUdate + " Заказов: " + (int)row["cntZakazDay"];
+                }
+
+                prevRUdate = RUdate;
+
 
                 orders.Add(order);
             }

@@ -181,19 +181,25 @@
     <thead>
         <tr>
             <th>
+                №
+            </th>
+            <th>
                 ID
             </th>
             <th>
                 Дата
             </th>
             <th>
+                Населённый пункт
+            </th>
+            <th>
                 Адрес
             </th>
             <th>
-                Номер
+                Телефон
             </th>
             <th>
-                Холодильник дефект
+                Холодильник
             </th>
             <th>
                 Время
@@ -201,23 +207,58 @@
             <th>
                 Мастер
             </th>
-            <th width="165">
+            <th width="165px">
                 Статус
+            </th>
+            <th>
+                Доставлено
+            </th>
+            <th>
+                Кампания
             </th>
             <th>
                 Промокод
             </th>
+            <th>
+                Примечание
+            </th>
+            <th>
+                Вложение
+            </th>
+            <th width="90px">
+                Приход ₽
+            </th>
+            <th>
+                Комментарии
+            </th>
         </tr>
     </thead>
     <tbody>
-        @foreach (var item in Model.Orders)
+       @foreach (var item in Model.Orders)
         {
-        <tr>
+           @if (!String.IsNullOrEmpty(item.DayWeek_Date))
+           {
+               <tr>
+                   <td colspan="17" align="center" bgcolor="#eee">
+                       <h4>
+                           @item.DayWeek_Date
+                       </h4>
+                   </td>
+               </tr>
+           }
+           
+            <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.NumRow)
+            </td>
             <td>
                 <a asp-action="DetailOrder" asp-route-id_zakaz="@item.ID_ZAKAZ"><b>@item.ID_ZAKAZ</b></a>
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.GetDATA)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.City)
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.GetAdresFull)
@@ -235,22 +276,58 @@
                 @Html.DisplayFor(modelItem => item.USER_MASTER.Name)
             </td>
             <td>
-                @*@switch (item.STATUS.NameStatus)
-            {
-                case "В ОЖИДАНИИ":<span class="   " style='background-color:@item.STATUS.ColorHex; padding: 6px;'>@item.STATUS.GetNameStatus</span> break;
-                case "ПОВТОР": <span class=" " style='background-color:@item.STATUS.ColorHex; padding: 6px;'>@item.STATUS.GetNameStatus</span> break;
-                case "ОТКАЗ": <span class="  " style='background-color:@item.STATUS.ColorHex; padding: 6px;'>@item.STATUS.GetNameStatus</span> break;
-                case "В РАБОТЕ": <span class=" " style='background-color:@item.STATUS.ColorHex; padding: 6px;'>@item.STATUS.GetNameStatus</span> break;
-                case "ВЫПОЛНЕН": <span class=" " style='background-color:@item.STATUS.ColorHex; padding: 6px;'>@item.STATUS.GetNameStatus</span> break;
-                default: @item.STATUS.NameStatus; break;
-             }*@
-                <span class="   " style='background-color:@item.STATUS.ColorHex; padding: 6px;'>@item.STATUS.GetNameStatus</span>
+                <!--добавить кубик если повтор-->
+                <div class="">
+                    <span class="" style='background-color:@item.STATUS.ColorHex; padding: 6px;'>@item.STATUS.GetNameStatus</span>
+                    
+                    @if (item.Povtor)
+                    {
+                        <span class="" style='background-color:#FFEA00; padding: 6px;'>   </span>
+                    }
+                </div>
 
+            </td>
+            <td>
+                <!--добавить одну галку две, две синие-->
+                @switch (item.GetStatusSend)
+                {
+                    case 1:
+                        Html.DisplayText("1");
+                        break;
+                    case 2:
+                        Html.Value("2");
+                        break;
+                    case 3:
+                        Html.DisplayText("3");
+                        break;
+                }
+
+
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.ORGANIZATION.NameOrg)
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.Promocode)
             </td>
-        </tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.PRIMECHANIE)
+            </td>
+            <td>
+                -
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.MoneyFirm)
+            </td>
+            <td>
+                -
+            </td>
+
+            </tr>
+           
+
+
+        
         }
     </tbody>
 </table>
