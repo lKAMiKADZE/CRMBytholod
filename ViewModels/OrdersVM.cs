@@ -42,7 +42,8 @@ namespace CRMBytholod.ViewModels
 
     public class FiltrOrders
     {
-        public string Adres { get; set; }
+        private string _adres;
+        
         public long ID_STATUS { get; set; }// выпадающий список
         public string Msisdn { get; set; }
         public DateTime? DateStart { get; set; }
@@ -51,6 +52,18 @@ namespace CRMBytholod.ViewModels
         public long ID_Master { get; set; }
         public DateTime? DateOne { get; set; }
         public string City { get; set; }
+
+        public string Adres 
+        { 
+            get 
+            {
+                if (String.IsNullOrEmpty(_adres))
+                    return _adres;
+
+                return _adres.Trim(); 
+            } 
+            set { _adres = value; }
+        }
 
         public FiltrOrders()
         {

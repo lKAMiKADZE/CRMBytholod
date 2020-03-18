@@ -70,6 +70,7 @@ namespace CRMBytholod.Models
         /// </summary>
         public int StatusSend { get; set; }
         public int NumRow { get; set; }// нумерация строк
+        public int cntLogMoney { get; set; }// Сколько раз редактировались суммы мастером
 
 
         /////////////////////////////////
@@ -167,6 +168,16 @@ namespace CRMBytholod.Models
             get
             {
                 return MoneyFirm + " Руб.";
+            }
+        }
+        public string GetMoneyFirmChangeAmount
+        {
+            get
+            {
+                if(cntLogMoney>0)
+                    return MoneyFirm + " ***";
+
+                return MoneyFirm.ToString();
             }
         }
         public string GetMoneyDetal
@@ -1734,12 +1745,15 @@ WITH OrdersPage AS
 	,z.PRIMECHANIE
 	,z.MoneyFirm
 
-
     ,(SELECT  count(1) FROM [Zakaz] z1
 	WHERE cast(z1.[DATA] As Date)=cast(z.[DATA] As Date)
 	GROUP BY cast(z1.[DATA] As Date)
 	) AS cntZakazDay
 	
+	,(SELECT count(1) FROM [LogMoney]
+	  WHERE ID_ZAKAZ=z.ID_ZAKAZ
+	)  AS cntLogMoney
+
     ,ROW_NUMBER() OVER (ORDER BY z.[DATA] DESC ) AS 'RowNumber' --ORDERBY
     FROM [dbo].[Zakaz] z
 	JOIN [Status] s ON s.ID_STATUS=z.ID_STATUS
@@ -1783,7 +1797,9 @@ SELECT
 	,Povtor
 	,PRIMECHANIE
 	,MoneyFirm
+
     ,cntZakazDay
+    ,cntLogMoney
 
 	,RowNumber
 FROM OrdersPage 
@@ -1843,7 +1859,7 @@ ORDER BY RowNumber ASC
                     PRIMECHANIE = (string)row["PRIMECHANIE"],
                     MoneyFirm = (int)row["MoneyFirm"],
                     NumRow= numrow,
-
+                    cntLogMoney = (int)row["cntLogMoney"],
 
 
                     USER_MASTER = userMaster,
