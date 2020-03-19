@@ -9,15 +9,6 @@
 
 <h4>Статус</h4>
 
-@*@switch (Model.order.STATUS.NameStatus)
-{
-    case "В ОЖИДАНИИ":<span class=" " style='background-color:@Model.order.STATUS.ColorHex; padding: 6px;'>@Model.order.STATUS.GetNameStatus</span> break;
-case "ПОВТОР": <span class=" " style='background-color:@Model.order.STATUS.ColorHex; padding: 6px;'>@Model.order.STATUS.GetNameStatus</span> break;
-case "ОТКАЗ": <span class="" style='background-color:@Model.order.STATUS.ColorHex; padding: 6px;'>@Model.order.STATUS.GetNameStatus</span> break;
-case "В РАБОТЕ": <span class="" style='background-color:@Model.order.STATUS.ColorHex; padding: 6px;'>@Model.order.STATUS.GetNameStatus</span> break;
-case "ВЫПОЛНЕН": <span class="" style='background-color:@Model.order.STATUS.ColorHex; padding: 6px;'>@Model.order.STATUS.GetNameStatus</span> break;
-default: @Model.order.STATUS.NameStatus; break;
-}*@
 
 <span class="" style='background-color:@Model.order.STATUS.ColorHex; padding: 6px;'>@Model.order.STATUS.GetNameStatus</span>
 
@@ -223,6 +214,15 @@ default: @Model.order.STATUS.NameStatus; break;
                     <label asp-for="order.NameClient" class="control-label">Имя клиента</label>
                     <input asp-for="order.NameClient" class="form-control" autocomplete="off" />
                     <span asp-validation-for="order.NameClient" class="text-danger"></span>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="form-group form-check">
+                    <label class="form-check-label">
+                        Оплата наличными
+                        <br />
+                        <input class="form-check-input chekboxLarge" asp-for="order.OplataNal" />
+                    </label>
                 </div>
             </div>
 

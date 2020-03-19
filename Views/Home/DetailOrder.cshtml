@@ -8,23 +8,35 @@
 
 <hr />
 
-@if (Model.order.STATUS.ID_STATUS != 3 && Model.order.STATUS.ID_STATUS != 5)
-{
-    <div>
-        <b>@Html.ActionLink("Редактировать", "EditOrder", new { ID_ZAKAZ = Model.order.ID_ZAKAZ })</b>
+
+<div class="row">
+
+    <div class="col-md-3">
+        <div>
+            <b>@Html.ActionLink("Редактировать", "EditOrder", new { ID_ZAKAZ = Model.order.ID_ZAKAZ })</b>
+        </div>
+        <br />
+
+
+        @if (Model.order.STATUS.ID_STATUS != 3)
+        {
+
+            <div>
+                <b>@Html.ActionLink("Отказной заказ", "CloseOrder", new { ID_ZAKAZ = Model.order.ID_ZAKAZ })</b>
+            </div>
+            <br />
+        }
     </div>
-    <br />
-}
-
-@if (Model.order.STATUS.ID_STATUS != 3)
-{
-
-    <div>
-        <b>@Html.ActionLink("Отказной заказ", "CloseOrder", new { ID_ZAKAZ = Model.order.ID_ZAKAZ })</b>
+    <div class="col-md-3">
+        <a asp-action="CreateOrder" asp-route-ID_ZAKAZ="@Model.order.ID_ZAKAZ"><input type="button" class="btn btn-info" value="Дублировать заказ" /> </a>
     </div>
-    <br />
-}
+    
 
+    <p>
+        
+    </p>
+
+</div>
 
 
 <span class="" style='background-color:@Model.order.STATUS.ColorHex; padding: 6px;'>@Model.order.STATUS.GetNameStatus</span>
@@ -210,6 +222,14 @@
                 <label asp-for="order.NameClient" class="control-label">Имя клиента</label>
                 <input asp-for="order.NameClient" class="form-control" readonly />
                 <span asp-validation-for="order.NameClient" class="text-danger"></span>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="form-group form-check">
+                <label class="form-check-label">
+                    <br />
+                    <input class="form-check-input chekboxLarge" asp-for="order.OplataNal" readonly disabled /> Оплата наличными
+                </label>
             </div>
         </div>
 

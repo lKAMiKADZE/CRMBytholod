@@ -6,50 +6,6 @@
 
 <script type="text/javascript">
 
-    //// добавление слова при вводе улицы
-    //$(function () {
-    //    $("#order_STREET").typeahead({
-    //        hint: true,
-    //        highlight: true,
-    //        minLength: 1,
-    //        source: function (request, response) {
-    //            $.ajax({
-    //                url: '/Home/AutoComplete?prefix=' + request,
-    //                //data: "{ 'prefix': '" + request + "'}",
-    //                dataType: "json",
-    //                type: "GET",
-    //                contentType: "application/json; charset=utf-8",
-    //                success: function (data) {
-    //                    items = [];
-    //                    map = {};
-    //                    $.each(data, function (i, item) {
-    //                        var id = item.iD_KLADR;
-    //                        var name = item.nameStreet;
-    //                        map[name] = { id: id, name: name };
-    //                        items.push(name);
-    //                    });
-    //                    response(items);
-    //                    $(".dropdown-menu").css("height", "auto");
-    //                },
-    //                error: function (response) {
-    //                    alert(response.responseText);
-    //                },
-    //                failure: function (response) {
-    //                    alert(response.responseText);
-    //                }
-    //            });
-    //        },
-    //        updater: function (item) {
-    //            $('#hfCustomer').val(map[item].id);
-    //            return item;
-    //        }
-    //    });
-
-
-    
-
-
-    //});
 
 
  $(document).ready(function() {
@@ -136,7 +92,8 @@
             <div class="col-md-6">
                 <div class="form-group">
                     <label asp-for="order.STREET" class="control-label">Улица</label>
-                    <input type="text" class="form-control" autocomplete="off" id="order_STREET" name="order.STREET" />
+                    <input type="text" class="form-control" autocomplete="off" id="order_STREET" name="order.STREET" value="@Model.order.STREET"/>
+                    @*<input asp-for="order.STREET" class="form-control" autocomplete="off" />*@
                     @*<span asp-validation-for="order.STREET" class="text-danger"></span>*@
 
 

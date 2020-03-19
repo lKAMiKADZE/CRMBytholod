@@ -40,14 +40,14 @@ namespace CRMBytholod.Controllers
         ////// ЗАЯВКИ
         /////////////
 
-        public IActionResult Orders(int page, int step, string Adres, FiltrOrders filtrOrders)
+        public IActionResult Orders(int page, int step, string Adres, FiltrOrders filtrOrders, long ID_ZAKAZ_EDIT)
         {
             if (!User.Identity.IsAuthenticated)// если неавторизован то редирект на авторизацию
             {
                 Uri location = new Uri($"{Request.Scheme}://{Request.Host}/Account/Login");
                 return Redirect(location.AbsoluteUri);
             }
-            OrdersVM VM = new OrdersVM(User.Identity.Name, page, step, filtrOrders);
+            OrdersVM VM = new OrdersVM(User.Identity.Name, page, step, filtrOrders,ID_ZAKAZ_EDIT);
 
 
             return View(VM);
@@ -85,8 +85,11 @@ namespace CRMBytholod.Controllers
             
         }
 
-        [HttpGet]
-        public IActionResult CreateOrder()
+        [HttpPost]
+        public IActionResult EditOrderPartial(long ID_ZAKAZ, DateTime DATA, string City,
+            string Msisdn1, string HOLODILNIK_DEFECT, string VREMJA,
+            long ID_USER, long ID_ORGANIZATION, string Promocode,
+            string PRIMECHANIE, string Komment  )
         {
             if (!User.Identity.IsAuthenticated)// если неавторизован то редирект на авторизацию
             {
@@ -94,7 +97,43 @@ namespace CRMBytholod.Controllers
                 return Redirect(location.AbsoluteUri);
             }
 
-            OrderCreateVM VM = new OrderCreateVM();
+            //VM.order.USER_ADD.ID_USER = Convert.ToInt64(User.Identity.Name);// присваиваем, кто изменяет данные
+
+            Order.UpdatePartial(ID_ZAKAZ, DATA, City,
+                Msisdn1, HOLODILNIK_DEFECT, VREMJA,
+                ID_USER, ID_ORGANIZATION, Promocode,
+                PRIMECHANIE, Komment
+                );
+
+
+
+            // удаляем в конце строки идентификатор редактирования, и возвращаемся обратно на исходную страницу
+            string referrer = Request.Headers["Referer"];
+            int maxIndex = referrer.IndexOf("ID_ZAKAZ_EDIT");
+            referrer = referrer.Substring(0, maxIndex - 1);
+            return Redirect(referrer);
+
+            
+
+        }
+
+
+        [HttpGet]
+        public IActionResult CreateOrder(long ID_ZAKAZ)
+        {
+            if (!User.Identity.IsAuthenticated)// если неавторизован то редирект на авторизацию
+            {
+                Uri location = new Uri($"{Request.Scheme}://{Request.Host}/Account/Login");
+                return Redirect(location.AbsoluteUri);
+            }
+
+            
+            OrderCreateVM VM;
+            
+            if(ID_ZAKAZ == 0)
+                VM= new OrderCreateVM();
+            else
+                VM= new OrderCreateVM(ID_ZAKAZ);
 
 
             return View(VM);
@@ -154,8 +193,8 @@ namespace CRMBytholod.Controllers
             Uri location = new Uri($"{Request.Scheme}://{Request.Host}");
             return Redirect(location.AbsoluteUri);
 
-            CallClientOrderVM VM = new CallClientOrderVM(ID_ZAKAZ);
-            return View(VM);
+            //CallClientOrderVM VM = new CallClientOrderVM(ID_ZAKAZ);
+            //return View(VM);
         }
 
 

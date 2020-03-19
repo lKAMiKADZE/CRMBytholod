@@ -58,6 +58,8 @@ namespace CRMBytholod.Models
         public bool Povtor { get; set; }
         public string City { get; set; }
         public string Promocode { get; set; }
+        public bool OplataNal { get; set; }
+        public string Komment { get; set; }
         
 
         //dop param
@@ -929,6 +931,8 @@ SELECT [ID_ZAKAZ]
       ,u.[msisdnMaster]
       ,u.[Phone]
       ,[MoneyDiagnostik]
+      ,o.[OplataNal]
+
   FROM [dbo].[Zakaz] o
 JOIN [User] u ON u.ID_USER=o.ID_MASTER
 JOIN [Status] s ON s.ID_STATUS=o.ID_STATUS
@@ -1001,7 +1005,9 @@ WHERE 1=1
                     Msisdn3 = (string)row["Msisdn3"],
 
                     MoneyDiagnostik = (int)row["MoneyDiagnostik"],
-                    
+                    OplataNal = (bool)row["OplataNal"],
+                     
+
 
 
                     USER_MASTER = userMaster,
@@ -1547,6 +1553,9 @@ SELECT [ID_ZAKAZ]
 	  ,o.[City]
 	  ,o.[Promocode]
       ,[MoneyDiagnostik]
+      ,o.[OplataNal]
+      ,o.[Komment]
+
   FROM [dbo].[Zakaz] o
 JOIN [User] u ON u.ID_USER=o.ID_MASTER -- ADD User MASTER
 JOIN [User] uadd ON uadd.ID_USER=o.ID_USER_ADD -- ADD User DISP or ADMIN
@@ -1606,7 +1615,6 @@ WHERE 1=1
                     DateOpenMaster = row["DateOpenMaster"] != DBNull.Value ? (DateTime?)row["DateOpenMaster"] : null,
                     DateClose = row["DateClose"] != DBNull.Value ? (DateTime?)row["DateClose"] : null,
 
-
                     DescripClose = (string)row["DescripClose"],
                     KOD_DOMOFONA = (string)row["KOD_DOMOFONA"],
                     MoneyAll = (int)row["MoneyAll"],
@@ -1624,13 +1632,16 @@ WHERE 1=1
                     Promocode = (string)row["Promocode"],
                     City = (string)row["City"],
                     MoneyDiagnostik = (int)row["MoneyDiagnostik"],
+                    OplataNal = (bool)row["OplataNal"],
+                    Komment = (string)row["Komment"],
+
+
 
                     USER_MASTER = userMaster,
                     USER_ADD= userAdd,
 
                     STATUS = status,
                     ORGANIZATION = org
-
                 };
 
                 return order;
@@ -1745,14 +1756,13 @@ WITH OrdersPage AS
 	,z.PRIMECHANIE
 	,z.MoneyFirm
 
-    ,(SELECT  count(1) FROM [Zakaz] z1
-	WHERE cast(z1.[DATA] As Date)=cast(z.[DATA] As Date)
-	GROUP BY cast(z1.[DATA] As Date)
-	) AS cntZakazDay
-	
-	,(SELECT count(1) FROM [LogMoney]
-	  WHERE ID_ZAKAZ=z.ID_ZAKAZ
-	)  AS cntLogMoney
+    ,(SELECT count(1) FROM [Zakaz] z1	WHERE cast(z1.[DATA] As Date)=cast(z.[DATA] As Date)	GROUP BY cast(z1.[DATA] As Date)	) AS cntZakazDay	
+	,(SELECT count(1) FROM [LogMoney]	  WHERE ID_ZAKAZ=z.ID_ZAKAZ	)  AS cntLogMoney
+
+    ,[OplataNal]
+    ,[Komment]
+    ,o.ID_ORGANIZATION
+    ,u.ID_USER
 
     ,ROW_NUMBER() OVER (ORDER BY z.[DATA] DESC ) AS 'RowNumber' --ORDERBY
     FROM [dbo].[Zakaz] z
@@ -1801,6 +1811,11 @@ SELECT
     ,cntZakazDay
     ,cntLogMoney
 
+    ,OplataNal
+    ,Komment
+    ,ID_ORGANIZATION
+    ,ID_USER
+
 	,RowNumber
 FROM OrdersPage 
 WHERE RowNumber BETWEEN ({page}-1)*{step} AND {page}*{step}
@@ -1829,12 +1844,14 @@ ORDER BY RowNumber ASC
 
                 Organization o = new Organization
                 {
-                    NameOrg = (string)row["NameOrg"]
+                    NameOrg = (string)row["NameOrg"],
+                    ID_ORGANIZATION = (long)row["ID_ORGANIZATION"]
                 };
 
                 User userMaster = new User
                 {
-                    Name = (string)row["Name"]
+                    Name = (string)row["Name"],
+                    ID_USER = (long)row["ID_USER"]
                 };
 
                 Order order = new Order
@@ -1858,8 +1875,10 @@ ORDER BY RowNumber ASC
                     Povtor = (bool)row["Povtor"],
                     PRIMECHANIE = (string)row["PRIMECHANIE"],
                     MoneyFirm = (int)row["MoneyFirm"],
-                    NumRow= numrow,
+                    NumRow = numrow,
                     cntLogMoney = (int)row["cntLogMoney"],
+                    OplataNal = (bool)row["OplataNal"],
+                    Komment = (string)row["Komment"],
 
 
                     USER_MASTER = userMaster,
@@ -2127,7 +2146,6 @@ SELECT
             return orders;
         }
 
-
         /// <summary>
         /// Metod from site
         /// </summary>
@@ -2193,7 +2211,60 @@ UPDATE [dbo].[Zakaz]
       ,[City] =          @City  --City
  WHERE 1=1
 	AND ID_ZAKAZ=@ID_ZAKAZ
-	AND ID_STATUS NOT IN (3,5)
+
+";
+
+            #endregion
+
+            ExecuteSqlStatic(sqlText, parameters);
+
+            string tmpStatusName = Status.GetStatusName(_ID_STATUS);
+
+            ChangeStatusDispetcher(USER_ADD.ID_USER, ID_ZAKAZ, tmpStatusName);
+
+        }        
+        /// <summary>
+        /// Metod from site
+        /// </summary>
+        public static void UpdatePartial(long ID_ZAKAZ, DateTime DATA, string City,
+            string Msisdn1, string HOLODILNIK_DEFECT, string VREMJA,
+            long ID_USER, long ID_ORGANIZATION, string Promocode,
+            string PRIMECHANIE, string Komment)
+        {
+           
+
+            SqlParameter[] parameters = new SqlParameter[]
+            {
+                new SqlParameter(@"ID_ZAKAZ",SqlDbType.BigInt) { Value =ID_ZAKAZ },
+                new SqlParameter(@"HOLODILNIK_DEFECT",SqlDbType.NVarChar) { Value =HOLODILNIK_DEFECT  ?? ""},
+                new SqlParameter(@"DATA",SqlDbType.DateTime) { Value =DATA },
+                new SqlParameter(@"VREMJA",SqlDbType.NVarChar) { Value =VREMJA  ?? ""},
+                new SqlParameter(@"PRIMECHANIE",SqlDbType.NVarChar) { Value = PRIMECHANIE ?? ""},
+                new SqlParameter(@"Msisdn1",SqlDbType.NVarChar) { Value =Msisdn1 ?? "" },
+                new SqlParameter(@"ID_ORGANIZATION",SqlDbType.BigInt) { Value =ID_ORGANIZATION },
+                new SqlParameter(@"ID_MASTER",SqlDbType.BigInt) { Value =ID_USER },
+                new SqlParameter(@"Promocode",SqlDbType.NVarChar) { Value =Promocode??"" },
+                new SqlParameter(@"City",SqlDbType.NVarChar) { Value =City ?? ""},
+                new SqlParameter(@"Komment",SqlDbType.NVarChar) { Value =Komment ?? ""}
+            };
+
+            #region sql
+
+            string sqlText = @$"
+UPDATE [dbo].[Zakaz]
+   SET [HOLODILNIK_DEFECT] =@HOLODILNIK_DEFECT-- <HOLODILNIK_DEFECT, nvarchar(500),>
+      ,[DATA] =		@DATA		-- <DATA, datetime,>
+      ,[VREMJA] =	@VREMJA		--	<VREMJA, varchar(20),>
+      ,[PRIMECHANIE] =@PRIMECHANIE		--	<PRIMECHANIE, varchar(500),>
+      ,[Msisdn1] =	@Msisdn1		-- <Msisdn1, nvarchar(20),>
+      ,[ID_ORGANIZATION] =@ID_ORGANIZATION 	--	<ID_ORGANIZATION, bigint,>
+      ,[ID_MASTER] =	@ID_MASTER	-- <ID_MASTER, bigint,>
+      ,[Promocode]  =@Promocode --Promocode
+      ,[City] =          @City  --City
+      ,[Komment] = @Komment
+
+ WHERE 1=1
+	AND ID_ZAKAZ=@ID_ZAKAZ
 
 ";
 
@@ -2201,9 +2272,8 @@ UPDATE [dbo].[Zakaz]
 
             ExecuteSqlStatic(sqlText,parameters);
 
-            string tmpStatusName = Status.GetStatusName(_ID_STATUS);
-
-            ChangeStatusDispetcher(USER_ADD.ID_USER, ID_ZAKAZ, tmpStatusName);
+            //string tmpStatusName = Status.GetStatusName(_ID_STATUS);
+            //ChangeStatusDispetcher(USER_ADD.ID_USER, ID_ZAKAZ, tmpStatusName);
 
         }
         /// <summary>
@@ -2246,8 +2316,9 @@ UPDATE [dbo].[Zakaz]
                 new SqlParameter(@"ID_USER_ADD",SqlDbType.BigInt) { Value =USER_ADD.ID_USER },
                 new SqlParameter(@"Povtor",SqlDbType.Bit) { Value =Povtor },
                 new SqlParameter(@"Promocode",SqlDbType.NVarChar) { Value =Promocode??"" },
-                new SqlParameter(@"City",SqlDbType.NVarChar) { Value =City ?? ""}
-
+                new SqlParameter(@"City",SqlDbType.NVarChar) { Value =City ?? ""},
+                new SqlParameter(@"OplataNal",SqlDbType.Bit) { Value =OplataNal },
+                new SqlParameter(@"Komment",SqlDbType.NVarChar) { Value =Komment ?? ""}
             };
 
             
@@ -2290,6 +2361,9 @@ INSERT INTO [dbo].[Zakaz]
            ,[Povtor]
 		   ,[Promocode]
 		   ,[City]
+           ,[OplataNal]
+           ,[Komment]
+
 		   )
      VALUES
            (
@@ -2324,6 +2398,8 @@ INSERT INTO [dbo].[Zakaz]
           ,@Povtor --,<Povtor, bit,>
 		  ,@Promocode      --,[Promocode]
 		  ,@City      --,[City]
+          ,@OplataNal --,[OplataNal]
+          ,@Komment --,[Komment]
 )
 
 

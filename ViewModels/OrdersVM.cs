@@ -16,11 +16,14 @@ namespace CRMBytholod.ViewModels
 
         public FiltrOrders filtrOrders { get; set; }
         public List<User> MASTERs { get; set; }
+        public List<Organization> Organizations { get; set; }
 
         public int CountAllOrders { get; set; }
+        public long ID_ZAKAZ_EDIT { get; set; }
+        
 
 
-        public OrdersVM( string id_user, int _page, int _step, FiltrOrders filtr )
+        public OrdersVM( string id_user, int _page, int _step, FiltrOrders filtr, long ID_ZAKAZ_EDIT)
         {
             Steps = new int[] { 50,100,150,200};
             if (_step == 0) _step = 200;
@@ -30,9 +33,11 @@ namespace CRMBytholod.ViewModels
             Page = _page;
 
             filtrOrders = filtr;
+            this.ID_ZAKAZ_EDIT = ID_ZAKAZ_EDIT;
 
             Orders = Order.GetOrdersSite(Page, Step, filtrOrders);
             MASTERs = User.GetAllMasters();
+            Organizations = Organization.GetAllOrganization();
             CountAllOrders = Order.GetCountOrders(filtrOrders);
 
         }
