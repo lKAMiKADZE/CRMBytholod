@@ -1197,7 +1197,7 @@ INSERT INTO [dbo].[LogStatusOrder]
         /// <summary>
         /// Metod from Master mobile
         /// </summary>
-        public static void SetStatus_Succes(string Sessionid, long ID_ZAKAZ, int MoneyAll, int MoneyDetal, int MoneyFirm)
+        public static void SetStatus_Succes(string Sessionid, long ID_ZAKAZ, int MoneyAll, int MoneyDetal, int MoneyFirm, string DescripClose, bool OplataNal)
         {
             SqlParameter[] parameters = new SqlParameter[]
             {
@@ -1206,7 +1206,9 @@ INSERT INTO [dbo].[LogStatusOrder]
                 new SqlParameter(@"ID_STATUS",SqlDbType.BigInt) { Value = 5 },// Выполнен
                 new SqlParameter(@"MoneyAll",SqlDbType.Int) { Value =MoneyAll },
                 new SqlParameter(@"MoneyDetal",SqlDbType.Int) { Value =MoneyDetal },
-                new SqlParameter(@"MoneyFirm",SqlDbType.Int) { Value =MoneyFirm }
+                new SqlParameter(@"MoneyFirm",SqlDbType.Int) { Value =MoneyFirm },
+                new SqlParameter(@"DescripClose",SqlDbType.NVarChar) { Value =DescripClose },
+                new SqlParameter(@"OplataNal",SqlDbType.Bit) { Value =OplataNal }
             };
 
             #region sql
@@ -1227,6 +1229,8 @@ ID_STATUS=@ID_STATUS
 , DateClose=CURRENT_TIMESTAMP
 , MoneyMaster=(@MoneyAll-@MoneyDetal-@MoneyFirm)
    ,MoneyDiagnostik=0
+   ,DescripClose=@DescripClose
+   ,OplataNal=@OplataNal
    
 
 WHERE ID_ZAKAZ =(
@@ -1341,7 +1345,7 @@ INSERT INTO [dbo].[LogStatusOrder]
         /// <summary>
         /// Metod from Master mobile
         /// </summary>
-        public static void SetStatus_Diagnostik(string Sessionid, long ID_ZAKAZ, string DescripClose, int MoneyDiagnostik, int MoneyFirm)
+        public static void SetStatus_Diagnostik(string Sessionid, long ID_ZAKAZ, string DescripClose, int MoneyDiagnostik, int MoneyFirm, bool OplataNal)
         {
             SqlParameter[] parameters = new SqlParameter[]
             {
@@ -1350,7 +1354,8 @@ INSERT INTO [dbo].[LogStatusOrder]
                 new SqlParameter(@"ID_STATUS",SqlDbType.Int) { Value = 7 },// диагностика
                 new SqlParameter(@"DescripClose",SqlDbType.NVarChar) { Value =DescripClose },
                 new SqlParameter(@"MoneyDiagnostik",SqlDbType.Int) { Value = MoneyDiagnostik },
-                new SqlParameter(@"MoneyFirm",SqlDbType.Int) { Value =MoneyFirm }
+                new SqlParameter(@"MoneyFirm",SqlDbType.Int) { Value =MoneyFirm },
+                new SqlParameter(@"OplataNal",SqlDbType.Bit) { Value =OplataNal }
             };
 
             #region sql
@@ -1370,6 +1375,8 @@ UPDATE [dbo].[Zakaz] SET
    ,MoneyDiagnostik=@MoneyDiagnostik
    ,MoneyFirm=@MoneyFirm
    ,MoneyMaster= @MoneyDiagnostik - @MoneyFirm
+   ,OplataNal=@OplataNal
+
 WHERE ID_ZAKAZ =(
 SELECT ID_ZAKAZ  FROM [dbo].[Zakaz] o
 JOIN [User] u ON u.ID_USER=o.ID_MASTER

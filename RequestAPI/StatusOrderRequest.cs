@@ -15,7 +15,8 @@ namespace CRMBytholod.RequestAPI
         public int MoneyFirm { get; set; }
         public string DescripClose { get; set; }
         public int MoneyDiagnostik { get; set; }
-        
+        public bool OplataBK { get; set; }
+
 
 
     }
