@@ -19,7 +19,7 @@ namespace CRMBytholod.ViewModels
         public List<Organization> Organizations { get; set; }
 
         public int CountAllOrders { get; set; }
-        //public long ID_ZAKAZ_EDIT { get; set; }
+        public long ID_ZAKAZ_EDIT { get; set; }
         
 
 
@@ -33,7 +33,7 @@ namespace CRMBytholod.ViewModels
             Page = _page;
 
             filtrOrders = filtr;
-            //this.ID_ZAKAZ_EDIT = ID_ZAKAZ_EDIT;
+            this.ID_ZAKAZ_EDIT = ID_ZAKAZ_EDIT;
 
             Orders = Order.GetOrdersSite(Page, Step, filtrOrders);
             MASTERs = User.GetAllMasters();
