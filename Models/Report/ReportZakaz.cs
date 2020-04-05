@@ -12,22 +12,22 @@ namespace CRMBytholod.Models.Report
     public class ReportZakaz
     {
 
-        public int SUCCES_proc { get; set; }
+        public double SUCCES_proc { get; set; }
         public int SUCCES_ed { get; set; }
         public int SUCCES_summ { get; set; }
 
-        public int DIAGNOSTIK_proc { get; set; }
+        public double DIAGNOSTIK_proc { get; set; }
         public int DIAGNOSTIK_ed { get; set; }
         public int DIAGNOSTIK_summ { get; set; }
 
-        public int POVTORmoney_proc { get; set; }
+        public double POVTORmoney_proc { get; set; }
         public int POVTORmoney_ed { get; set; }
         public int POVTORmoney_summ { get; set; }
 
-        public int POVTORNOTmoney_proc { get; set; }
+        public double POVTORNOTmoney_proc { get; set; }
         public int POVTORNOTmoney_ed { get; set; }
 
-        public int DENY_proc { get; set; }
+        public double DENY_proc { get; set; }
         public int DENY_ed { get; set; }
 
         public int TOTAL_all_zakaz { get; set; }
@@ -192,30 +192,30 @@ WHERE 1=1
                 }
                 if ((int)row["ID_STATUS"] == 5)// ВЫПОЛНЕН
                 {
-                    SUCCES_proc = (int)row["Procent"];
+                    SUCCES_proc = (double)row["Procent"];
                     SUCCES_ed = (int)row["Cnt"];
                     SUCCES_summ = (int)row["Firma"];
                 }
                 if ((int)row["ID_STATUS"] == 7)// ДИАГНОСТИКА
                 {
 
-                    DIAGNOSTIK_proc = (int)row["Procent"];
+                    DIAGNOSTIK_proc = (double)row["Procent"];
                     DIAGNOSTIK_ed = (int)row["Cnt"];
                     DIAGNOSTIK_summ = (int)row["Firma"];
                 }
                 if ((int)row["ID_STATUS"] == 3)// ОТКАЗ
                 {
-                    DENY_proc= (int)row["Procent"];
+                    DENY_proc= (double)row["Procent"];
                     DENY_ed = (int)row["Cnt"];
                 }
                 if ((int)row["ID_STATUS"] == 88)// ПОВТОР НЕ РАБОЧИЙ
                 {
-                    POVTORNOTmoney_proc = (int)row["Procent"];
+                    POVTORNOTmoney_proc = (double)row["Procent"];
                     POVTORNOTmoney_ed = (int)row["Cnt"];
                 }
                 if ((int)row["ID_STATUS"] == 80)// ПОВТОР РАБОЧИЙ
                 {
-                    POVTORmoney_proc = (int)row["Procent"];
+                    POVTORmoney_proc = (double)row["Procent"];
                     POVTORmoney_ed = (int)row["Cnt"];
                     POVTORmoney_summ = (int)row["Firma"];
                 }
@@ -506,24 +506,6 @@ ORDER BY count(1) DESC
 
 
     }// end class
-
-    public class PointTime
-    {
-        public int Y { get; set; }
-        public DateTime X { get; set; }
-    }
-
-    public class PointString
-    {
-        public int Y { get; set; }        
-        public string X { get; set; }
-    }
-
-    public class PointCircle
-    {
-        public string Xtitle { get; set; }
-        public double Y { get; set; }
-    }
 
 
 }
