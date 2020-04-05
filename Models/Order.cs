@@ -2233,7 +2233,8 @@ UPDATE [dbo].[Zakaz]
         /// <summary>
         /// Metod from site
         /// </summary>
-        public static void UpdatePartial(long ID_ZAKAZ, DateTime DATA, string City,
+        public static void UpdatePartial(
+            long ID_ZAKAZ, DateTime DATA, string City,
             string Msisdn1, string HOLODILNIK_DEFECT, string VREMJA,
             long ID_USER, long ID_ORGANIZATION, string Promocode,
             string PRIMECHANIE, string Komment)
