@@ -1,17 +1,25 @@
-﻿using System;
+﻿using CRMBytholod.Models.Report;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
 namespace CRMBytholod.ViewModels
 {
-    public class reportZakazVM
+    public class ReportZakazVM
     {
         public reportZakazFiltr Filtr { get; set; }
+        public ReportZakaz reportZakaz { get; set; }
 
-        public reportZakazVM()
+        public ReportZakazVM()
         {
             Filtr = new reportZakazFiltr();
+            reportZakaz = new ReportZakaz(Filtr);
+        }
+        public ReportZakazVM(reportZakazFiltr Filtr)
+        {
+            this.Filtr = Filtr;
+            reportZakaz = new ReportZakaz(Filtr);
         }
 
     }
@@ -33,7 +41,7 @@ namespace CRMBytholod.ViewModels
 
     }
 
-    public enum GroupByDate { DAY, MONTH };
+    public enum GroupByDate { DAY, MONTH, YEAR };
 
 
 }

@@ -1,0 +1,184 @@
+﻿@model CRMBytholod.ViewModels.ReportZakazMasterVM
+
+@{
+    ViewData["Title"] = "Отчет по заказам мастеров";
+    Layout = "~/Views/Shared/_LayoutFindTextOrder.cshtml";
+}
+
+
+    <div class="container">
+
+        <h1>Отчет по заказам мастеров</h1>
+
+        <div>
+
+            <form asp-action="ReportZakazMaster" method="get">
+
+                <div class="row">
+                    <div class="col-md-2">
+                        <div class="form-group">
+                            <label for="inputDate">Дата закрытия С:</label>
+                            <input type="date" asp-for="Filtr.Start" class="form-control">
+                        </div>
+                    </div>
+
+                    <div class="col-md-2">
+                        <div class="form-group">
+                            <label for="inputDate">Дата закрытия ПО:</label>
+                            <input type="date" asp-for="Filtr.End" class="form-control">
+                        </div>
+                    </div>
+
+                    <div class="col-md-2">
+                        <div class="form-group">
+                            <label>Группировка по:</label>
+                            <select asp-for="Filtr.GroupDate" class="form-control">
+                                @if (Model.Filtr.GroupDate == 0)
+                                {
+                                    <option value="0">Дням</option>
+                                }
+                                else
+                                   if ((int)Model.Filtr.GroupDate == 1)
+                                {
+                                    <option value="1">Месяцам</option>
+                                }
+                                else
+                                   if ((int)Model.Filtr.GroupDate == 2)
+                                {
+                                    <option value="2">Годам</option>
+                                }
+
+                                <option value="0">Дням</option>
+                                <option value="1">Месяцам</option>
+                                <option value="2">Годам</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="col-md-2">
+                        <div class="form-group">
+                            <label>Мастер</label>
+                            <select asp-for="Filtr.ID_MASTER" class="form-control">
+                                @foreach (var item in Model.Masters)
+                                {
+                                    <option value="@item.ID_USER">@item.Name</option>
+                                }
+
+                            </select>
+                        </div>
+                    </div>
+
+
+                    <div class="col-md-2">
+                        <div class="form-group">
+                            <br />
+                            <input class="btn btn-secondary" type="submit" value="Поиск" />
+                        </div>
+                    </div>
+
+                    <div class="col-md-2">
+                        <div class="form-group">
+                            <br />
+                            <a asp-action="ReportZakazMaster"><input type="button" class="btn btn-info " value="Сбросить фильтр" /> </a>
+                        </div>
+                    </div>
+
+                </div>
+            </form>
+
+        </div>
+
+        <br />
+        <hr />
+        <br />
+
+
+
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>
+                        ФИО
+                    </th>
+                    <th>
+                        Всего заказов
+                    </th>
+                    <th>
+                        Выполнено шт
+                    </th>
+                    <th>
+                        Выполнено %
+                    </th>
+                    <th>
+                        Диагностик шт
+                    </th>
+                    <th>
+                        Диагностик %
+                    </th>
+                    <th>
+                        Отказов шт
+                    </th>
+                    <th>
+                        Отказов %
+                    </th>
+                    <th>
+                        Повтор рабочий шт
+                    </th>
+                    <th>
+                        Повтор рабочий %
+                    </th>
+                    <th>
+                        Повтор не рабочий шт
+                    </th>
+                    <th>
+                        Повтор не рабочий %
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model.reportZakazMasters)
+                {
+                    <tr>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.FIOMaster)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.AllZakaz)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.SUCCES_ed)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.SUCCES_proc)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.DIAGNOSTIK_ed)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.DIAGNOSTIK_proc)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.DENY_ed)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.DENY_proc)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.POVTORMoney_ed)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.POVTORMoney_proc)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.POVTORNotMoney_ed)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.POVTORNotMoney_proc)
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+
+
+    </div>

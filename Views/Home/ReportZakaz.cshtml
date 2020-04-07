@@ -1,0 +1,519 @@
+﻿@model CRMBytholod.ViewModels.ReportZakazVM;
+
+@{
+    ViewData["Title"] = "Отчет по заказам";
+    Layout = "~/Views/Shared/_LayoutFindTextOrder.cshtml";
+
+    
+    var XLabelsCircle = Newtonsoft.Json.JsonConvert.SerializeObject(Model.reportZakaz.DiagramCircle_Zakaz.Select(x => x.Xtitle).ToList());
+    var YValuesCircle = Newtonsoft.Json.JsonConvert.SerializeObject(Model.reportZakaz.DiagramCircle_Zakaz.Select(x => x.Y).ToList());
+
+    var XLabels = Newtonsoft.Json.JsonConvert.SerializeObject(Model.reportZakaz.DiagramLine_Firma.Select(x => x.X.ToString("dd-MM-yy") ).ToList());
+    var YValues = Newtonsoft.Json.JsonConvert.SerializeObject(Model.reportZakaz.DiagramLine_Firma.Select(x => x.Y).ToList());
+
+    
+    var XLabelsCity = Newtonsoft.Json.JsonConvert.SerializeObject(Model.reportZakaz.DiagramLine_City.Select(x => x.X).ToList());
+    var YValuesCity = Newtonsoft.Json.JsonConvert.SerializeObject(Model.reportZakaz.DiagramLine_City.Select(x => x.Y).ToList());
+
+    
+    var XLabelsOrganization = Newtonsoft.Json.JsonConvert.SerializeObject(Model.reportZakaz.DiagramLine_Organization.Select(x => x.X).ToList());
+    var YValuesOrganization = Newtonsoft.Json.JsonConvert.SerializeObject(Model.reportZakaz.DiagramLine_Organization.Select(x => x.Y).ToList());
+
+
+}
+
+<div class="container">
+<h1>Отчет по заказам</h1>
+
+
+<div>
+
+    <form asp-action="ReportZakaz" method="get">
+
+        <div class="row">
+            <div class="col-md-2">
+                <div class="form-group">
+                    <label for="inputDate">Дата закрытия С:</label>
+                    <input type="date" asp-for="Filtr.Start" class="form-control">
+                </div>
+            </div>
+
+            <div class="col-md-2">
+                <div class="form-group">
+                    <label for="inputDate">Дата закрытия ПО:</label>
+                    <input type="date" asp-for="Filtr.End" class="form-control">
+                </div>
+            </div>
+
+            <div class="col-md-2">
+                <div class="form-group">
+                    <label>Группировка по:</label>
+                    <select asp-for="Filtr.GroupDate" class="form-control">
+                        @if (Model.Filtr.GroupDate == 0)
+                        {
+                            <option value="0">Дням</option>
+                        }
+                        else
+                        {
+                            <option value="1">Месяцам</option>
+                        }
+                        <option value="0">Дням</option>
+                        <option value="1">Месяцам</option>
+                    </select>
+                </div>
+            </div>
+
+
+            <div class="col-md-2">
+                <div class="form-group">
+                    <br />
+                    <input class="btn btn-secondary" type="submit" value="Поиск" />
+                </div>
+            </div>
+
+            <div class="col-md-2">
+                <div class="form-group">
+                    <br />
+                    <a asp-action="ReportZakaz"><input type="button" class="btn btn-info " value="Сбросить фильтр" /> </a>
+                </div>
+            </div>
+
+        </div>
+    </form>
+
+</div>
+    
+<br />
+<hr />
+<br />
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                Название
+            </th>
+            <th>
+                Процентов
+            </th>
+            <th>
+                Кол-во
+            </th>
+            <th>
+                Сумма в фирму
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+
+        <tr>
+            <td>
+                Выполнено
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => Model.reportZakaz.SUCCES_proc)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => Model.reportZakaz.SUCCES_ed)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => Model.reportZakaz.SUCCES_summ)
+            </td>
+        </tr>
+        <tr>
+            <td>
+                Диагностика
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => Model.reportZakaz.DIAGNOSTIK_proc)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => Model.reportZakaz.DIAGNOSTIK_ed)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => Model.reportZakaz.DIAGNOSTIK_summ)
+            </td>
+        </tr>
+        <tr>
+            <td>
+                Отказов
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => Model.reportZakaz.DENY_proc)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => Model.reportZakaz.DENY_ed)
+            </td>
+            <td>
+                -
+            </td>
+        </tr>
+        <tr>
+            <td>
+                Повторы рабочие
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => Model.reportZakaz.POVTORmoney_proc)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => Model.reportZakaz.POVTORmoney_ed)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => Model.reportZakaz.POVTORmoney_summ)
+            </td>
+        </tr>
+        <tr>
+            <td>
+                Повторы не рабочие
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => Model.reportZakaz.POVTORNOTmoney_proc)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => Model.reportZakaz.POVTORNOTmoney_ed)
+            </td>
+            <td>
+                -
+            </td>
+        </tr>
+
+        <tr>
+            <td colspan="4"></td>
+        </tr>
+
+        <tr>
+            <td></td>
+            <td>Общее кол-во заказов</td>
+            <td>Средний чек с клиента</td>
+            <td>Средний чек в фирму</td>
+
+        </tr>
+
+        <tr>
+            <td>
+                Итого
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => Model.reportZakaz.TOTAL_all_zakaz)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => Model.reportZakaz.TOTAL_avg_getClient)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => Model.reportZakaz.TOTAL_avg_firma)
+            </td>
+        </tr>
+
+    </tbody>
+</table>
+    
+<br />
+</div>
+
+
+<div>
+    <h2>Соотношение</h2>
+    <div class="">
+        <canvas id="pie" style="width:100%; height:300px"></canvas>
+    </div>
+
+    <br />
+    <br />
+    <h2>Выполненые заказы</h2>
+    <div>
+        <canvas id="chartSucces" style="width:100%; height:300px"></canvas>
+    </div>
+
+    <br />
+    <br />
+    <h2>По городам</h2>
+    <div>
+        <canvas id="chartCity" style="width:100%; height:300px"></canvas>
+    </div>
+
+    <br />
+    <br />
+    <h2>По организациям</h2>
+    <div>
+        <canvas id="chartOrganization" style="width:100%; height:300px"></canvas>
+    </div>
+</div>
+
+
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.2/Chart.bundle.min.js"></script>
+<script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+
+<script type="text/javascript">
+
+/////// pie
+    $(function () {  
+    var chartName = "pie";  
+        var ctx = document.getElementById(chartName).getContext('2d');  
+        var data = {  
+                labels: @Html.Raw(XLabelsCircle),  
+                datasets: [{  
+                    label: "Соотношение",  
+                    backgroundColor: [  
+                        'rgba(255, 99, 132, 0.2)',  
+                        'rgba(54, 162, 235, 0.2)',  
+                        'rgba(255, 206, 86, 0.2)',  
+                        'rgba(75, 192, 192, 0.2)',  
+                        'rgba(153, 102, 255, 0.2)',  
+                        'rgba(255, 159, 64, 0.2)',  
+                        'rgba(255, 0, 0)',  
+                        'rgba(0, 255, 0)',  
+                        'rgba(0, 0, 255)',  
+                        'rgba(192, 192, 192)',  
+                        'rgba(255, 255, 0)',  
+                        'rgba(255, 0, 255)'  
+                    ],  
+                    borderColor: [  
+                        'rgba(255,99,132,1)',  
+                        'rgba(54, 162, 235, 1)',  
+                        'rgba(255, 206, 86, 1)',  
+                        'rgba(75, 192, 192, 1)',  
+                        'rgba(153, 102, 255, 1)',  
+                        'rgba(255, 159, 64, 1)',  
+                        'rgba(255, 0, 0)',  
+                        'rgba(0, 255, 0)',  
+                        'rgba(0, 0, 255)',  
+                        'rgba(192, 192, 192)',  
+                        'rgba(255, 255, 0)',  
+                        'rgba(255, 0, 255)'  
+                    ],  
+                    borderWidth: 1,  
+                    data: @Html.Raw(YValuesCircle)  
+    }]  
+            };  
+  
+var options = {  
+                maintainAspectRatio: false,  
+                scales: {  
+                    yAxes: [{  
+                        ticks: {  
+                            min: 0,  
+                            beginAtZero: true  
+                        },  
+                        gridLines: {  
+                            display: true,  
+                            color: "rgba(255,99,164,0.2)"  
+                        }  
+}],  
+                    xAxes: [{  
+                        ticks: {  
+                            min: 0,  
+                            beginAtZero: true  
+                        },  
+                        gridLines: {  
+                            display: false  
+                        }  
+                    }]  
+                }  
+            };  
+  
+       var myChart = new  Chart(ctx, {  
+                options: options,  
+                data: data,  
+                type:'pie'  
+  
+            });  
+        });  
+    
+/////// chartSucces
+    $(function () {
+        var chartName = "chartSucces";
+            var ctx = document.getElementById(chartName).getContext('2d');
+            var data = {
+                    labels: @Html.Raw(XLabels),
+                    datasets: [{
+                        label: "Выполненные заказы",
+                        backgroundColor: [
+                            'rgba(254,192,1)'
+                        ],
+                        borderColor: [
+                            'rgba(254,192,1)'
+                        ],
+                        borderWidth: 1,
+                    data: @Html.Raw(YValues)
+                    }]
+                };
+
+    var options = {
+        maintainAspectRatio: false,
+        smooth: false,
+        fill: false,
+                    scales: {
+                        yAxes: [{
+                            ticks: {
+                                min: 0,
+                                beginAtZero: true
+                            },
+                            gridLines: {
+                                display: true,
+                                color: "rgba(255,99,164,0.2)"
+                            }
+    }],
+                        xAxes: [{
+                            ticks: {
+                                min: 0,
+                                beginAtZero: true
+                            },
+                            gridLines: {
+                                display: false
+                            }
+                        }]
+                    }
+                };
+
+           var myChart = new  Chart(ctx, {
+                    options: options,
+                    data: data,
+                    type:'line'
+
+                });
+            });
+
+/////// chartCity
+    $(function () {  
+    var chartName = "chartCity";  
+        var ctx = document.getElementById(chartName).getContext('2d');  
+        var data = {  
+                labels: @Html.Raw(XLabelsCity),  
+                datasets: [{  
+                    label: "По городам",  
+                    backgroundColor: [  
+                        'rgba(255, 99, 132, 0.2)',  
+                        'rgba(54, 162, 235, 0.2)',  
+                        'rgba(255, 206, 86, 0.2)',  
+                        'rgba(75, 192, 192, 0.2)',  
+                        'rgba(153, 102, 255, 0.2)',  
+                        'rgba(255, 159, 64, 0.2)',  
+                        'rgba(255, 0, 0)',  
+                        'rgba(0, 255, 0)',  
+                        'rgba(0, 0, 255)',  
+                        'rgba(192, 192, 192)',  
+                        'rgba(255, 255, 0)',  
+                        'rgba(255, 0, 255)'  
+                    ],  
+                    borderColor: [  
+                        'rgba(255,99,132,1)',  
+                        'rgba(54, 162, 235, 1)',  
+                        'rgba(255, 206, 86, 1)',  
+                        'rgba(75, 192, 192, 1)',  
+                        'rgba(153, 102, 255, 1)',  
+                        'rgba(255, 159, 64, 1)',  
+                        'rgba(255, 0, 0)',  
+                        'rgba(0, 255, 0)',  
+                        'rgba(0, 0, 255)',  
+                        'rgba(192, 192, 192)',  
+                        'rgba(255, 255, 0)',  
+                        'rgba(255, 0, 255)'  
+                    ],  
+                    borderWidth: 1,  
+                    data: @Html.Raw(YValuesCity)  
+    }]  
+            };  
+  
+var options = {  
+                maintainAspectRatio: false,  
+                scales: {  
+                    yAxes: [{  
+                        ticks: {  
+                            min: 0,  
+                            beginAtZero: true  
+                        },  
+                        gridLines: {  
+                            display: true,  
+                            color: "rgba(255,99,164,0.2)"  
+                        }  
+}],  
+                    xAxes: [{  
+                        ticks: {  
+                            min: 0,  
+                            beginAtZero: true  
+                        },  
+                        gridLines: {  
+                            display: false  
+                        }  
+                    }]  
+                }  
+            };  
+  
+       var myChart = new  Chart(ctx, {  
+                options: options,  
+                data: data,  
+                type:'bar'  
+  
+            });  
+        }); 
+
+/////// chartOrganization
+    $(function () {
+        var chartName = "chartOrganization";
+            var ctx = document.getElementById(chartName).getContext('2d');
+            var data = {
+                    labels: @Html.Raw(XLabelsOrganization),
+                    datasets: [{
+                        label: "По организациям",
+                        backgroundColor: [
+                        'rgba(255,99,132,1)',  
+                        'rgba(54, 162, 235, 1)',  
+                        'rgba(255, 206, 86, 1)',  
+                        'rgba(75, 192, 192, 1)',  
+                        'rgba(153, 102, 255, 1)',  
+                        'rgba(255, 159, 64, 1)',  
+                        'rgba(255, 0, 0)',  
+                        'rgba(0, 255, 0)',  
+                        'rgba(0, 0, 255)',  
+                        'rgba(192, 192, 192)',  
+                        'rgba(255, 255, 0)',  
+                        'rgba(255, 0, 255)'
+                        ],
+                        borderColor: [
+                        ],
+                        borderWidth: 1,
+                    data: @Html.Raw(YValuesOrganization)
+                    }]
+                };
+
+    var options = {
+                    maintainAspectRatio: false,
+                    scales: {
+                        yAxes: [{
+                            ticks: {
+                                min: 0,
+                                beginAtZero: true
+                            },
+                            gridLines: {
+                                display: true,
+                                color: "rgba(255,99,164,0.2)"
+                            }
+    }],
+                        xAxes: [{
+                            ticks: {
+                                min: 0,
+                                beginAtZero: true
+                            },
+                            gridLines: {
+                                display: false
+                            }
+                        }]
+                    }
+                };
+
+           var myChart = new  Chart(ctx, {
+                    options: options,
+                    data: data,
+                    type:'bar'
+
+                });
+            });
+
+
+
+</script>
+
+
+
+

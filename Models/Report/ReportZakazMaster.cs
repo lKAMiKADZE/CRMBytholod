@@ -15,15 +15,15 @@ namespace CRMBytholod.Models.Report
         public long ID_MASTER { get; set; }
         public int AllZakaz { get; set; }
         public int SUCCES_ed { get; set; }
-        public double SUCCES_proc { get; set; }
+        public decimal SUCCES_proc { get; set; }
         public int DIAGNOSTIK_ed { get; set; }
-        public double DIAGNOSTIK_proc { get; set; }
+        public decimal DIAGNOSTIK_proc { get; set; }
         public int POVTORMoney_ed { get; set; }
-        public double POVTORMoney_proc { get; set; }
+        public decimal POVTORMoney_proc { get; set; }
         public int POVTORNotMoney_ed { get; set; }
-        public double POVTORNotMoney_proc { get; set; }
+        public decimal POVTORNotMoney_proc { get; set; }
         public int DENY_ed { get; set; }
-        public double DENY_proc { get; set; }
+        public decimal DENY_proc { get; set; }
 
 
 
@@ -159,15 +159,15 @@ ORDER BY m.Name ASC
                     ID_MASTER= (long)row["ID_MASTER"],
                     AllZakaz=(int)row["cntAllZakaz"],
                     SUCCES_ed = (int)row["cntAllClose"],
-                    SUCCES_proc = (double)row["cntAllCloseProcent"],
+                    SUCCES_proc = (decimal)row["cntAllCloseProcent"],
                     DIAGNOSTIK_ed = (int)row["cntDiagnostik"],
-                    DIAGNOSTIK_proc = (double)row["cntDiagnostikProcent"],
+                    DIAGNOSTIK_proc = (decimal)row["cntDiagnostikProcent"],
                     POVTORMoney_ed = (int)row["cntPovtor"],
-                    POVTORMoney_proc = (double)row["cntPovtorProcent"],
+                    POVTORMoney_proc = (decimal)row["cntPovtorProcent"],
                     POVTORNotMoney_ed = (int)row["cntPovtorNotMoney"],
-                    POVTORNotMoney_proc = (double)row["cntPovtorNotMoneyProcent"],
+                    POVTORNotMoney_proc = (decimal)row["cntPovtorNotMoneyProcent"],
                     DENY_ed = (int)row["cntDeny"],
-                    DENY_proc = (double)row["cntDenyProcent"]
+                    DENY_proc = (decimal)row["cntDenyProcent"]
                 };
 
                 masters.Add(master);
@@ -221,7 +221,7 @@ ORDER BY DATEPART(YEAR,z.DateClose) ASC
 SELECT 
  DATEPART(YEAR,z.DateClose) AS Year
 ,DATEPART(MONTH,z.DateClose) AS Month
-,0 AS Day
+,1 AS Day
 , count(1) AS cntZakazClose
 , SUM(z.MoneyFirm) AS summ
 FROM [Zakaz] z
@@ -237,6 +237,28 @@ ORDER BY DATEPART(YEAR,z.DateClose) ASC
 
 ";
 
+
+            if (Filtr.GroupDate == GroupByDate.YEAR)
+                sqlText = $@"
+
+--c.	Выполнено с деньгами кол-во
+SELECT 
+ DATEPART(YEAR,z.DateClose) AS Year
+,1 AS Month
+,1 AS Day
+, count(1) AS cntZakazClose
+, SUM(z.MoneyFirm) AS summ
+FROM [Zakaz] z
+	WHERE z.ID_MASTER= @ID_MASTER 
+		AND z.ID_STATUS in (5,7) 
+		AND z.MoneyFirm>0
+		AND	z.DateClose between @start AND @end
+GROUP BY DATEPART(YEAR,z.DateClose)
+ORDER BY DATEPART(YEAR,z.DateClose) ASC
+	
+
+
+";
 
 
             #endregion
@@ -310,7 +332,7 @@ ORDER BY DATEPART(YEAR,z.DateClose) ASC
 SELECT 
  DATEPART(YEAR,z.DateClose) AS Year
 ,DATEPART(MONTH,z.DateClose) AS Month
-,0 AS Day
+,1 AS Day
 , count(1) AS cntZakazClose
 , SUM(z.MoneyFirm) AS summ
  FROM [Zakaz] z
@@ -327,6 +349,29 @@ ORDER BY DATEPART(YEAR,z.DateClose) ASC
 
 ";
 
+            if (Filtr.GroupDate == GroupByDate.YEAR)
+                sqlText = $@"
+
+------------------------------------
+--d.	Диагностик 
+SELECT 
+ DATEPART(YEAR,z.DateClose) AS Year
+,1 AS Month
+,1 AS Day
+, count(1) AS cntZakazClose
+, SUM(z.MoneyFirm) AS summ
+ FROM [Zakaz] z
+	WHERE z.ID_MASTER=@ID_MASTER 
+		AND z.ID_STATUS in (7) 
+		AND z.MoneyFirm>0
+		AND	z.DateClose between @start AND @end
+GROUP BY DATEPART(YEAR,z.DateClose)
+ORDER BY DATEPART(YEAR,z.DateClose) ASC
+	
+	
+
+
+";
 
 
             #endregion
@@ -404,7 +449,7 @@ ORDER BY DATEPART(YEAR,z.DateClose) ASC
 SELECT  
 DATEPART(YEAR,z.DateClose) AS Year
 ,DATEPART(MONTH,z.DateClose) AS Month
-,0 AS Day
+,1 AS Day
 
 , count(1) AS cntZakazClose
 , SUM(z.MoneyFirm) AS summ
@@ -424,6 +469,33 @@ ORDER BY DATEPART(YEAR,z.DateClose) ASC
 
 ";
 
+            if (Filtr.GroupDate == GroupByDate.YEAR)
+                sqlText = $@"
+
+
+------------------------------------
+--e.	Повторки с деньгами в фирму
+SELECT  
+DATEPART(YEAR,z.DateClose) AS Year
+,1 AS Month
+,1 AS Day
+
+, count(1) AS cntZakazClose
+, SUM(z.MoneyFirm) AS summ
+ FROM [Zakaz] z
+	WHERE z.ID_MASTER=@ID_MASTER 
+		AND z.ID_STATUS in (5,7) 
+		AND z.MoneyFirm>0		
+		AND	z.DateClose between @start AND @end
+		AND z.Povtor=1
+GROUP BY DATEPART(YEAR,z.DateClose)
+ORDER BY DATEPART(YEAR,z.DateClose) ASC
+	
+	
+	
+
+
+";
 
 
             #endregion
@@ -499,7 +571,7 @@ ORDER BY DATEPART(YEAR,z.DateClose) ASC
 SELECT  
 DATEPART(YEAR,z.DateClose) AS Year
 ,DATEPART(MONTH,z.DateClose) AS Month
-,0 AS Day
+,1 AS Day
 
 , count(1) AS cntZakazClose
 , SUM(z.MoneyFirm) AS summ
@@ -519,6 +591,32 @@ ORDER BY DATEPART(YEAR,z.DateClose) ASC
 
 ";
 
+            if (Filtr.GroupDate == GroupByDate.YEAR)
+                sqlText = $@"
+
+------------------------------------
+--f.	Повторки без денег 
+SELECT  
+DATEPART(YEAR,z.DateClose) AS Year
+,1 AS Month
+,1 AS Day
+
+, count(1) AS cntZakazClose
+, SUM(z.MoneyFirm) AS summ
+ FROM [Zakaz] z
+	WHERE z.ID_MASTER=@ID_MASTER 
+		AND z.ID_STATUS in (5,7) 
+		AND z.MoneyFirm=0		
+		AND	z.DateClose between @start AND @end
+		AND z.Povtor=1
+GROUP BY DATEPART(YEAR,z.DateClose)
+ORDER BY DATEPART(YEAR,z.DateClose) ASC
+	
+	
+	
+
+
+";
 
 
             #endregion
@@ -595,7 +693,7 @@ ORDER BY DATEPART(YEAR,z.DateClose) ASC
 SELECT 
 DATEPART(YEAR,z.DateClose) AS Year
 ,DATEPART(MONTH,z.DateClose) AS Month
-,0 AS Day
+,1 AS Day
 
 , count(1) AS cntZakazClose
 , SUM(z.MoneyFirm) AS summ
@@ -606,6 +704,33 @@ DATEPART(YEAR,z.DateClose) AS Year
 GROUP BY DATEPART(YEAR,z.DateClose),DATEPART(MONTH,z.DateClose)
 ORDER BY DATEPART(YEAR,z.DateClose) ASC
 	,DATEPART(MONTH,z.DateClose) ASC
+	
+
+	
+	
+
+
+";
+
+            if (Filtr.GroupDate == GroupByDate.YEAR)
+                sqlText = $@"
+
+
+------------------------------------
+--g.	Отказы
+SELECT 
+DATEPART(YEAR,z.DateClose) AS Year
+,1 AS Month
+,1 AS Day
+
+, count(1) AS cntZakazClose
+, SUM(z.MoneyFirm) AS summ
+  FROM [Zakaz] z
+	WHERE z.ID_MASTER=@ID_MASTER 
+		AND z.ID_STATUS in (3) 		
+		AND	z.DateClose between @start AND @end
+GROUP BY DATEPART(YEAR,z.DateClose)
+ORDER BY DATEPART(YEAR,z.DateClose) ASC
 	
 
 	

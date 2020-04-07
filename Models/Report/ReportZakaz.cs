@@ -12,22 +12,22 @@ namespace CRMBytholod.Models.Report
     public class ReportZakaz
     {
 
-        public double SUCCES_proc { get; set; }
+        public decimal SUCCES_proc { get; set; }
         public int SUCCES_ed { get; set; }
         public int SUCCES_summ { get; set; }
 
-        public double DIAGNOSTIK_proc { get; set; }
+        public decimal DIAGNOSTIK_proc { get; set; }
         public int DIAGNOSTIK_ed { get; set; }
         public int DIAGNOSTIK_summ { get; set; }
 
-        public double POVTORmoney_proc { get; set; }
+        public decimal POVTORmoney_proc { get; set; }
         public int POVTORmoney_ed { get; set; }
         public int POVTORmoney_summ { get; set; }
 
-        public double POVTORNOTmoney_proc { get; set; }
+        public decimal POVTORNOTmoney_proc { get; set; }
         public int POVTORNOTmoney_ed { get; set; }
 
-        public double DENY_proc { get; set; }
+        public decimal DENY_proc { get; set; }
         public int DENY_ed { get; set; }
 
         public int TOTAL_all_zakaz { get; set; }
@@ -184,38 +184,38 @@ WHERE 1=1
 
             foreach (DataRow row in dt.Rows)
             {
-                if ((int)row["ID_STATUS"] == 1111)// TOTAL
+                if ((long)row["ID_STATUS"] == 1111)// TOTAL
                 {
                     TOTAL_all_zakaz =     (int)row["Cnt"];
                     TOTAL_avg_firma =     (int)row["Firma"];
                     TOTAL_avg_getClient = (int)row["moneyAll"];
                 }
-                if ((int)row["ID_STATUS"] == 5)// ВЫПОЛНЕН
+                if ((long)row["ID_STATUS"] == 5)// ВЫПОЛНЕН
                 {
-                    SUCCES_proc = (double)row["Procent"];
+                    SUCCES_proc = (decimal)row["Procent"];
                     SUCCES_ed = (int)row["Cnt"];
                     SUCCES_summ = (int)row["Firma"];
                 }
-                if ((int)row["ID_STATUS"] == 7)// ДИАГНОСТИКА
+                if ((long)row["ID_STATUS"] == 7)// ДИАГНОСТИКА
                 {
 
-                    DIAGNOSTIK_proc = (double)row["Procent"];
+                    DIAGNOSTIK_proc = (decimal)row["Procent"];
                     DIAGNOSTIK_ed = (int)row["Cnt"];
                     DIAGNOSTIK_summ = (int)row["Firma"];
                 }
-                if ((int)row["ID_STATUS"] == 3)// ОТКАЗ
+                if ((long)row["ID_STATUS"] == 3)// ОТКАЗ
                 {
-                    DENY_proc= (double)row["Procent"];
+                    DENY_proc= (decimal)row["Procent"];
                     DENY_ed = (int)row["Cnt"];
                 }
-                if ((int)row["ID_STATUS"] == 88)// ПОВТОР НЕ РАБОЧИЙ
+                if ((long)row["ID_STATUS"] == 88)// ПОВТОР НЕ РАБОЧИЙ
                 {
-                    POVTORNOTmoney_proc = (double)row["Procent"];
+                    POVTORNOTmoney_proc = (decimal)row["Procent"];
                     POVTORNOTmoney_ed = (int)row["Cnt"];
                 }
-                if ((int)row["ID_STATUS"] == 80)// ПОВТОР РАБОЧИЙ
+                if ((long)row["ID_STATUS"] == 80)// ПОВТОР РАБОЧИЙ
                 {
-                    POVTORmoney_proc = (double)row["Procent"];
+                    POVTORmoney_proc = (decimal)row["Procent"];
                     POVTORmoney_ed = (int)row["Cnt"];
                     POVTORmoney_summ = (int)row["Firma"];
                 }
@@ -272,7 +272,7 @@ ORDER BY DATEPART(YEAR, z.DateClose) ASC
 SELECT 
 DATEPART(YEAR,z.DateClose) AS Year
 ,DATEPART(MONTH,z.DateClose) AS Month
-,0 AS Day
+,1 AS Day
 , count(1) AS cntComplete
 , SUM(z.MoneyFirm) AS sumMoneyFirm
  FROM [Zakaz] z

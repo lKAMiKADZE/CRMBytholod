@@ -47,7 +47,7 @@ namespace CRMBytholod.Controllers
                 Uri location = new Uri($"{Request.Scheme}://{Request.Host}/Account/Login");
                 return Redirect(location.AbsoluteUri);
             }
-            OrdersVM VM = new OrdersVM(User.Identity.Name, page, step, filtrOrders,ID_ZAKAZ_EDIT);
+            OrdersVM VM = new OrdersVM(User.Identity.Name, page, step, filtrOrders, ID_ZAKAZ_EDIT);
 
 
             return View(VM);
@@ -74,7 +74,7 @@ namespace CRMBytholod.Controllers
                 Uri location = new Uri($"{Request.Scheme}://{Request.Host}/Account/Login");
                 return Redirect(location.AbsoluteUri);
             }
-            
+
             VM.order.USER_ADD.ID_USER = Convert.ToInt64(User.Identity.Name);// присваиваем, кто изменяет данные
 
             VM.order.Update();
@@ -82,14 +82,14 @@ namespace CRMBytholod.Controllers
             Uri locat = new Uri($"{Request.Scheme}://{Request.Host}/Home/DetailOrder?ID_ZAKAZ={VM.order.ID_ZAKAZ}");
             return Redirect(locat.AbsoluteUri);
 
-            
+
         }
 
         [HttpPost]
         public IActionResult EditOrderPartial(long ID_ZAKAZ, DateTime DATA, string City,
             string Msisdn1, string HOLODILNIK_DEFECT, string VREMJA,
             long ID_USER, long ID_ORGANIZATION, string Promocode,
-            string PRIMECHANIE, string Komment  )
+            string PRIMECHANIE, string Komment)
         {
             if (!User.Identity.IsAuthenticated)// если неавторизован то редирект на авторизацию
             {
@@ -113,7 +113,7 @@ namespace CRMBytholod.Controllers
             referrer = referrer.Substring(0, maxIndex - 1);
             return Redirect(referrer);
 
-            
+
 
         }
 
@@ -127,13 +127,13 @@ namespace CRMBytholod.Controllers
                 return Redirect(location.AbsoluteUri);
             }
 
-            
+
             OrderCreateVM VM;
-            
-            if(ID_ZAKAZ == 0)
-                VM= new OrderCreateVM();
+
+            if (ID_ZAKAZ == 0)
+                VM = new OrderCreateVM();
             else
-                VM= new OrderCreateVM(ID_ZAKAZ);
+                VM = new OrderCreateVM(ID_ZAKAZ);
 
 
             return View(VM);
@@ -151,7 +151,7 @@ namespace CRMBytholod.Controllers
             VM.order.USER_ADD.ID_USER = Convert.ToInt64(User.Identity.Name);// присваиваем, кто добавляет пользователя
 
             long ID_ZAKAZ = VM.order.Save();
-                        
+
             Uri locat = new Uri($"{Request.Scheme}://{Request.Host}/Home/DetailOrder?ID_ZAKAZ={ID_ZAKAZ}");
             return Redirect(locat.AbsoluteUri);
         }
@@ -169,7 +169,7 @@ namespace CRMBytholod.Controllers
 
             return View(VM);
         }
-                       
+
         public IActionResult CloseOrder(long ID_ZAKAZ)
         {
             if (!User.Identity.IsAuthenticated)// если неавторизован то редирект на авторизацию
@@ -301,13 +301,64 @@ namespace CRMBytholod.Controllers
         public IActionResult test()
         {
 
-            ViewBag.Message = "CustomerName: " + " CustomerId: " ;
+            ViewBag.Message = "CustomerName: " + " CustomerId: ";
             return View();
         }
 
 
 
-        
+
+
+        ////// Отчеты
+        ///////////////////////////////////
+
+
+        [HttpGet]
+        public IActionResult ReportZakaz(reportZakazFiltr filtr)
+        {
+            if (!User.Identity.IsAuthenticated)// если неавторизован то редирект на авторизацию
+            {
+                Uri location = new Uri($"{Request.Scheme}://{Request.Host}/Account/Login");
+                return Redirect(location.AbsoluteUri);
+            }
+
+            ReportZakazVM VM;
+
+            if (filtr != null)
+                VM = new ReportZakazVM(filtr);
+            else
+                VM = new ReportZakazVM();
+
+            return View(VM);
+        }
+
+
+        [HttpGet]
+        public IActionResult ReportZakazMaster(reportZakazMasterFiltr filtr)
+        {
+            if (!User.Identity.IsAuthenticated)// если неавторизован то редирект на авторизацию
+            {
+                Uri location = new Uri($"{Request.Scheme}://{Request.Host}/Account/Login");
+                return Redirect(location.AbsoluteUri);
+            }
+
+            ReportZakazMasterVM VM;
+
+            if (filtr != null)
+                VM = new ReportZakazMasterVM(filtr);
+            else
+                VM = new ReportZakazMasterVM();
+
+            return View(VM);
+        }
+
+
+
+
+
+
+
+
         public JsonResult AutoComplete(string prefix)
         {
 
@@ -317,6 +368,8 @@ namespace CRMBytholod.Controllers
         }
 
        
+
+        
 
     }
 }

@@ -24,7 +24,7 @@ namespace CRMBytholod.Models.Report
     public class PointCircle
     {
         public string Xtitle { get; set; }
-        public double Y { get; set; }
+        public decimal Y { get; set; }
     }
 
 }
