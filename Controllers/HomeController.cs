@@ -352,6 +352,25 @@ namespace CRMBytholod.Controllers
             return View(VM);
         }
 
+        [HttpGet]
+        public IActionResult ReportMasterMoney(ReportMasterMoneyFiltr filtr)
+        {
+            if (!User.Identity.IsAuthenticated)// если неавторизован то редирект на авторизацию
+            {
+                Uri location = new Uri($"{Request.Scheme}://{Request.Host}/Account/Login");
+                return Redirect(location.AbsoluteUri);
+            }
+
+            ReportMasterMoneyVM VM;
+
+            if (filtr != null)
+                VM = new ReportMasterMoneyVM(filtr);
+            else
+                VM = new ReportMasterMoneyVM();
+
+            return View(VM);
+        }
+
 
 
 

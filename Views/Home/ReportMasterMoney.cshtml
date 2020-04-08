@@ -1,36 +1,39 @@
-﻿@model CRMBytholod.ViewModels.ReportZakazMasterVM
+﻿@model CRMBytholod.ViewModels.ReportMasterMoneyVM
 
 @{
-    ViewData["Title"] = "Отчет по заказам мастеров";
+    ViewData["Title"] = "Отчет по выручке мастеров";
     Layout = "~/Views/Shared/_LayoutFindTextOrder.cshtml";
 
 
-    var XLabelsZakazClose = Newtonsoft.Json.JsonConvert.SerializeObject(Model.DiagramLine_ZakazClose.Select(x => x.XdateStr).ToList());
-    var YValuesZakazClose = Newtonsoft.Json.JsonConvert.SerializeObject(Model.DiagramLine_ZakazClose.Select(x => x.Y).ToList());
+    var XLabelsFirma = Newtonsoft.Json.JsonConvert.SerializeObject(Model.DiagramLine_UpFirma.Select(x => x.XdateStr).ToList());
+    var YValuesFirma = Newtonsoft.Json.JsonConvert.SerializeObject(Model.DiagramLine_UpFirma.Select(x => x.Y).ToList());
 
-    var XLabelsDiagnostik = Newtonsoft.Json.JsonConvert.SerializeObject(Model.DiagramLine_Diagnostik.Select(x => x.XdateStr).ToList());
-    var YValuesDiagnostik = Newtonsoft.Json.JsonConvert.SerializeObject(Model.DiagramLine_Diagnostik.Select(x => x.Y).ToList());
+    var XLabelsUpSucces = Newtonsoft.Json.JsonConvert.SerializeObject(Model.DiagramLine_UpSucces.Select(x => x.XdateStr).ToList());
+    var YValuesUpSucces = Newtonsoft.Json.JsonConvert.SerializeObject(Model.DiagramLine_UpSucces.Select(x => x.Y).ToList());
 
-    var XLabelsDeny = Newtonsoft.Json.JsonConvert.SerializeObject(Model.DiagramLine_Deny.Select(x => x.XdateStr).ToList());
-    var YValuesDeny = Newtonsoft.Json.JsonConvert.SerializeObject(Model.DiagramLine_Deny.Select(x => x.Y).ToList());
+    var XLabelsUpDiagnostik = Newtonsoft.Json.JsonConvert.SerializeObject(Model.DiagramLine_UpDiagnostik.Select(x => x.XdateStr).ToList());
+    var YValuesUpDiagnostik = Newtonsoft.Json.JsonConvert.SerializeObject(Model.DiagramLine_UpDiagnostik.Select(x => x.Y).ToList());
 
-    var XLabelsPovtor = Newtonsoft.Json.JsonConvert.SerializeObject(Model.DiagramLine_PovtorMoney.Select(x => x.XdateStr).ToList());
-    var YValuesPovtor = Newtonsoft.Json.JsonConvert.SerializeObject(Model.DiagramLine_PovtorMoney.Select(x => x.Y).ToList());
+    var XLabelsUpPovtor = Newtonsoft.Json.JsonConvert.SerializeObject(Model.DiagramLine_UpPovtorMoney.Select(x => x.XdateStr).ToList());
+    var YValuesUpPovtor = Newtonsoft.Json.JsonConvert.SerializeObject(Model.DiagramLine_UpPovtorMoney.Select(x => x.Y).ToList());
 
-    var XLabelsPovtorNotRab = Newtonsoft.Json.JsonConvert.SerializeObject(Model.DiagramLine_PovtorNotMoney.Select(x => x.XdateStr).ToList());
-    var YValuesPovtorNotRab = Newtonsoft.Json.JsonConvert.SerializeObject(Model.DiagramLine_PovtorNotMoney.Select(x => x.Y).ToList());
+    var XLabelsNal = Newtonsoft.Json.JsonConvert.SerializeObject(Model.DiagramLine_UpMasterNal.Select(x => x.XdateStr).ToList());
+    var YValuesNal = Newtonsoft.Json.JsonConvert.SerializeObject(Model.DiagramLine_UpMasterNal.Select(x => x.Y).ToList());
 
+    var XLabelsNotNal = Newtonsoft.Json.JsonConvert.SerializeObject(Model.DiagramLine_UpMasterNotNal.Select(x => x.XdateStr).ToList());
+    var YValuesNotNal = Newtonsoft.Json.JsonConvert.SerializeObject(Model.DiagramLine_UpMasterNotNal.Select(x => x.Y).ToList());
 
 }
 
-
 <div class="container">
 
-    <h1>Отчет по заказам мастеров</h1>
+    <h1>Отчет по выручке мастеров</h1>
+
+
 
     <div>
 
-        <form asp-action="ReportZakazMaster" method="get">
+        <form asp-action="ReportMasterMoney" method="get">
 
             <div class="row">
                 <div class="col-md-2">
@@ -56,12 +59,12 @@
                                 <option value="0">Дням</option>
                             }
                             else
-                              if ((int)Model.Filtr.GroupDate == 1)
+                          if ((int)Model.Filtr.GroupDate == 1)
                             {
                                 <option value="1">Месяцам</option>
                             }
                             else
-                              if ((int)Model.Filtr.GroupDate == 2)
+                          if ((int)Model.Filtr.GroupDate == 2)
                             {
                                 <option value="2">Годам</option>
                             }
@@ -97,7 +100,7 @@
                 <div class="col-md-2">
                     <div class="form-group">
                         <br />
-                        <a asp-action="ReportZakazMaster"><input type="button" class="btn btn-info " value="Сбросить фильтр" /> </a>
+                        <a asp-action="ReportMasterMoney"><input type="button" class="btn btn-info " value="Сбросить фильтр" /> </a>
                     </div>
                 </div>
 
@@ -109,7 +112,7 @@
     <br />
     <hr />
     <br />
-
+    <br />
 
 
     <table class="table">
@@ -119,109 +122,84 @@
                     ФИО
                 </th>
                 <th>
-                    Всего заказов
+                    В фирму ₽
                 </th>
                 <th>
-                    Выполнено шт
+                    Выполненно ₽
                 </th>
                 <th>
-                    Выполнено %
+                    Диагоностика ₽
                 </th>
                 <th>
-                    Диагностик шт
+                    Повтор ₽
                 </th>
                 <th>
-                    Диагностик %
+                    Детали ₽
                 </th>
                 <th>
-                    Отказов шт
+                    Заработал мастер наличными ₽
                 </th>
                 <th>
-                    Отказов %
-                </th>
-                <th>
-                    Повтор рабочий шт
-                </th>
-                <th>
-                    Повтор рабочий %
-                </th>
-                <th>
-                    Повтор не рабочий шт
-                </th>
-                <th>
-                    Повтор не рабочий %
+                    Заработал мастер без наличными ₽
                 </th>
             </tr>
         </thead>
         <tbody>
-            @foreach (var item in Model.reportZakazMasters)
+            @foreach (var item in Model.reportMasterMoneys)
             {
                 <tr>
                     <td>
                         @Html.DisplayFor(modelItem => item.FIOMaster)
                     </td>
                     <td>
-                        @Html.DisplayFor(modelItem => item.AllZakaz)
+                        @Html.DisplayFor(modelItem => item.Firma)
                     </td>
                     <td>
-                        @Html.DisplayFor(modelItem => item.SUCCES_ed)
+                        @Html.DisplayFor(modelItem => item.Succes)
                     </td>
                     <td>
-                        @Html.DisplayFor(modelItem => item.SUCCES_proc)
+                        @Html.DisplayFor(modelItem => item.Diagnostik)
                     </td>
                     <td>
-                        @Html.DisplayFor(modelItem => item.DIAGNOSTIK_ed)
+                        @Html.DisplayFor(modelItem => item.PovtorMoney)
                     </td>
                     <td>
-                        @Html.DisplayFor(modelItem => item.DIAGNOSTIK_proc)
+                        @Html.DisplayFor(modelItem => item.Detal)
                     </td>
                     <td>
-                        @Html.DisplayFor(modelItem => item.DENY_ed)
+                        @Html.DisplayFor(modelItem => item.ZarabotalMasterNal)
                     </td>
                     <td>
-                        @Html.DisplayFor(modelItem => item.DENY_proc)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.POVTORMoney_ed)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.POVTORMoney_proc)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.POVTORNotMoney_ed)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.POVTORNotMoney_proc)
+                        @Html.DisplayFor(modelItem => item.ZarabotalMasterNotNal)
                     </td>
                 </tr>
             }
         </tbody>
     </table>
-
-
 </div>
+
 
 
 <div>
     <br />
     <br />
-    <h2>Выполненные заказы</h2>
+    <h2>В фирму</h2>
+    <div>
+        <canvas id="chartFirma" style="width:100%; height:300px"></canvas>
+    </div>
+
+    <br />
+    <br />
+    <h2>По выполненным заказам</h2>
     <div>
         <canvas id="chartSucces" style="width:100%; height:300px"></canvas>
     </div>
 
     <br />
     <br />
-    <h2>Диагностика</h2>
+    <h2>По диагностике</h2>
     <div>
         <canvas id="chartDiagnostik" style="width:100%; height:300px"></canvas>
-    </div>
-
-    <br />
-    <br />
-    <h2>Отказы</h2>
-    <div>
-        <canvas id="chartDeny" style="width:100%; height:300px"></canvas>
     </div>
 
     <br />
@@ -230,31 +208,99 @@
     <div>
         <canvas id="chartPovtorRab" style="width:100%; height:300px"></canvas>
     </div>
+    
+    <br />
+    <br />
+    <h2>Выручка наличными мастером</h2>
+    <div>
+        <canvas id="chartNal" style="width:100%; height:300px"></canvas>
+    </div>
 
     <br />
     <br />
-    <h2>Повторы не рабочие</h2>
+    <h2>Выручка безналичными мастером</h2>
     <div>
-        <canvas id="chartPovtorNotRab" style="width:100%; height:300px"></canvas>
+        <canvas id="chartNotNal" style="width:100%; height:300px"></canvas>
     </div>
 
 </div>
-
-
-
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.2/Chart.bundle.min.js"></script>
 <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
 
 
 <script type="text/javascript">
+
     
+/////// chartFirma
+    $(function () {
+        var chartName = "chartFirma";
+            var ctx = document.getElementById(chartName).getContext('2d');
+            var data = {
+                    labels: @Html.Raw(XLabelsFirma),
+                    datasets: [{
+                        label: "В фирму",
+                        backgroundColor: [
+                        //    'rgba(254,192,1)',
+                        //'rgba(75, 192, 192, 0.2)',
+                        'rgba(153, 102, 255, 0.2)'
+                        //'rgba(255, 159, 64, 0.2)',
+                        //'rgba(255, 0, 0)',
+                        //'rgba(0, 255, 0)',
+                        //'rgba(0, 0, 255)',
+                        //'rgba(192, 192, 192)',
+                        //'rgba(255, 255, 0)',
+                        //'rgba(255, 0, 255)'
+                        ],
+                        borderColor: [
+                            'rgba(254,192,1)'
+                        ],
+                        borderWidth: 1,
+                    data: @Html.Raw(YValuesFirma)
+                    }]
+                };
+
+    var options = {
+        maintainAspectRatio: false,
+        smooth: false,
+        fill: false,
+                    scales: {
+                        yAxes: [{
+                            ticks: {
+                                min: 0,
+                                beginAtZero: true
+                            },
+                            gridLines: {
+                                display: true,
+                                color: "rgba(255,99,164,0.2)"
+                            }
+    }],
+                        xAxes: [{
+                            ticks: {
+                                min: 0,
+                                beginAtZero: true
+                            },
+                            gridLines: {
+                                display: false
+                            }
+                        }]
+                    }
+                };
+
+           var myChart = new  Chart(ctx, {
+                    options: options,
+                    data: data,
+                    type:'line'
+
+                });
+            });
+
 /////// chartSucces
     $(function () {
         var chartName = "chartSucces";
             var ctx = document.getElementById(chartName).getContext('2d');
             var data = {
-                    labels: @Html.Raw(XLabelsZakazClose),
+                    labels: @Html.Raw(XLabelsUpSucces),
                     datasets: [{
                         label: "Выполненные заказы",
                         backgroundColor: [
@@ -264,7 +310,7 @@
                             'rgba(254,192,1)'
                         ],
                         borderWidth: 1,
-                    data: @Html.Raw(YValuesZakazClose)
+                    data: @Html.Raw(YValuesUpSucces)
                     }]
                 };
 
@@ -302,31 +348,31 @@
 
                 });
             });
-    
+
 /////// chartDiagnostik
     $(function () {
         var chartName = "chartDiagnostik";
             var ctx = document.getElementById(chartName).getContext('2d');
             var data = {
-                    labels: @Html.Raw(XLabelsDiagnostik),
+                    labels: @Html.Raw(XLabelsUpDiagnostik),
                     datasets: [{
                         label: "Диагностика",
                         backgroundColor: [
-                        'rgba(75, 112, 142, 0.5)'  
-                        //'rgba(153, 102, 255, 0.2)',  
-                        //'rgba(255, 159, 64, 0.2)',  
-                        //'rgba(255, 0, 0)',  
-                        //'rgba(0, 255, 0)',  
-                        //'rgba(0, 0, 255)',  
-                        //'rgba(192, 192, 192)',  
-                        //'rgba(255, 255, 0)',  
-                        //'rgba(255, 0, 255)' 
+                        'rgba(75, 112, 142, 0.5)'
+                        //'rgba(153, 102, 255, 0.2)',
+                        //'rgba(255, 159, 64, 0.2)',
+                        //'rgba(255, 0, 0)',
+                        //'rgba(0, 255, 0)',
+                        //'rgba(0, 0, 255)',
+                        //'rgba(192, 192, 192)',
+                        //'rgba(255, 255, 0)',
+                        //'rgba(255, 0, 255)'
                         ],
                         borderColor: [
                             'rgba(254,192,1)'
                         ],
                         borderWidth: 1,
-                    data: @Html.Raw(YValuesDiagnostik)
+                    data: @Html.Raw(YValuesUpDiagnostik)
                     }]
                 };
 
@@ -364,94 +410,31 @@
 
                 });
             });
-    
-/////// chartDeny
-    $(function () {
-        var chartName = "chartDeny";
-            var ctx = document.getElementById(chartName).getContext('2d');
-            var data = {
-                    labels: @Html.Raw(XLabelsDeny),
-                    datasets: [{
-                        label: "Отказы",
-                        backgroundColor: [
-                           // 'rgba(254,192,1)',
-                        'rgba(75, 192, 192, 0.2)'
-                        //'rgba(153, 102, 255, 0.2)',  
-                        //'rgba(255, 159, 64, 0.2)',  
-                        //'rgba(255, 0, 0)',  
-                        //'rgba(0, 255, 0)',  
-                        //'rgba(0, 0, 255)',  
-                        //'rgba(192, 192, 192)',  
-                        //'rgba(255, 255, 0)',  
-                        ],
-                        borderColor: [
-                            'rgba(254,192,1)'
-                        ],
-                        borderWidth: 1,
-                    data: @Html.Raw(YValuesDeny)
-                    }]
-                };
 
-    var options = {
-        maintainAspectRatio: false,
-        smooth: false,
-        fill: false,
-                    scales: {
-                        yAxes: [{
-                            ticks: {
-                                min: 0,
-                                beginAtZero: true
-                            },
-                            gridLines: {
-                                display: true,
-                                color: "rgba(255,99,164,0.2)"
-                            }
-    }],
-                        xAxes: [{
-                            ticks: {
-                                min: 0,
-                                beginAtZero: true
-                            },
-                            gridLines: {
-                                display: false
-                            }
-                        }]
-                    }
-                };
-
-           var myChart = new  Chart(ctx, {
-                    options: options,
-                    data: data,
-                    type:'line'
-
-                });
-            });
-    
 /////// chartPovtorRab
     $(function () {
         var chartName = "chartPovtorRab";
             var ctx = document.getElementById(chartName).getContext('2d');
             var data = {
-                    labels: @Html.Raw(XLabelsPovtor),
+                    labels: @Html.Raw(XLabelsUpPovtor),
                     datasets: [{
-                        label: "Повторы рабочие",
+                        label: "Повторы",
                         backgroundColor: [
-                        //    'rgba(254,192,1)',
-                        //'rgba(75, 192, 192, 0.2)',  
-                        'rgba(153, 102, 255, 0.2)'
-                        //'rgba(255, 159, 64, 0.2)',  
-                        //'rgba(255, 0, 0)',  
-                        //'rgba(0, 255, 0)',  
-                        //'rgba(0, 0, 255)',  
-                        //'rgba(192, 192, 192)',  
-                        //'rgba(255, 255, 0)',  
-                        //'rgba(255, 0, 255)' 
+                           // 'rgba(254,192,1)',
+                        'rgba(75, 192, 192, 0.2)'
+                        //'rgba(153, 102, 255, 0.2)',
+                        //'rgba(255, 159, 64, 0.2)',
+                        //'rgba(255, 0, 0)',
+                        //'rgba(0, 255, 0)',
+                        //'rgba(0, 0, 255)',
+                        //'rgba(192, 192, 192)',
+                        //'rgba(255, 255, 0)',
                         ],
                         borderColor: [
                             'rgba(254,192,1)'
                         ],
                         borderWidth: 1,
-                    data: @Html.Raw(YValuesPovtor)
+                    data: @Html.Raw(YValuesUpPovtor)
                     }]
                 };
 
@@ -489,23 +472,32 @@
 
                 });
             });
+
     
-/////// chartPovtorNotRab
+/////// chartNal
     $(function () {
-        var chartName = "chartPovtorNotRab";
+        var chartName = "chartNal";
             var ctx = document.getElementById(chartName).getContext('2d');
             var data = {
-                    labels: @Html.Raw(XLabelsPovtorNotRab),
+                    labels: @Html.Raw(XLabelsNal),
                     datasets: [{
-                        label: "Повторы не рабочие",
+                        label: "Наличные",
                         backgroundColor: [
-                            'rgba(175, 142, 192, 0.5)'
+                           // 'rgba(254,192,1)',
+                        'rgba(75, 192, 192, 0.2)'
+                        //'rgba(153, 102, 255, 0.2)',
+                        //'rgba(255, 159, 64, 0.2)',
+                        //'rgba(255, 0, 0)',
+                        //'rgba(0, 255, 0)',
+                        //'rgba(0, 0, 255)',
+                        //'rgba(192, 192, 192)',
+                        //'rgba(255, 255, 0)',
                         ],
                         borderColor: [
                             'rgba(254,192,1)'
                         ],
                         borderWidth: 1,
-                    data: @Html.Raw(YValuesPovtorNotRab)
+                    data: @Html.Raw(YValuesNal)
                     }]
                 };
 
@@ -543,5 +535,74 @@
 
                 });
             });
+
+ 
+/////// chartNotNal
+    $(function () {
+        var chartName = "chartNotNal";
+            var ctx = document.getElementById(chartName).getContext('2d');
+            var data = {
+                    labels: @Html.Raw(XLabelsNotNal),
+                    datasets: [{
+                        label: "Безналичные",
+                        backgroundColor: [
+                           // 'rgba(254,192,1)',
+                        'rgba(75, 192, 192, 0.2)'
+                        //'rgba(153, 102, 255, 0.2)',
+                        //'rgba(255, 159, 64, 0.2)',
+                        //'rgba(255, 0, 0)',
+                        //'rgba(0, 255, 0)',
+                        //'rgba(0, 0, 255)',
+                        //'rgba(192, 192, 192)',
+                        //'rgba(255, 255, 0)',
+                        ],
+                        borderColor: [
+                            'rgba(254,192,1)'
+                        ],
+                        borderWidth: 1,
+                    data: @Html.Raw(YValuesNotNal)
+                    }]
+                };
+
+    var options = {
+        maintainAspectRatio: false,
+        smooth: false,
+        fill: false,
+                    scales: {
+                        yAxes: [{
+                            ticks: {
+                                min: 0,
+                                beginAtZero: true
+                            },
+                            gridLines: {
+                                display: true,
+                                color: "rgba(255,99,164,0.2)"
+                            }
+    }],
+                        xAxes: [{
+                            ticks: {
+                                min: 0,
+                                beginAtZero: true
+                            },
+                            gridLines: {
+                                display: false
+                            }
+                        }]
+                    }
+                };
+
+           var myChart = new  Chart(ctx, {
+                    options: options,
+                    data: data,
+                    type:'line'
+
+                });
+            });
+
+
+
+
+
+
 
 </script>

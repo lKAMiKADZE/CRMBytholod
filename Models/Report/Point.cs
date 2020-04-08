@@ -13,6 +13,18 @@ namespace CRMBytholod.Models.Report
     {
         public int Y { get; set; }
         public DateTime X { get; set; }
+
+
+        public string XdateStr
+        {
+            get
+            {
+                string str = X.ToString("dd-MM-yy");
+
+                return str;
+
+            }
+        }
     }
 
     public class PointString

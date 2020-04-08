@@ -8,7 +8,7 @@
     var XLabelsCircle = Newtonsoft.Json.JsonConvert.SerializeObject(Model.reportZakaz.DiagramCircle_Zakaz.Select(x => x.Xtitle).ToList());
     var YValuesCircle = Newtonsoft.Json.JsonConvert.SerializeObject(Model.reportZakaz.DiagramCircle_Zakaz.Select(x => x.Y).ToList());
 
-    var XLabels = Newtonsoft.Json.JsonConvert.SerializeObject(Model.reportZakaz.DiagramLine_Firma.Select(x => x.X.ToString("dd-MM-yy") ).ToList());
+    var XLabels = Newtonsoft.Json.JsonConvert.SerializeObject(Model.reportZakaz.DiagramLine_Firma.Select(x => x.XdateStr).ToList());
     var YValues = Newtonsoft.Json.JsonConvert.SerializeObject(Model.reportZakaz.DiagramLine_Firma.Select(x => x.Y).ToList());
 
     
@@ -54,11 +54,19 @@
                             <option value="0">Дням</option>
                         }
                         else
+                         if ((int)Model.Filtr.GroupDate == 1)
                         {
                             <option value="1">Месяцам</option>
                         }
+                        else
+                         if ((int)Model.Filtr.GroupDate == 2)
+                        {
+                            <option value="2">Годам</option>
+                        }
+
                         <option value="0">Дням</option>
                         <option value="1">Месяцам</option>
+                        <option value="2">Годам</option>
                     </select>
                 </div>
             </div>
@@ -100,7 +108,7 @@
                 Кол-во
             </th>
             <th>
-                Сумма в фирму
+                В фирму ₽
             </th>
         </tr>
     </thead>
@@ -184,8 +192,8 @@
         <tr>
             <td></td>
             <td>Общее кол-во заказов</td>
-            <td>Средний чек с клиента</td>
-            <td>Средний чек в фирму</td>
+            <td>Средний чек с клиента ₽</td>
+            <td>Средний чек в фирму ₽</td>
 
         </tr>
 

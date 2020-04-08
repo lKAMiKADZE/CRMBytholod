@@ -285,8 +285,25 @@ ORDER BY DATEPART(YEAR,z.DateClose) ASC
 
 
 ";
-            
 
+
+            if (Filtr.GroupDate == GroupByDate.YEAR)
+                sqlText = $@"
+SELECT 
+DATEPART(YEAR,z.DateClose) AS Year
+,1 AS Month
+,1 AS Day
+, count(1) AS cntComplete
+, SUM(z.MoneyFirm) AS sumMoneyFirm
+ FROM [Zakaz] z
+WHERE z.ID_STATUS in (5)
+	AND z.DateClose between @start AND @end
+	AND z.MoneyFirm > 0
+GROUP BY DATEPART(YEAR,z.DateClose)
+ORDER BY DATEPART(YEAR,z.DateClose) ASC
+
+
+";
 
             #endregion
 

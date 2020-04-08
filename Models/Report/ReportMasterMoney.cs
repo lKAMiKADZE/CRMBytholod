@@ -189,7 +189,7 @@ ORDER BY DATEPART(YEAR,z.DateClose) ASC
 SELECT 
  DATEPART(YEAR,z.DateClose) AS Year
 ,DATEPART(MONTH,z.DateClose) AS Month
-,0 AS Day
+,1 AS Day
 
 , count(1) AS cntZakazClose
 , SUM(z.MoneyFirm) AS summ
@@ -207,6 +207,30 @@ ORDER BY DATEPART(YEAR,z.DateClose) ASC
 
 ";
 
+            if (Filtr.GroupDate == GroupByDate.YEAR)
+                sqlText = $@"
+
+-----------------------------------------------------
+--b.	Сколько заработал всего (в фирму) руб
+SELECT 
+ DATEPART(YEAR,z.DateClose) AS Year
+,1 AS Month
+,1 AS Day
+
+, count(1) AS cntZakazClose
+, SUM(z.MoneyFirm) AS summ
+
+ FROM [Zakaz] z
+WHERE z.ID_STATUS in (5,7)
+	AND z.DateClose between @start AND @end
+	AND z.MoneyFirm > 0
+	AND z.ID_MASTER = @ID_MASTER
+GROUP BY DATEPART(YEAR,z.DateClose)
+ORDER BY DATEPART(YEAR,z.DateClose) ASC
+	
+
+
+";
 
 
             #endregion
@@ -236,7 +260,6 @@ ORDER BY DATEPART(YEAR,z.DateClose) ASC
 
             return chart;
         }
-
         public static List<PointTime> GetDiagramLine_UpSucces(ReportMasterMoneyFiltr Filtr)
         {
             List<PointTime> chart = new List<PointTime>();
@@ -283,7 +306,7 @@ ORDER BY DATEPART(YEAR,z.DateClose) ASC
 SELECT 
  DATEPART(YEAR,z.DateClose) AS Year
 ,DATEPART(MONTH,z.DateClose) AS Month
-,0 AS Day
+,1 AS Day
 
 , count(1) AS cntZakazClose
 , SUM(z.MoneyFirm) AS summ
@@ -302,6 +325,30 @@ ORDER BY DATEPART(YEAR,z.DateClose) ASC
 ";
 
 
+            if (Filtr.GroupDate == GroupByDate.YEAR)
+                sqlText = $@"
+
+-----------------------------------------------------
+--c.	Сколько по выполненным заказам (в фирму) руб
+SELECT 
+ DATEPART(YEAR,z.DateClose) AS Year
+,1 AS Month
+,1 AS Day
+
+, count(1) AS cntZakazClose
+, SUM(z.MoneyFirm) AS summ
+
+ FROM [Zakaz] z
+WHERE z.ID_STATUS in (5)
+	AND z.DateClose between @start AND @end
+	AND z.MoneyFirm > 0
+	AND z.ID_MASTER =  @ID_MASTER
+GROUP BY DATEPART(YEAR,z.DateClose)
+ORDER BY DATEPART(YEAR,z.DateClose) ASC
+	
+
+
+";
 
             #endregion
 
@@ -376,7 +423,7 @@ ORDER BY DATEPART(YEAR,z.DateClose) ASC
 SELECT 
  DATEPART(YEAR,z.DateClose) AS Year
 ,DATEPART(MONTH,z.DateClose) AS Month
-,0 AS Day
+,1 AS Day
 
 , count(1) AS cntZakazClose
 , SUM(z.MoneyFirm) AS summ
@@ -395,6 +442,30 @@ ORDER BY DATEPART(YEAR,z.DateClose) ASC
 ";
 
 
+            if (Filtr.GroupDate == GroupByDate.YEAR)
+                sqlText = $@"
+
+-----------------------------------------------------
+--d.	По диагностике руб (в фирму)
+SELECT 
+ DATEPART(YEAR,z.DateClose) AS Year
+,1 AS Month
+,1 AS Day
+
+, count(1) AS cntZakazClose
+, SUM(z.MoneyFirm) AS summ
+
+ FROM [Zakaz] z
+WHERE z.ID_STATUS in (7)
+	AND z.DateClose between @start AND @end
+	AND z.MoneyFirm > 0
+	AND z.ID_MASTER =  @ID_MASTER
+GROUP BY DATEPART(YEAR,z.DateClose)
+ORDER BY DATEPART(YEAR,z.DateClose) ASC
+	
+
+
+";
 
             #endregion
 
@@ -470,7 +541,7 @@ ORDER BY DATEPART(YEAR,z.DateClose) ASC
 SELECT 
  DATEPART(YEAR,z.DateClose) AS Year
 ,DATEPART(MONTH,z.DateClose) AS Month
-,0 AS Day
+,1 AS Day
 
 , count(1) AS cntZakazClose
 , SUM(z.MoneyFirm) AS summ
@@ -489,7 +560,31 @@ ORDER BY DATEPART(YEAR,z.DateClose) ASC
 
 ";
 
+            if (Filtr.GroupDate == GroupByDate.YEAR)
+                sqlText = $@"
 
+-----------------------------------------------------
+--e.	По повторам рабочим с деньгами (в фирму) руб.
+SELECT 
+ DATEPART(YEAR,z.DateClose) AS Year
+,1 AS Month
+,1 AS Day
+
+, count(1) AS cntZakazClose
+, SUM(z.MoneyFirm) AS summ
+
+ FROM [Zakaz] z
+WHERE z.ID_STATUS in (5,7)
+	AND z.DateClose between @start AND @end
+	AND z.MoneyFirm > 0
+	AND z.ID_MASTER = @ID_MASTER
+	AND z.Povtor=1
+GROUP BY DATEPART(YEAR,z.DateClose)
+ORDER BY DATEPART(YEAR,z.DateClose) ASC
+	
+
+
+";
 
             #endregion
 
@@ -565,7 +660,7 @@ ORDER BY DATEPART(YEAR,z.DateClose) ASC
 SELECT 
  DATEPART(YEAR,z.DateClose) AS Year
 ,DATEPART(MONTH,z.DateClose) AS Month
-,0 AS Day
+,1 AS Day
 
 , count(1) AS cntZakazClose
 , SUM(z.MoneyMaster) AS summ
@@ -584,6 +679,31 @@ ORDER BY DATEPART(YEAR,z.DateClose) ASC
 
 ";
 
+            if (Filtr.GroupDate == GroupByDate.YEAR)
+                sqlText = $@"
+
+----------------------------------------------------- 
+--g.	Сколько заработал сам мастер наличными
+SELECT 
+ DATEPART(YEAR,z.DateClose) AS Year
+,1 AS Month
+,1 AS Day
+
+, count(1) AS cntZakazClose
+, SUM(z.MoneyMaster) AS summ
+
+ FROM [Zakaz] z
+WHERE z.ID_STATUS in (5,7)
+	AND z.DateClose between @start AND @end
+	AND z.MoneyFirm > 0
+	AND z.ID_MASTER =  @ID_MASTER
+	AND z.OplataNal=1
+GROUP BY DATEPART(YEAR,z.DateClose)
+ORDER BY DATEPART(YEAR,z.DateClose) ASC
+	
+
+
+";
 
 
             #endregion
@@ -660,7 +780,7 @@ ORDER BY DATEPART(YEAR,z.DateClose) ASC
 SELECT 
  DATEPART(YEAR,z.DateClose) AS Year
 ,DATEPART(MONTH,z.DateClose) AS Month
-,0 AS Day
+,1 AS Day
 
 , count(1) AS cntZakazClose
 , SUM(z.MoneyMaster) AS summ
@@ -678,6 +798,34 @@ ORDER BY DATEPART(YEAR,z.DateClose) ASC
 
 
 ";
+
+            if (Filtr.GroupDate == GroupByDate.YEAR)
+                sqlText = $@"
+
+-----------------------------------------------------
+--h.	Сколько заработал сам мастер безналом
+SELECT 
+ DATEPART(YEAR,z.DateClose) AS Year
+,1 AS Month
+,1 AS Day
+
+, count(1) AS cntZakazClose
+, SUM(z.MoneyMaster) AS summ
+
+ FROM [Zakaz] z
+WHERE z.ID_STATUS in (5,7)
+	AND z.DateClose between @start AND @end
+	AND z.MoneyFirm > 0
+	AND z.ID_MASTER =  @ID_MASTER
+	AND z.OplataNal=0
+GROUP BY DATEPART(YEAR,z.DateClose)
+ORDER BY DATEPART(YEAR,z.DateClose) ASC
+	
+	
+
+
+";
+
 
 
 
