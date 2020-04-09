@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -19,7 +20,7 @@ namespace CRMBytholod.Models.Report
         {
             get
             {
-                string str = X.ToString("dd-MM-yy");
+                string str = X.ToString("dd MMM yy", CultureInfo.GetCultureInfo("ru-ru"));
 
                 return str;
 
