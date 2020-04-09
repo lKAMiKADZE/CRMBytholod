@@ -16,7 +16,7 @@ namespace CRMBytholod.ResponseAPI
 
         public MasterResponse(MasterRequest req)
         {
-            Master = User.GetMasterStat(req.Sessionid);       
+            Master = User.GetMasterInfo(req.Sessionid);       
 
         }
 

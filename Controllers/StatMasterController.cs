@@ -2,28 +2,23 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Mvc;
 using CRMBytholod.RequestAPI;
 using CRMBytholod.ResponseAPI;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
 
 namespace CRMBytholod.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class NotifiOrderController : ControllerBase
+    public class StatMasterController : ControllerBase
     {
 
         [HttpPost]
-        public NotifiNewOrderResponse Post([FromBody] NotifiNewOrderRequest req)
+        public StatMasterResponse Post([FromBody] StatMasterRequest req)
         {
-
-            NotifiNewOrderResponse resp = new NotifiNewOrderResponse(req);
-
+            StatMasterResponse resp = new StatMasterResponse(req);
 
             return resp;
         }
-
-
     }
 }

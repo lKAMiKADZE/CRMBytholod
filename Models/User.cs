@@ -39,10 +39,23 @@ namespace CRMBytholod.Models
         public bool Deleted { get; set; }
         public string msisdnMaster { get; set; }
 
+        //статистика мастера
 
-        ////Свойства
+        public int MoneyMasterNal    { get; set; }
+        public int MoneyMasterALL    { get; set; }
+        public int MoneyGetFromFirm { get; set; }
+        public int MoneyDetal       { get; set; }
+        public int MoneyPutFirma     { get; set; }
+        public int TotalAllZakaz     { get; set; }
+        public int TotalComplete     { get; set; }
+        public int TotalDiagnostik    { get; set; }
+        public int TotalDeny           { get; set; }
+        public int TotalPovtorNotRab { get; set; }
+        public int TotalPovtorRab     { get; set; }
 
-        public string GetAdmin
+////Свойства
+
+public string GetAdmin
         {
             get
             {
@@ -117,7 +130,7 @@ END
 
             return false;
         }
-        public static User GetMasterStat(string Sessionid)
+        public static User GetMasterInfo(string Sessionid)
         {
             User us;
 
@@ -471,6 +484,176 @@ SELECT [ID_USER]
             return null;
         }
 
+
+        /// <summary>
+        /// Mobile
+        /// </summary>        
+        public static User GetMasterStat(string Sessionid, DateTime DateStart, DateTime DateEnd)
+        {
+            SqlParameter[] parameters = new SqlParameter[]
+            {
+                new SqlParameter(@"sessionid",SqlDbType.NVarChar) { Value =Sessionid },
+                new SqlParameter(@"start",SqlDbType.DateTime) { Value =DateStart },
+                new SqlParameter(@"end",SqlDbType.DateTime) { Value =DateEnd.AddSeconds(1) }
+            };
+
+            #region sql
+
+            string sqlText = $@"
+
+SELECT 
+m.Name -- a
+,z.ID_MASTER
+
+,(SELECT ISNULL(SUM(z1.MoneyMaster),0) FROM [Zakaz] z1
+	WHERE z1.ID_MASTER=z.ID_MASTER
+	AND z1.ID_STATUS in (5,7)
+	AND z1.DateClose between @start AND @end
+	AND z1.MoneyFirm > 0
+	AND z1.OplataNal=1
+	) AS MoneyMasterNal 
+
+,(SELECT ISNULL(SUM(z1.MoneyMaster),0) FROM [Zakaz] z1
+	WHERE z1.ID_MASTER=z.ID_MASTER
+	AND z1.ID_STATUS in (5,7)
+	AND z1.DateClose between @start AND @end
+	AND z1.MoneyFirm > 0
+	) AS MoneyMasterALL
+
+	
+,(SELECT
+ ISNULL((SUM(z1.MoneyMaster) + SUM(z1.MoneyDetal)),0) 
+	FROM [Zakaz] z1
+	WHERE z1.ID_MASTER=z.ID_MASTER
+	AND z1.ID_STATUS in (5,7)
+	AND z1.DateClose between @start AND @end
+	AND z1.MoneyFirm > 0
+	AND z1.OplataNal=0
+	) AS MoneyGetFromFirm
+
+,(SELECT ISNULL(SUM(z1.MoneyDetal),0) FROM [Zakaz] z1
+	WHERE z1.ID_MASTER=z.ID_MASTER
+	AND z1.ID_STATUS in (5,7)
+	AND z1.DateClose between @start AND @end
+	AND z1.MoneyFirm > 0
+	) AS MoneyDetal 
+	
+,(SELECT ISNULL(SUM(z1.MoneyFirm),0) FROM [Zakaz] z1
+	WHERE z1.ID_MASTER=z.ID_MASTER
+	AND z1.ID_STATUS in (5,7)
+	AND z1.DateClose between @start AND @end
+	AND z1.MoneyFirm > 0
+	) AS MoneyPutFirma 
+	
+--------
+-- TOTAL
+--------
+--a.	Сколько было всего заказов ед
+,(SELECT count(1) FROM [Zakaz] z1
+	WHERE z1.ID_MASTER=z.ID_MASTER
+	AND z1.ID_STATUS in (3,5,7)
+	AND z1.DateClose between @start AND @end
+	) AS TotalAllZakaz
+
+--b.	Выполнено с деньгами  ед
+,(SELECT count(1) FROM [Zakaz] z1
+	WHERE z1.ID_MASTER=z.ID_MASTER
+	AND z1.ID_STATUS in (5,7)
+	AND z1.DateClose between @start AND @end
+	AND z1.MoneyFirm>0
+	) AS TotalComplete
+	
+--c.	Диагностик ед
+,(SELECT count(1) FROM [Zakaz] z1
+	WHERE z1.ID_MASTER=z.ID_MASTER
+	AND z1.ID_STATUS in (7)
+	AND z1.DateClose between @start AND @end
+	AND z1.MoneyFirm>0
+	) AS TotalDiagnostik
+
+--d.	Отказов ед
+,(SELECT count(1) FROM [Zakaz] z1
+	WHERE z1.ID_MASTER=z.ID_MASTER
+	AND z1.ID_STATUS in (3)
+	AND z1.DateClose between @start AND @end	
+	) AS TotalDeny
+	
+--e.	Повторов без денег ед
+,(SELECT count(1) FROM [Zakaz] z1
+	WHERE z1.ID_MASTER=z.ID_MASTER
+	AND z1.ID_STATUS in (3,5,7)
+	AND z1.DateClose between @start AND @end	
+	AND z1.Povtor=1
+	AND z1.MoneyFirm=0
+	) AS TotalPovtorNotRab
+
+--f.	Повторов рабочих с деньгами (в фирму) ед
+,(SELECT count(1) FROM [Zakaz] z1
+	WHERE z1.ID_MASTER=z.ID_MASTER
+	AND z1.ID_STATUS in (5,7)
+	AND z1.DateClose between @start AND @end	
+	AND z1.Povtor=1
+	AND z1.MoneyFirm>0
+	) AS TotalPovtorRab
+
+FROM [Zakaz] z
+JOIN [User] m ON m.ID_USER=z.ID_MASTER
+WHERE 1=1
+	AND m.Sessionid=@sessionid	
+
+	AND z.ID_STATUS in (3,5,7)
+	
+	AND z.DateClose between @start AND @end 
+
+GROUP BY m.Name, z.ID_MASTER
+ORDER BY m.Name ASC
+
+
+
+
+
+
+
+";
+
+            #endregion
+
+            DataTable dt = new DataTable();// при наличии данных
+            // получаем данные из запроса
+            dt = ExecuteSqlGetDataTableStatic(sqlText, parameters);
+
+
+            foreach (DataRow row in dt.Rows)
+            {
+                // попали в цикл, значит авторизовались, т.к. такой пользователь существует
+                User us = new User
+                {
+                    ID_USER = (long)row["ID_MASTER"],
+                    Name = (string)row["Name"],
+                    MoneyMasterNal = (int)row["MoneyMasterNal"],
+                    MoneyMasterALL = (int)row["MoneyMasterALL"],
+                    MoneyGetFromFirm = (int)row["MoneyGetFromFirm"],
+                    MoneyDetal = (int)row["MoneyDetal"],
+                    MoneyPutFirma = (int)row["MoneyPutFirma"],
+                    TotalAllZakaz = (int)row["TotalAllZakaz"],
+                    TotalComplete = (int)row["TotalComplete"],
+                    TotalDiagnostik = (int)row["TotalDiagnostik"],
+                    TotalDeny = (int)row["TotalDeny"],
+                    TotalPovtorNotRab = (int)row["TotalPovtorNotRab"],
+                    TotalPovtorRab = (int)row["TotalPovtorRab"]
+
+                };
+                return us;
+            }
+
+
+            return new User();
+        }
+
+        /// <summary>
+        /// сайт
+        /// </summary>
+        /// <returns></returns>
         public static List<User> GetAllMasters()
         {
             List<User> users = new List<User>();
@@ -517,7 +700,6 @@ SELECT [ID_USER]
 
             return users;
         }
-
 
         public void Update()
         {
