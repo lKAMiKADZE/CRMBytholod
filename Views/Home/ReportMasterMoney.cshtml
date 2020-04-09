@@ -152,25 +152,25 @@
                         @Html.DisplayFor(modelItem => item.FIOMaster)
                     </td>
                     <td>
-                        @Html.DisplayFor(modelItem => item.Firma)
+                        <b>@Html.DisplayFor(modelItem => item.Firma) ₽</b>
                     </td>
                     <td>
-                        @Html.DisplayFor(modelItem => item.Succes)
+                        <b>@Html.DisplayFor(modelItem => item.Succes) ₽</b>
                     </td>
                     <td>
-                        @Html.DisplayFor(modelItem => item.Diagnostik)
+                        @Html.DisplayFor(modelItem => item.Diagnostik) ₽
                     </td>
                     <td>
-                        @Html.DisplayFor(modelItem => item.PovtorMoney)
+                        @Html.DisplayFor(modelItem => item.PovtorMoney) ₽
                     </td>
                     <td>
-                        @Html.DisplayFor(modelItem => item.Detal)
+                        @Html.DisplayFor(modelItem => item.Detal) ₽
                     </td>
                     <td>
-                        @Html.DisplayFor(modelItem => item.ZarabotalMasterNal)
+                        <b>@Html.DisplayFor(modelItem => item.ZarabotalMasterNal) ₽</b>
                     </td>
                     <td>
-                        @Html.DisplayFor(modelItem => item.ZarabotalMasterNotNal)
+                        @Html.DisplayFor(modelItem => item.ZarabotalMasterNotNal) ₽
                     </td>
                 </tr>
             }
@@ -241,21 +241,12 @@
                     datasets: [{
                         label: "В фирму",
                         backgroundColor: [
-                        //    'rgba(254,192,1)',
-                        //'rgba(75, 192, 192, 0.2)',
-                        'rgba(153, 102, 255, 0.2)'
-                        //'rgba(255, 159, 64, 0.2)',
-                        //'rgba(255, 0, 0)',
-                        //'rgba(0, 255, 0)',
-                        //'rgba(0, 0, 255)',
-                        //'rgba(192, 192, 192)',
-                        //'rgba(255, 255, 0)',
-                        //'rgba(255, 0, 255)'
+                        'rgba(153, 102, 255, 0)'
                         ],
                         borderColor: [
                             'rgba(254,192,1)'
                         ],
-                        borderWidth: 1,
+                        borderWidth: 2,
                     data: @Html.Raw(YValuesFirma)
                     }]
                 };
@@ -304,12 +295,12 @@
                     datasets: [{
                         label: "Выполненные заказы",
                         backgroundColor: [
-                            'rgba(254,192,1, 0.2)'
+                            'rgba(254,192,1, 0)'
                         ],
                         borderColor: [
                             'rgba(254,192,1)'
                         ],
-                        borderWidth: 1,
+                        borderWidth: 2,
                     data: @Html.Raw(YValuesUpSucces)
                     }]
                 };
@@ -358,20 +349,12 @@
                     datasets: [{
                         label: "Диагностика",
                         backgroundColor: [
-                        'rgba(75, 112, 142, 0.5)'
-                        //'rgba(153, 102, 255, 0.2)',
-                        //'rgba(255, 159, 64, 0.2)',
-                        //'rgba(255, 0, 0)',
-                        //'rgba(0, 255, 0)',
-                        //'rgba(0, 0, 255)',
-                        //'rgba(192, 192, 192)',
-                        //'rgba(255, 255, 0)',
-                        //'rgba(255, 0, 255)'
+                        'rgba(75, 112, 142, 0.0)'
                         ],
                         borderColor: [
                             'rgba(254,192,1)'
                         ],
-                        borderWidth: 1,
+                        borderWidth: 2,
                     data: @Html.Raw(YValuesUpDiagnostik)
                     }]
                 };
@@ -420,20 +403,12 @@
                     datasets: [{
                         label: "Повторы",
                         backgroundColor: [
-                           // 'rgba(254,192,1)',
-                        'rgba(75, 192, 192, 0.2)'
-                        //'rgba(153, 102, 255, 0.2)',
-                        //'rgba(255, 159, 64, 0.2)',
-                        //'rgba(255, 0, 0)',
-                        //'rgba(0, 255, 0)',
-                        //'rgba(0, 0, 255)',
-                        //'rgba(192, 192, 192)',
-                        //'rgba(255, 255, 0)',
+                        'rgba(75, 192, 192, 0)'
                         ],
                         borderColor: [
                             'rgba(254,192,1)'
                         ],
-                        borderWidth: 1,
+                        borderWidth: 2,
                     data: @Html.Raw(YValuesUpPovtor)
                     }]
                 };
@@ -483,20 +458,12 @@
                     datasets: [{
                         label: "Наличные",
                         backgroundColor: [
-                           // 'rgba(254,192,1)',
-                        'rgba(75, 192, 192, 0.2)'
-                        //'rgba(153, 102, 255, 0.2)',
-                        //'rgba(255, 159, 64, 0.2)',
-                        //'rgba(255, 0, 0)',
-                        //'rgba(0, 255, 0)',
-                        //'rgba(0, 0, 255)',
-                        //'rgba(192, 192, 192)',
-                        //'rgba(255, 255, 0)',
+                        'rgba(75, 192, 192, 0)'
                         ],
                         borderColor: [
                             'rgba(254,192,1)'
                         ],
-                        borderWidth: 1,
+                        borderWidth: 2,
                     data: @Html.Raw(YValuesNal)
                     }]
                 };
@@ -546,20 +513,12 @@
                     datasets: [{
                         label: "Безналичные",
                         backgroundColor: [
-                           // 'rgba(254,192,1)',
-                        'rgba(75, 192, 192, 0.2)'
-                        //'rgba(153, 102, 255, 0.2)',
-                        //'rgba(255, 159, 64, 0.2)',
-                        //'rgba(255, 0, 0)',
-                        //'rgba(0, 255, 0)',
-                        //'rgba(0, 0, 255)',
-                        //'rgba(192, 192, 192)',
-                        //'rgba(255, 255, 0)',
+                        'rgba(75, 192, 192, 0)'
                         ],
                         borderColor: [
                             'rgba(254,192,1)'
                         ],
-                        borderWidth: 1,
+                        borderWidth: 2,
                     data: @Html.Raw(YValuesNotNal)
                     }]
                 };

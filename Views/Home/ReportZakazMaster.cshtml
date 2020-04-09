@@ -119,7 +119,7 @@
                     ФИО
                 </th>
                 <th>
-                    Всего заказов
+                    Всего заказов шт
                 </th>
                 <th>
                     Выполнено шт
@@ -161,37 +161,37 @@
                         @Html.DisplayFor(modelItem => item.FIOMaster)
                     </td>
                     <td>
-                        @Html.DisplayFor(modelItem => item.AllZakaz)
+                        @Html.DisplayFor(modelItem => item.AllZakaz) шт
                     </td>
                     <td>
-                        @Html.DisplayFor(modelItem => item.SUCCES_ed)
+                        @Html.DisplayFor(modelItem => item.SUCCES_ed) шт
                     </td>
                     <td>
-                        @Html.DisplayFor(modelItem => item.SUCCES_proc)
+                        <b>@Html.DisplayFor(modelItem => item.SUCCES_proc) %</b>
                     </td>
                     <td>
-                        @Html.DisplayFor(modelItem => item.DIAGNOSTIK_ed)
+                        @Html.DisplayFor(modelItem => item.DIAGNOSTIK_ed) шт
                     </td>
                     <td>
-                        @Html.DisplayFor(modelItem => item.DIAGNOSTIK_proc)
+                        <b>@Html.DisplayFor(modelItem => item.DIAGNOSTIK_proc) %</b>
                     </td>
                     <td>
-                        @Html.DisplayFor(modelItem => item.DENY_ed)
+                        @Html.DisplayFor(modelItem => item.DENY_ed) шт
                     </td>
                     <td>
-                        @Html.DisplayFor(modelItem => item.DENY_proc)
+                        <b>@Html.DisplayFor(modelItem => item.DENY_proc) %</b>
                     </td>
                     <td>
-                        @Html.DisplayFor(modelItem => item.POVTORMoney_ed)
+                        @Html.DisplayFor(modelItem => item.POVTORMoney_ed) шт
                     </td>
                     <td>
-                        @Html.DisplayFor(modelItem => item.POVTORMoney_proc)
+                        <b>@Html.DisplayFor(modelItem => item.POVTORMoney_proc) %</b>
                     </td>
                     <td>
-                        @Html.DisplayFor(modelItem => item.POVTORNotMoney_ed)
+                        @Html.DisplayFor(modelItem => item.POVTORNotMoney_ed) шт
                     </td>
                     <td>
-                        @Html.DisplayFor(modelItem => item.POVTORNotMoney_proc)
+                        <b>@Html.DisplayFor(modelItem => item.POVTORNotMoney_proc) %</b>
                     </td>
                 </tr>
             }
@@ -258,12 +258,12 @@
                     datasets: [{
                         label: "Выполненные заказы",
                         backgroundColor: [
-                            'rgba(254,192,1, 0.2)'
+                            'rgba(254,192,1, 0)'
                         ],
                         borderColor: [
                             'rgba(254,192,1)'
                         ],
-                        borderWidth: 1,
+                        borderWidth: 2,
                     data: @Html.Raw(YValuesZakazClose)
                     }]
                 };
@@ -312,20 +312,12 @@
                     datasets: [{
                         label: "Диагностика",
                         backgroundColor: [
-                        'rgba(75, 112, 142, 0.5)'  
-                        //'rgba(153, 102, 255, 0.2)',  
-                        //'rgba(255, 159, 64, 0.2)',  
-                        //'rgba(255, 0, 0)',  
-                        //'rgba(0, 255, 0)',  
-                        //'rgba(0, 0, 255)',  
-                        //'rgba(192, 192, 192)',  
-                        //'rgba(255, 255, 0)',  
-                        //'rgba(255, 0, 255)' 
+                        'rgba(75, 112, 142, 0)'  
                         ],
                         borderColor: [
                             'rgba(254,192,1)'
                         ],
-                        borderWidth: 1,
+                        borderWidth: 2,
                     data: @Html.Raw(YValuesDiagnostik)
                     }]
                 };
@@ -374,20 +366,12 @@
                     datasets: [{
                         label: "Отказы",
                         backgroundColor: [
-                           // 'rgba(254,192,1)',
-                        'rgba(75, 192, 192, 0.2)'
-                        //'rgba(153, 102, 255, 0.2)',  
-                        //'rgba(255, 159, 64, 0.2)',  
-                        //'rgba(255, 0, 0)',  
-                        //'rgba(0, 255, 0)',  
-                        //'rgba(0, 0, 255)',  
-                        //'rgba(192, 192, 192)',  
-                        //'rgba(255, 255, 0)',  
+                        'rgba(75, 192, 192, 0)'
                         ],
                         borderColor: [
                             'rgba(254,192,1)'
                         ],
-                        borderWidth: 1,
+                        borderWidth: 2,
                     data: @Html.Raw(YValuesDeny)
                     }]
                 };
@@ -436,21 +420,12 @@
                     datasets: [{
                         label: "Повторы рабочие",
                         backgroundColor: [
-                        //    'rgba(254,192,1)',
-                        //'rgba(75, 192, 192, 0.2)',  
-                        'rgba(153, 102, 255, 0.2)'
-                        //'rgba(255, 159, 64, 0.2)',  
-                        //'rgba(255, 0, 0)',  
-                        //'rgba(0, 255, 0)',  
-                        //'rgba(0, 0, 255)',  
-                        //'rgba(192, 192, 192)',  
-                        //'rgba(255, 255, 0)',  
-                        //'rgba(255, 0, 255)' 
+                        'rgba(153, 102, 255, 0)'
                         ],
                         borderColor: [
                             'rgba(254,192,1)'
                         ],
-                        borderWidth: 1,
+                        borderWidth: 2,
                     data: @Html.Raw(YValuesPovtor)
                     }]
                 };
@@ -499,12 +474,12 @@
                     datasets: [{
                         label: "Повторы не рабочие",
                         backgroundColor: [
-                            'rgba(175, 142, 192, 0.5)'
+                            'rgba(175, 142, 192, 0)'
                         ],
                         borderColor: [
                             'rgba(254,192,1)'
                         ],
-                        borderWidth: 1,
+                        borderWidth: 2,
                     data: @Html.Raw(YValuesPovtorNotRab)
                     }]
                 };

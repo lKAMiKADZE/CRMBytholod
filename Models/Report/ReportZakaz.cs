@@ -332,7 +332,7 @@ ORDER BY DATEPART(YEAR,z.DateClose) ASC
 
             return chart;
         }
-        private List<PointString> GetDiagramLine_City(reportZakazFiltr Filtr)
+        private List<PointString> GetDiagramLine_Organization(reportZakazFiltr Filtr)
         {
             List<PointString> chart = new List<PointString>();
 
@@ -389,7 +389,7 @@ ORDER BY count(1) DESC
 
             return chart;
         }
-        private List<PointString> GetDiagramLine_Organization(reportZakazFiltr Filtr)
+        private List<PointString> GetDiagramLine_City(reportZakazFiltr Filtr)
         {
             List<PointString> chart = new List<PointString>();
 

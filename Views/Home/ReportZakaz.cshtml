@@ -102,10 +102,10 @@
                 Название
             </th>
             <th>
-                Процентов
+                Процентов %
             </th>
             <th>
-                Кол-во
+                Кол-во шт
             </th>
             <th>
                 В фирму ₽
@@ -119,13 +119,13 @@
                 Выполнено
             </td>
             <td>
-                @Html.DisplayFor(modelItem => Model.reportZakaz.SUCCES_proc)
+                @Html.DisplayFor(modelItem => Model.reportZakaz.SUCCES_proc) %
             </td>
             <td>
-                @Html.DisplayFor(modelItem => Model.reportZakaz.SUCCES_ed)
+                @Html.DisplayFor(modelItem => Model.reportZakaz.SUCCES_ed) шт
             </td>
             <td>
-                @Html.DisplayFor(modelItem => Model.reportZakaz.SUCCES_summ)
+                <b>@Html.DisplayFor(modelItem => Model.reportZakaz.SUCCES_summ) ₽</b>
             </td>
         </tr>
         <tr>
@@ -133,13 +133,13 @@
                 Диагностика
             </td>
             <td>
-                @Html.DisplayFor(modelItem => Model.reportZakaz.DIAGNOSTIK_proc)
+                @Html.DisplayFor(modelItem => Model.reportZakaz.DIAGNOSTIK_proc) %
             </td>
             <td>
-                @Html.DisplayFor(modelItem => Model.reportZakaz.DIAGNOSTIK_ed)
+                @Html.DisplayFor(modelItem => Model.reportZakaz.DIAGNOSTIK_ed) шт
             </td>
             <td>
-                @Html.DisplayFor(modelItem => Model.reportZakaz.DIAGNOSTIK_summ)
+                <b>@Html.DisplayFor(modelItem => Model.reportZakaz.DIAGNOSTIK_summ) ₽</b>
             </td>
         </tr>
         <tr>
@@ -147,10 +147,10 @@
                 Отказов
             </td>
             <td>
-                @Html.DisplayFor(modelItem => Model.reportZakaz.DENY_proc)
+                @Html.DisplayFor(modelItem => Model.reportZakaz.DENY_proc) %
             </td>
             <td>
-                @Html.DisplayFor(modelItem => Model.reportZakaz.DENY_ed)
+                @Html.DisplayFor(modelItem => Model.reportZakaz.DENY_ed) шт
             </td>
             <td>
                 -
@@ -161,13 +161,13 @@
                 Повторы рабочие
             </td>
             <td>
-                @Html.DisplayFor(modelItem => Model.reportZakaz.POVTORmoney_proc)
+                @Html.DisplayFor(modelItem => Model.reportZakaz.POVTORmoney_proc) %
             </td>
             <td>
-                @Html.DisplayFor(modelItem => Model.reportZakaz.POVTORmoney_ed)
+                @Html.DisplayFor(modelItem => Model.reportZakaz.POVTORmoney_ed) шт
             </td>
             <td>
-                @Html.DisplayFor(modelItem => Model.reportZakaz.POVTORmoney_summ)
+                <b>@Html.DisplayFor(modelItem => Model.reportZakaz.POVTORmoney_summ)₽</b>
             </td>
         </tr>
         <tr>
@@ -175,10 +175,10 @@
                 Повторы не рабочие
             </td>
             <td>
-                @Html.DisplayFor(modelItem => Model.reportZakaz.POVTORNOTmoney_proc)
+                @Html.DisplayFor(modelItem => Model.reportZakaz.POVTORNOTmoney_proc) %
             </td>
             <td>
-                @Html.DisplayFor(modelItem => Model.reportZakaz.POVTORNOTmoney_ed)
+                @Html.DisplayFor(modelItem => Model.reportZakaz.POVTORNOTmoney_ed) шт
             </td>
             <td>
                 -
@@ -191,7 +191,7 @@
 
         <tr>
             <td></td>
-            <td>Общее кол-во заказов</td>
+            <td>Общее кол-во заказов шт</td>
             <td>Средний чек с клиента ₽</td>
             <td>Средний чек в фирму ₽</td>
 
@@ -202,13 +202,13 @@
                 Итого
             </td>
             <td>
-                @Html.DisplayFor(modelItem => Model.reportZakaz.TOTAL_all_zakaz)
+                @Html.DisplayFor(modelItem => Model.reportZakaz.TOTAL_all_zakaz) шт
             </td>
             <td>
-                @Html.DisplayFor(modelItem => Model.reportZakaz.TOTAL_avg_getClient)
+                <b>@Html.DisplayFor(modelItem => Model.reportZakaz.TOTAL_avg_getClient)₽</b>
             </td>
             <td>
-                @Html.DisplayFor(modelItem => Model.reportZakaz.TOTAL_avg_firma)
+                <b>@Html.DisplayFor(modelItem => Model.reportZakaz.TOTAL_avg_firma)₽</b>
             </td>
         </tr>
 
@@ -338,12 +338,12 @@ var options = {
                     datasets: [{
                         label: "Выполненные заказы",
                         backgroundColor: [
-                            'rgba(254,192,1, 0.2)'
+                            'rgba(254,192,1, 0)'
                         ],
                         borderColor: [
                             'rgba(254,192,1)'
                         ],
-                        borderWidth: 1,
+                        borderWidth: 2,
                     data: @Html.Raw(YValues)
                     }]
                 };
@@ -397,13 +397,13 @@ var options = {
                         'rgba(255, 206, 86, 0.2)',  
                         'rgba(75, 192, 192, 0.2)',  
                         'rgba(153, 102, 255, 0.2)',  
+                        'rgba(255, 159, 64, 0.2)',
+                        'rgba(255, 99, 132, 0.2)',  
+                        'rgba(54, 162, 235, 0.2)',  
+                        'rgba(255, 206, 86, 0.2)',  
+                        'rgba(75, 192, 192, 0.2)',  
+                        'rgba(153, 102, 255, 0.2)',  
                         'rgba(255, 159, 64, 0.2)',  
-                        'rgba(255, 0, 0)',  
-                        'rgba(0, 255, 0)',  
-                        'rgba(0, 0, 255)',  
-                        'rgba(192, 192, 192)',  
-                        'rgba(255, 255, 0)',  
-                        'rgba(255, 0, 255)'  
                     ],  
                     borderColor: [  
                         'rgba(255,99,132,1)',  
@@ -412,12 +412,12 @@ var options = {
                         'rgba(75, 192, 192, 1)',  
                         'rgba(153, 102, 255, 1)',  
                         'rgba(255, 159, 64, 1)',  
-                        'rgba(255, 0, 0)',  
-                        'rgba(0, 255, 0)',  
-                        'rgba(0, 0, 255)',  
-                        'rgba(192, 192, 192)',  
-                        'rgba(255, 255, 0)',  
-                        'rgba(255, 0, 255)'  
+                        'rgba(255,99,132,1)',  
+                        'rgba(54, 162, 235, 1)',  
+                        'rgba(255, 206, 86, 1)',  
+                        'rgba(75, 192, 192, 1)',  
+                        'rgba(153, 102, 255, 1)',  
+                        'rgba(255, 159, 64, 1)',  
                     ],  
                     borderWidth: 1,  
                     data: @Html.Raw(YValuesCity)  
@@ -471,28 +471,29 @@ var options = {
                         'rgba(255, 206, 86, 0.2)',  
                         'rgba(75, 192, 192, 0.2)',  
                         'rgba(153, 102, 255, 0.2)',  
-                        'rgba(255, 159, 64, 0.2)',  
-                        'rgba(255, 0, 0)',  
-                        'rgba(0, 255, 0)',  
-                        'rgba(0, 0, 255)',  
-                        'rgba(192, 192, 192)',  
-                        'rgba(255, 255, 0)',  
-                        'rgba(255, 0, 255)'
+                        'rgba(255, 159, 64, 0.2)',
+                        'rgba(255, 99, 132, 0.2)',  
+                        'rgba(54, 162, 235, 0.2)',  
+                        'rgba(255, 206, 86, 0.2)',  
+                        'rgba(75, 192, 192, 0.2)',  
+                        'rgba(153, 102, 255, 0.2)',  
+                        'rgba(255, 159, 64, 0.2)', 
                         ],
                         borderColor: [
                             
+                        
                         'rgba(255,99,132,1)',  
                         'rgba(54, 162, 235, 1)',  
                         'rgba(255, 206, 86, 1)',  
                         'rgba(75, 192, 192, 1)',  
                         'rgba(153, 102, 255, 1)',  
                         'rgba(255, 159, 64, 1)',  
-                        'rgba(255, 0, 0)',  
-                        'rgba(0, 255, 0)',  
-                        'rgba(0, 0, 255)',  
-                        'rgba(192, 192, 192)',  
-                        'rgba(255, 255, 0)',  
-                        'rgba(255, 0, 255)'  
+                        'rgba(255,99,132,1)',  
+                        'rgba(54, 162, 235, 1)',  
+                        'rgba(255, 206, 86, 1)',  
+                        'rgba(75, 192, 192, 1)',  
+                        'rgba(153, 102, 255, 1)',  
+                        'rgba(255, 159, 64, 1)',   
                         ],
                         borderWidth: 1,
                     data: @Html.Raw(YValuesOrganization)
