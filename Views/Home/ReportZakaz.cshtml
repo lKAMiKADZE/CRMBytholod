@@ -102,10 +102,10 @@
                 Название
             </th>
             <th>
-                Процентов %
+                Кол-во шт
             </th>
             <th>
-                Кол-во шт
+                Процентов %
             </th>
             <th>
                 В фирму ₽
@@ -119,10 +119,10 @@
                 Выполнено
             </td>
             <td>
-                @Html.DisplayFor(modelItem => Model.reportZakaz.SUCCES_proc) %
+                @Html.DisplayFor(modelItem => Model.reportZakaz.SUCCES_ed) шт
             </td>
             <td>
-                @Html.DisplayFor(modelItem => Model.reportZakaz.SUCCES_ed) шт
+                @Html.DisplayFor(modelItem => Model.reportZakaz.SUCCES_proc) %
             </td>
             <td>
                 <b>@Html.DisplayFor(modelItem => Model.reportZakaz.SUCCES_summ) ₽</b>
@@ -133,10 +133,10 @@
                 Диагностика
             </td>
             <td>
-                @Html.DisplayFor(modelItem => Model.reportZakaz.DIAGNOSTIK_proc) %
+                @Html.DisplayFor(modelItem => Model.reportZakaz.DIAGNOSTIK_ed) шт
             </td>
             <td>
-                @Html.DisplayFor(modelItem => Model.reportZakaz.DIAGNOSTIK_ed) шт
+                @Html.DisplayFor(modelItem => Model.reportZakaz.DIAGNOSTIK_proc) %
             </td>
             <td>
                 <b>@Html.DisplayFor(modelItem => Model.reportZakaz.DIAGNOSTIK_summ) ₽</b>
@@ -147,10 +147,10 @@
                 Отказов
             </td>
             <td>
-                @Html.DisplayFor(modelItem => Model.reportZakaz.DENY_proc) %
+                @Html.DisplayFor(modelItem => Model.reportZakaz.DENY_ed) шт
             </td>
             <td>
-                @Html.DisplayFor(modelItem => Model.reportZakaz.DENY_ed) шт
+                @Html.DisplayFor(modelItem => Model.reportZakaz.DENY_proc) %
             </td>
             <td>
                 -
@@ -161,10 +161,10 @@
                 Повторы рабочие
             </td>
             <td>
-                @Html.DisplayFor(modelItem => Model.reportZakaz.POVTORmoney_proc) %
+                @Html.DisplayFor(modelItem => Model.reportZakaz.POVTORmoney_ed) шт
             </td>
             <td>
-                @Html.DisplayFor(modelItem => Model.reportZakaz.POVTORmoney_ed) шт
+                @Html.DisplayFor(modelItem => Model.reportZakaz.POVTORmoney_proc) %
             </td>
             <td>
                 <b>@Html.DisplayFor(modelItem => Model.reportZakaz.POVTORmoney_summ)₽</b>
@@ -175,10 +175,10 @@
                 Повторы не рабочие
             </td>
             <td>
-                @Html.DisplayFor(modelItem => Model.reportZakaz.POVTORNOTmoney_proc) %
+                @Html.DisplayFor(modelItem => Model.reportZakaz.POVTORNOTmoney_ed) шт
             </td>
             <td>
-                @Html.DisplayFor(modelItem => Model.reportZakaz.POVTORNOTmoney_ed) шт
+                @Html.DisplayFor(modelItem => Model.reportZakaz.POVTORNOTmoney_proc) %
             </td>
             <td>
                 -
@@ -292,7 +292,7 @@
                         'rgba(255, 0, 255)'  
                     ],  
                     borderWidth: 1,  
-                    data: @Html.Raw(YValuesCircle)  
+                    data: @Html.Raw(YValuesCircle) ,
     }]  
             };  
   
@@ -344,36 +344,39 @@ var options = {
                             'rgba(254,192,1)'
                         ],
                         borderWidth: 2,
+                        lineTension: 0,
                     data: @Html.Raw(YValues)
                     }]
                 };
 
-    var options = {
-        maintainAspectRatio: false,
-        smooth: false,
-        fill: false,
-                    scales: {
-                        yAxes: [{
-                            ticks: {
-                                min: 0,
-                                beginAtZero: true
-                            },
-                            gridLines: {
-                                display: true,
-                                color: "rgba(255,99,164,0.2)"
-                            }
-    }],
-                        xAxes: [{
-                            ticks: {
-                                min: 0,
-                                beginAtZero: true
-                            },
-                            gridLines: {
-                                display: false
-                            }
-                        }]
+        var options = {
+            maintainAspectRatio: false,
+            smooth: false,
+            fill: false,
+            scales: {
+                yAxes: [{
+                    ticks: {
+                        min: 0,
+                        beginAtZero: true
+                    },
+                    gridLines: {
+                        display: true,
+                        color: "rgba(255,99,164,0.2)"
                     }
-                };
+                }],
+                xAxes: [{
+                    ticks: {
+                        min: 0,
+                        beginAtZero: true
+                    },
+                    gridLines: {
+                        display: false
+                    }
+                }]
+            }
+
+
+         };
 
            var myChart = new  Chart(ctx, {
                     options: options,
@@ -442,7 +445,7 @@ var options = {
                             min: 0,  
                             beginAtZero: true  
                         },  
-                        gridLines: {  
+                        gridLines: {
                             display: false  
                         }  
                     }]  
@@ -508,7 +511,7 @@ var options = {
                             min: 0,  
                             beginAtZero: true  
                         },  
-                        gridLines: {  
+                        gridLines: {
                             display: true,  
                             color: "rgba(255,99,164,0.2)"  
                         }  
