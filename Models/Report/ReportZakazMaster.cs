@@ -41,9 +41,8 @@ namespace CRMBytholod.Models.Report
 
             #region sql
 
+
             string sqlText = @"
-
-
 -- Кол-во заказов по мастерам
 SELECT 
 m.Name
@@ -53,15 +52,15 @@ m.Name
 --c.	Выполнено с деньгами кол-во
 ,(SELECT count(1) FROM [Zakaz] zz 
 	WHERE zz.ID_MASTER=z.ID_MASTER 
-		AND zz.ID_STATUS in (5,7) 
-		AND zz.MoneyFirm>0
+		AND zz.ID_STATUS in (5) 
+		--AND zz.MoneyFirm>0
 		AND	zz.DateClose between @start AND @end
 ) AS cntAllClose 
 
 ,(SELECT CAST( (CAST (count(*) AS FLOAT )/count(z.ID_ZAKAZ))*100 AS numeric(36,1)) AS Procent FROM [Zakaz] zz 
 	WHERE zz.ID_MASTER=z.ID_MASTER 
-		AND zz.ID_STATUS in (5,7) 
-		AND zz.MoneyFirm>0
+		AND zz.ID_STATUS in (5) 
+		--AND zz.MoneyFirm>0
 		AND	zz.DateClose between @start AND @end
 ) AS cntAllCloseProcent
 
@@ -69,14 +68,14 @@ m.Name
 ,(SELECT count(1) FROM [Zakaz] zz 
 	WHERE zz.ID_MASTER=z.ID_MASTER 
 		AND zz.ID_STATUS in (7) 
-		AND zz.MoneyFirm>0
+		--AND zz.MoneyFirm>0
 		AND	zz.DateClose between @start AND @end
 ) AS cntDiagnostik
 
 ,(SELECT CAST( (CAST (count(*) AS FLOAT )/count(z.ID_ZAKAZ))*100 AS numeric(36,1)) AS Procent FROM [Zakaz] zz 
 	WHERE zz.ID_MASTER=z.ID_MASTER 
 		AND zz.ID_STATUS in (7) 
-		AND zz.MoneyFirm>0
+		--AND zz.MoneyFirm>0
 		AND	zz.DateClose between @start AND @end
 ) AS cntDiagnostikProcent
 
