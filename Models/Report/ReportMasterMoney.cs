@@ -48,28 +48,28 @@ m.Name -- a
 ,(SELECT ISNULL(SUM(z1.MoneyFirm),0) FROM [Zakaz] z1
 	WHERE z1.ID_MASTER=z.ID_MASTER
 	AND z1.ID_STATUS in (5,7)
-	AND z1.DateClose between @start AND @end
+	AND z1.DATA between @start AND @end
 	AND z1.MoneyFirm > 0
 	) AS MoneyAllFirma --b
 
 ,(SELECT ISNULL(SUM(z1.MoneyFirm),0) FROM [Zakaz] z1
 	WHERE z1.ID_MASTER=z.ID_MASTER
 	AND z1.ID_STATUS=5
-	AND z1.DateClose between @start AND @end
+	AND z1.DATA between @start AND @end
 	AND z1.MoneyFirm > 0
 	) AS MoneySucces --c
 	
 ,(SELECT ISNULL(SUM(z1.MoneyFirm),0) FROM [Zakaz] z1
 	WHERE z1.ID_MASTER=z.ID_MASTER
 	AND z1.ID_STATUS=7
-	AND z1.DateClose between @start AND @end
+	AND z1.DATA between @start AND @end
 	AND z1.MoneyFirm > 0
 	) AS MoneyDiagnostik --d
 
 ,(SELECT ISNULL(SUM(z1.MoneyFirm),0) FROM [Zakaz] z1
 	WHERE z1.ID_MASTER=z.ID_MASTER
 	AND z1.ID_STATUS in (5,7)
-	AND z1.DateClose between @start AND @end
+	AND z1.DATA between @start AND @end
 	AND z1.MoneyFirm > 0
 	AND z1.Povtor=1
 	) AS MoneyPovtorRab --e
@@ -77,7 +77,7 @@ m.Name -- a
 ,(SELECT ISNULL(SUM(z1.MoneyDetal),0) FROM [Zakaz] z1
 	WHERE z1.ID_MASTER=z.ID_MASTER
 	AND z1.ID_STATUS=5
-	--AND z1.DateClose > CURRENT_TIMESTAMP - 30
+	AND z1.DATA between @start AND @end
 	AND z1.MoneyFirm > 0
 	) AS MoneyDetal --f
 	
@@ -85,7 +85,7 @@ m.Name -- a
 ,(SELECT ISNULL(SUM(z1.MoneyMaster),0) FROM [Zakaz] z1
 	WHERE z1.ID_MASTER=z.ID_MASTER
 	AND z1.ID_STATUS in (5,7)
-	AND z1.DateClose between @start AND @end
+	AND z1.DATA between @start AND @end
 	AND z1.MoneyFirm > 0
 	AND z1.OplataNal=1
 	) AS MoneyNal --g
@@ -93,7 +93,7 @@ m.Name -- a
 ,(SELECT ISNULL(SUM(z1.MoneyMaster),0) FROM [Zakaz] z1
 	WHERE z1.ID_MASTER=z.ID_MASTER
 	AND z1.ID_STATUS in (5,7)
-	AND z1.DateClose between @start AND @end
+	AND z1.DATA between @start AND @end
 	AND z1.MoneyFirm > 0
 	AND z1.OplataNal=0 
 	) AS MoneyNotNal --h
@@ -103,7 +103,7 @@ m.Name -- a
  FROM [Zakaz] z
 JOIN [User] m ON m.ID_USER=z.ID_MASTER
 WHERE z.ID_STATUS in (3,5,7)
-	AND z.DateClose between @start AND @end
+	AND z.DATA between @start AND @end
 GROUP BY m.Name, z.ID_MASTER
 ORDER BY m.Name ASC
 

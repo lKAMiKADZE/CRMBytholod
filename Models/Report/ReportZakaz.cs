@@ -163,7 +163,7 @@ FROM [Zakaz] z
 JOIN [Status] s ON s.ID_STATUS=z.ID_STATUS
 WHERE 1=1
 	AND	z.DateClose between @start AND @end
-	AND s.ID_STATUS in (3,5,7)
+	AND s.ID_STATUS in (5)
 
 
 ";
@@ -221,6 +221,9 @@ WHERE 1=1
                 }
 
             }
+
+            
+
 
             DiagramCircle_Zakaz = new List<PointCircle>
             {

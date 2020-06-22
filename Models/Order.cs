@@ -335,6 +335,7 @@ namespace CRMBytholod.Models
             STATUS = new Status();
             ORGANIZATION = new Organization();
             Msisdn1 = Msisdn2 = Msisdn3 = "7";
+            City = "Москва";
         }
 
 
