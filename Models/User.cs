@@ -145,12 +145,20 @@ END
             string sqlText = $@"
 SELECT 
  u.Name
-, sum(z.MoneyMaster) AS MoneyMaster
+
+,( SELECT isnull(sum(z.MoneyMaster),0) FROM [dbo].[User] u
+	JOIN [dbo].[Zakaz] z ON z.ID_MASTER=u.ID_USER
+	WHERE 1=1
+		AND u.Sessionid=@Sessionid --'CB80665A-93E0-4E91-A982-36063D546CE6' --@Sessionid --
+		AND z.DATA >= CURRENT_TIMESTAMP-30		
+		
+) AS MoneyMaster
+
 ,( SELECT count(1) FROM [dbo].[User] u
 	JOIN [dbo].[Zakaz] z ON z.ID_MASTER=u.ID_USER
 	WHERE 1=1
 		AND u.Sessionid=@Sessionid --'CB80665A-93E0-4E91-A982-36063D546CE6' --@Sessionid --
-		AND z.DateAdd >= CURRENT_TIMESTAMP-30
+		AND z.DATA >= CURRENT_TIMESTAMP-30
 		AND z.ID_STATUS=1
 		
 ) AS Await
@@ -159,7 +167,7 @@ SELECT
 	JOIN [dbo].[Zakaz] z ON z.ID_MASTER=u.ID_USER
 	WHERE 1=1
 		AND u.Sessionid=@Sessionid --'CB80665A-93E0-4E91-A982-36063D546CE6' --@Sessionid
-		AND z.DateAdd >= CURRENT_TIMESTAMP-30
+		AND z.DATA >= CURRENT_TIMESTAMP-30
 		AND z.ID_STATUS=2
 ) AS Povtor
 
@@ -167,7 +175,7 @@ SELECT
 	JOIN [dbo].[Zakaz] z ON z.ID_MASTER=u.ID_USER
 	WHERE 1=1
 		AND u.Sessionid=@Sessionid --'CB80665A-93E0-4E91-A982-36063D546CE6' --@Sessionid
-		AND z.DateAdd >= CURRENT_TIMESTAMP-30
+		AND z.DATA >= CURRENT_TIMESTAMP-30
 		AND z.ID_STATUS=3
 ) AS Denied
 
@@ -175,7 +183,7 @@ SELECT
 	JOIN [dbo].[Zakaz] z ON z.ID_MASTER=u.ID_USER
 	WHERE 1=1
 		AND u.Sessionid=@Sessionid --'CB80665A-93E0-4E91-A982-36063D546CE6' --@Sessionid
-		AND z.DateAdd >= CURRENT_TIMESTAMP-30
+		AND z.DATA >= CURRENT_TIMESTAMP-30
 		AND z.ID_STATUS=4
 ) AS InWork
 
@@ -183,15 +191,13 @@ SELECT
 	JOIN [dbo].[Zakaz] z ON z.ID_MASTER=u.ID_USER
 	WHERE 1=1
 		AND u.Sessionid=@Sessionid --'CB80665A-93E0-4E91-A982-36063D546CE6' --@Sessionid
-		AND z.DateAdd >= CURRENT_TIMESTAMP-30
+		AND z.DATA >= CURRENT_TIMESTAMP-30
 		AND z.ID_STATUS=5
 ) AS Succes
 
- FROM [dbo].[User] u
-JOIN [dbo].[Zakaz] z ON z.ID_MASTER=u.ID_USER
-WHERE 1=1
+ FROM [dbo].[User] u 
+WHERE 1=1	
 	AND u.Sessionid=@Sessionid --'CB80665A-93E0-4E91-A982-36063D546CE6' --@Sessionid
-	AND z.DateAdd >= CURRENT_TIMESTAMP-30
 	
 GROUP BY  u.Name
 
