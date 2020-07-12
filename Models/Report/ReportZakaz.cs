@@ -64,6 +64,7 @@ namespace CRMBytholod.Models.Report
 
             string sqlText = @"
 
+	
 -- ReportZakaz
 
 declare @allZakaz int,
@@ -74,7 +75,7 @@ set @allZakaz = (
 SELECT 	count(*) FROM [Zakaz] z
 JOIN [Status] s ON s.ID_STATUS=z.ID_STATUS
 WHERE 1=1
-	AND	z.DateClose between @start AND @end
+	AND	z.DATA between @start AND @end
 	AND s.ID_STATUS in (3,5,7)
 )
 
@@ -82,7 +83,7 @@ set @ZakazPovtor = (
 SELECT 	count(*) FROM [Zakaz] z
 JOIN [Status] s ON s.ID_STATUS=z.ID_STATUS
 WHERE 1=1
-	AND	z.DateClose between @start AND @end
+	AND	z.DATA between @start AND @end
 	AND s.ID_STATUS in (3,5,7)
 	AND z.Povtor=1
 )
@@ -101,7 +102,7 @@ s.NameStatus
 FROM [Zakaz] z
 JOIN [Status] s ON s.ID_STATUS=z.ID_STATUS
 WHERE 1=1
-	AND	z.DateClose between @start AND @end
+	AND	z.DATA between @start AND @end
 	AND s.ID_STATUS in (3,5,7)
 GROUP BY s.NameStatus , s.ID_STATUS
 
@@ -120,7 +121,7 @@ SELECT
 FROM [Zakaz] z
 JOIN [Status] s ON s.ID_STATUS=z.ID_STATUS
 WHERE 1=1
-	AND	z.DateClose between @start AND @end
+	AND	z.DATA between @start AND @end
 	AND s.ID_STATUS in (3,5,7)
 	AND z.Povtor=1
 	AND z.MoneyFirm > 0 
@@ -140,7 +141,7 @@ SELECT
 FROM [Zakaz] z
 JOIN [Status] s ON s.ID_STATUS=z.ID_STATUS
 WHERE 1=1
-	AND	z.DateClose between @start AND @end
+	AND	z.DATA between @start AND @end
 	AND s.ID_STATUS in (3,5,7)
 	AND z.Povtor=1
 	AND z.MoneyFirm = 0 
@@ -162,7 +163,7 @@ SELECT
 FROM [Zakaz] z
 JOIN [Status] s ON s.ID_STATUS=z.ID_STATUS
 WHERE 1=1
-	AND	z.DateClose between @start AND @end
+	AND	z.DATA between @start AND @end
 	AND s.ID_STATUS in (5)
 
 

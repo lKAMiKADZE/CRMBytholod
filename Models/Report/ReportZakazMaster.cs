@@ -43,6 +43,7 @@ namespace CRMBytholod.Models.Report
 
 
             string sqlText = @"
+
 -- Кол-во заказов по мастерам
 SELECT 
 m.Name
@@ -54,14 +55,14 @@ m.Name
 	WHERE zz.ID_MASTER=z.ID_MASTER 
 		AND zz.ID_STATUS in (5) 
 		--AND zz.MoneyFirm>0
-		AND	zz.DateClose between @start AND @end
+		AND	zz.DATA between @start AND @end
 ) AS cntAllClose 
 
 ,(SELECT CAST( (CAST (count(*) AS FLOAT )/count(z.ID_ZAKAZ))*100 AS numeric(36,1)) AS Procent FROM [Zakaz] zz 
 	WHERE zz.ID_MASTER=z.ID_MASTER 
 		AND zz.ID_STATUS in (5) 
 		--AND zz.MoneyFirm>0
-		AND	zz.DateClose between @start AND @end
+		AND	zz.DATA between @start AND @end
 ) AS cntAllCloseProcent
 
 --d.	Диагностик 
@@ -69,14 +70,14 @@ m.Name
 	WHERE zz.ID_MASTER=z.ID_MASTER 
 		AND zz.ID_STATUS in (7) 
 		--AND zz.MoneyFirm>0
-		AND	zz.DateClose between @start AND @end
+		AND	zz.DATA between @start AND @end
 ) AS cntDiagnostik
 
 ,(SELECT CAST( (CAST (count(*) AS FLOAT )/count(z.ID_ZAKAZ))*100 AS numeric(36,1)) AS Procent FROM [Zakaz] zz 
 	WHERE zz.ID_MASTER=z.ID_MASTER 
 		AND zz.ID_STATUS in (7) 
 		--AND zz.MoneyFirm>0
-		AND	zz.DateClose between @start AND @end
+		AND	zz.DATA between @start AND @end
 ) AS cntDiagnostikProcent
 
 
@@ -85,7 +86,7 @@ m.Name
 	WHERE zz.ID_MASTER=z.ID_MASTER 
 		AND zz.ID_STATUS in (5,7) 
 		AND zz.MoneyFirm>0		
-		AND	zz.DateClose between @start AND @end
+		AND	zz.DATA between @start AND @end
 		AND zz.Povtor=1
 ) AS cntPovtor
 
@@ -93,7 +94,7 @@ m.Name
 	WHERE zz.ID_MASTER=z.ID_MASTER 
 		AND zz.ID_STATUS in (5,7) 
 		AND zz.MoneyFirm>0
-		AND	zz.DateClose between @start AND @end
+		AND	zz.DATA between @start AND @end
 		AND zz.Povtor=1
 ) AS cntPovtorProcent
 
@@ -102,7 +103,7 @@ m.Name
 	WHERE zz.ID_MASTER=z.ID_MASTER 
 		AND zz.ID_STATUS in (5,7) 
 		AND zz.MoneyFirm=0		
-		AND	zz.DateClose between @start AND @end
+		AND	zz.DATA between @start AND @end
 		AND zz.Povtor=1
 ) AS cntPovtorNotMoney
 
@@ -110,7 +111,7 @@ m.Name
 	WHERE zz.ID_MASTER=z.ID_MASTER 
 		AND zz.ID_STATUS in (5,7) 
 		AND zz.MoneyFirm=0
-		AND	zz.DateClose between @start AND @end
+		AND	zz.DATA between @start AND @end
 		AND zz.Povtor=1
 ) AS cntPovtorNotMoneyProcent
 
@@ -119,23 +120,25 @@ m.Name
 ,(SELECT count(1) FROM [Zakaz] zz 
 	WHERE zz.ID_MASTER=z.ID_MASTER 
 		AND zz.ID_STATUS in (3) 		
-		AND	zz.DateClose between @start AND @end
+		AND	zz.DATA between @start AND @end
 ) AS cntDeny
 
 ,(SELECT CAST( (CAST (count(*) AS FLOAT )/count(z.ID_ZAKAZ))*100 AS numeric(36,1)) AS Procent FROM [Zakaz] zz 
 	WHERE zz.ID_MASTER=z.ID_MASTER 
 		AND zz.ID_STATUS in (3) 		
-		AND	zz.DateClose between @start AND @end
+		AND	zz.DATA between @start AND @end
 ) AS cntDenyProcent
 
 
  FROM [Zakaz] z
 JOIN [User] m ON m.ID_USER=z.ID_MASTER
 WHERE z.ID_STATUS in (3,5,7)
-	AND	z.DateClose between @start AND @end
+	AND	z.DATA between @start AND @end
 
 GROUP BY m.Name, z.ID_MASTER
 ORDER BY m.Name ASC
+
+
 
 
 ";
