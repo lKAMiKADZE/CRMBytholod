@@ -364,7 +364,7 @@ JOIN [User] u ON u.ID_USER=o.ID_MASTER
 JOIN [Status] s ON s.ID_STATUS=o.ID_STATUS
 WHERE 1=1
 	AND u.Sessionid=@Sessionid	--'CB80665A-93E0-4E91-A982-36063D546CE6'--@Sessionid	
-	AND s.ID_STATUS in (1,2,4)
+	--AND s.ID_STATUS in (1,2,4)
 
 	AND DateSendMaster is null
 )
