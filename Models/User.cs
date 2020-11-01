@@ -507,6 +507,7 @@ SELECT [ID_USER]
 
             string sqlText = $@"
 
+
 SELECT 
 m.Name -- a
 ,z.ID_MASTER
@@ -514,7 +515,7 @@ m.Name -- a
 ,(SELECT ISNULL(SUM(z1.MoneyMaster),0) FROM [Zakaz] z1
 	WHERE z1.ID_MASTER=z.ID_MASTER
 	AND z1.ID_STATUS in (5,7)
-	AND z1.DateClose between @start AND @end
+	AND z1.DATA between @start AND @end
 	AND z1.MoneyFirm > 0
 	AND z1.OplataNal=1
 	) AS MoneyMasterNal 
@@ -522,7 +523,7 @@ m.Name -- a
 ,(SELECT ISNULL(SUM(z1.MoneyMaster),0) FROM [Zakaz] z1
 	WHERE z1.ID_MASTER=z.ID_MASTER
 	AND z1.ID_STATUS in (5,7)
-	AND z1.DateClose between @start AND @end
+	AND z1.DATA between @start AND @end
 	AND z1.MoneyFirm > 0
 	) AS MoneyMasterALL
 
@@ -532,7 +533,7 @@ m.Name -- a
 	FROM [Zakaz] z1
 	WHERE z1.ID_MASTER=z.ID_MASTER
 	AND z1.ID_STATUS in (5,7)
-	AND z1.DateClose between @start AND @end
+	AND z1.DATA between @start AND @end
 	AND z1.MoneyFirm > 0
 	AND z1.OplataNal=0
 	) AS MoneyGetFromFirm
@@ -540,14 +541,14 @@ m.Name -- a
 ,(SELECT ISNULL(SUM(z1.MoneyDetal),0) FROM [Zakaz] z1
 	WHERE z1.ID_MASTER=z.ID_MASTER
 	AND z1.ID_STATUS in (5,7)
-	AND z1.DateClose between @start AND @end
+	AND z1.DATA between @start AND @end
 	AND z1.MoneyFirm > 0
 	) AS MoneyDetal 
 	
 ,(SELECT ISNULL(SUM(z1.MoneyFirm),0) FROM [Zakaz] z1
 	WHERE z1.ID_MASTER=z.ID_MASTER
 	AND z1.ID_STATUS in (5,7)
-	AND z1.DateClose between @start AND @end
+	AND z1.DATA between @start AND @end
 	AND z1.MoneyFirm > 0
 	) AS MoneyPutFirma 
 	
@@ -558,14 +559,14 @@ m.Name -- a
 ,(SELECT count(1) FROM [Zakaz] z1
 	WHERE z1.ID_MASTER=z.ID_MASTER
 	AND z1.ID_STATUS in (3,5,7)
-	AND z1.DateClose between @start AND @end
+	AND z1.DATA between @start AND @end
 	) AS TotalAllZakaz
 
 --b.	Выполнено с деньгами  ед
 ,(SELECT count(1) FROM [Zakaz] z1
 	WHERE z1.ID_MASTER=z.ID_MASTER
 	AND z1.ID_STATUS in (5,7)
-	AND z1.DateClose between @start AND @end
+	AND z1.DATA between @start AND @end
 	AND z1.MoneyFirm>0
 	) AS TotalComplete
 	
@@ -573,7 +574,7 @@ m.Name -- a
 ,(SELECT count(1) FROM [Zakaz] z1
 	WHERE z1.ID_MASTER=z.ID_MASTER
 	AND z1.ID_STATUS in (7)
-	AND z1.DateClose between @start AND @end
+	AND z1.DATA between @start AND @end
 	AND z1.MoneyFirm>0
 	) AS TotalDiagnostik
 
@@ -581,14 +582,14 @@ m.Name -- a
 ,(SELECT count(1) FROM [Zakaz] z1
 	WHERE z1.ID_MASTER=z.ID_MASTER
 	AND z1.ID_STATUS in (3)
-	AND z1.DateClose between @start AND @end	
+	AND z1.DATA between @start AND @end	
 	) AS TotalDeny
 	
 --e.	Повторов без денег ед
 ,(SELECT count(1) FROM [Zakaz] z1
 	WHERE z1.ID_MASTER=z.ID_MASTER
 	AND z1.ID_STATUS in (3,5,7)
-	AND z1.DateClose between @start AND @end	
+	AND z1.DATA between @start AND @end	
 	AND z1.Povtor=1
 	AND z1.MoneyFirm=0
 	) AS TotalPovtorNotRab
@@ -597,7 +598,7 @@ m.Name -- a
 ,(SELECT count(1) FROM [Zakaz] z1
 	WHERE z1.ID_MASTER=z.ID_MASTER
 	AND z1.ID_STATUS in (5,7)
-	AND z1.DateClose between @start AND @end	
+	AND z1.DATA between @start AND @end	
 	AND z1.Povtor=1
 	AND z1.MoneyFirm>0
 	) AS TotalPovtorRab
@@ -609,7 +610,7 @@ WHERE 1=1
 
 	AND z.ID_STATUS in (3,5,7)
 	
-	AND z.DateClose between @start AND @end 
+	AND z.DATA between @start AND @end 
 
 GROUP BY m.Name, z.ID_MASTER
 ORDER BY m.Name ASC
