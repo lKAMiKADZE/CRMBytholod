@@ -1719,8 +1719,12 @@ WHERE 1=1
             if (filtrOrders.ID_STATUS != 0)
                 WHERE_idStatus = $"AND z.ID_STATUS = {filtrOrders.ID_STATUS}";
 
-            if (!String.IsNullOrEmpty(filtrOrders.Msisdn))
-                WHERE_msisdn = $" AND lower(msisdn1) like '%{filtrOrders.Msisdn.ToLower()}%'";
+            if (!String.IsNullOrEmpty(filtrOrders.Msisdn)) //WHERE_msisdn = $" AND lower(msisdn1) like '%{filtrOrders.Msisdn.ToLower()}%'";
+                WHERE_msisdn = @$" AND     (
+                    lower(msisdn1) like '%{filtrOrders.Msisdn.ToLower()}%'
+                    OR lower(msisdn2) like '%{filtrOrders.Msisdn.ToLower()}%'
+                    OR lower(msisdn3) like '%{filtrOrders.Msisdn.ToLower()}%'
+                    )";
 
             if (filtrOrders.ID_Master >= 0)
             {
